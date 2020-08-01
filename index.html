@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Shooty Blasters</title>
+    <style>
+      body { margin: 0; }
+      canvas { display: block; }
+    </style>
+  </head>
+  <body>
+    <script src="three.js"></script>
+    <script src="classes/timer.js"></script>
+    <script src="classes/character.js"></script>
+    <script src="classes/enemy.js"></script>
+    <script>
+
+      // run every frame
+      function animate() {
+        player.handleMovement()
+        killer.handleMovement()
+
+        // check if intersecting
+        player.handleHit(killer)
+
+        player.animation();
+        killer.animation();
+
+        requestAnimationFrame( animate );
+        renderer.render( scene, camera );
+      }
+
+      // scene contains objects
+      var scene = new THREE.Scene();
+      // camera is passed into renderer, rather than as scene object
+      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+      // need instantiated geo and material for each object
+      var geometry = new THREE.BoxGeometry(0.2,0.2,0.3);
+      var material = new THREE.MeshBasicMaterial( { color: 0xdf8849 } );
+      var playercube = new THREE.Mesh( geometry, material );
+      var playercubeBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      
+      let player = new Character(playercube, playercubeBBox, 0x228849)
+
+      scene.add( player.mesh );
+      // create bounding box object for intersection
+      
+
+      var killercube = new THREE.Mesh( new THREE.BoxGeometry(0.02,0.02,0.6), new THREE.MeshBasicMaterial( { color: 0x228849 }) );
+      var killercubeBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+      killer = new Enemy(killercube, killercubeBBox, 0x0088dd);
+      scene.add(killer.mesh)
+      killer.mesh.position.x = 0.3
+
+      // add grid
+      var size = 10;
+      var divisions = 10;
+      var gridHelper = new THREE.GridHelper( size, divisions );
+      gridHelper.rotation.x = 80;
+      scene.add( gridHelper );
+
+      camera.position.z = 5;
+
+      // render has the beef (webgl) to draw each frame
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+
+
+
+
+      animate();
+
+      document.addEventListener("keydown", onDocumentKeyDownUp, false);
+      document.addEventListener("keyup", onDocumentKeyDownUp, false);
+
+      function changeSpeed(key){
+        if (key == "ArrowLeft") {
+            // console.log("left")
+            player.accx -= 0.5;
+        } else if (key == "ArrowUp") {
+            // console.log("up")
+            player.accy += 0.5;
+        } else if (key == "ArrowRight") {
+            // console.log("right")
+            player.accx += 0.5;
+        } else if (key == "ArrowDown") {
+            // console.log("down")
+            player.accy   -= 0.5;
+        } else if (key == 32) {
+            // console.log("fuck")
+            playercube.position.set(0, 0, 0);
+        }
+
+      }
+
+
+      let heldkeys = {};
+      function onDocumentKeyDownUp(event) {
+        heldkeys[event.key] = event.type == 'keydown';
+        
+        heldkeys_keys = Object.keys(heldkeys)
+
+        // are any keys held down 
+        if(heldkeys_keys){
+          for(i=0; i<heldkeys_keys.length; i++){
+            // is the key held down?
+            let key = heldkeys_keys[i];
+            if(heldkeys[key]){
+              changeSpeed(event.key)
+            }
+          }
+        }
+        
+        // console.log("playercube position is")
+        // console.log(playercube.position)
+      }
+
+      document.body.appendChild( renderer.domElement );
+
+
+    </script>
+  </body>
+</html>
+
