@@ -15,6 +15,10 @@ class Timer {
     this.endTime = new Date().getSeconds()
   }
 
+  reset(){
+    this.currentTime = new Date().getSeconds
+  }
+
   time(){
     if(this.running){
       // # of seconds since start time

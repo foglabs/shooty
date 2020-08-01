@@ -3,28 +3,39 @@
   <head>
     <meta charset="utf-8">
     <title>Shooty Blasters</title>
-    <style>
-      body { margin: 0; }
-      canvas { display: block; }
-    </style>
+    <link href="game.css" rel="stylesheet">
   </head>
+
   <body>
+    <div id="info"></div>
+
     <script src="three.js"></script>
+    <script src="classes/game.js"></script>
     <script src="classes/timer.js"></script>
     <script src="classes/character.js"></script>
+    <script src="classes/player.js"></script>
     <script src="classes/enemy.js"></script>
     <script>
 
       // run every frame
       function animate() {
+        if(enemyTimer.running && enemyTimer.time() > 10 ){
+
+          game.generateEnemies( Math.round(Math.random() * 50) )
+          enemyTimer.reset()
+        }
+
+
         player.handleMovement()
-        killer.handleMovement()
 
-        // check if intersecting
-        player.handleHit(killer)
 
-        player.animation();
-        killer.animation();
+
+        game.moveEnemies()
+        game.handleLife()
+
+        player.animation()
+
+        game.drawScore()
 
         requestAnimationFrame( animate );
         renderer.render( scene, camera );
@@ -34,24 +45,24 @@
       var scene = new THREE.Scene();
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+      camera.position.z = 5;
 
-      // need instantiated geo and material for each object
-      var geometry = new THREE.BoxGeometry(0.2,0.2,0.3);
-      var material = new THREE.MeshBasicMaterial( { color: 0xdf8849 } );
-      var playercube = new THREE.Mesh( geometry, material );
-      var playercubeBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-      
-      let player = new Character(playercube, playercubeBBox, 0x228849)
+
+
+      let game = new Game()
+
+      // to generate enemies every so often
+      let enemyTimer = new Timer()
+      enemyTimer.start()      
+
+
+      let player = new Player([22,88,49])
 
       scene.add( player.mesh );
       // create bounding box object for intersection
-      
 
-      var killercube = new THREE.Mesh( new THREE.BoxGeometry(0.02,0.02,0.6), new THREE.MeshBasicMaterial( { color: 0x228849 }) );
-      var killercubeBBox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-      killer = new Enemy(killercube, killercubeBBox, 0x0088dd);
-      scene.add(killer.mesh)
-      killer.mesh.position.x = 0.3
+      game.generateEnemies(20)
+
 
       // add grid
       var size = 10;
@@ -60,20 +71,14 @@
       gridHelper.rotation.x = 80;
       scene.add( gridHelper );
 
-      camera.position.z = 5;
-
       // render has the beef (webgl) to draw each frame
       var renderer = new THREE.WebGLRenderer();
       renderer.setSize( window.innerWidth, window.innerHeight );
-
-
-
 
       animate();
 
       document.addEventListener("keydown", onDocumentKeyDownUp, false);
       document.addEventListener("keyup", onDocumentKeyDownUp, false);
-
       function changeSpeed(key){
         if (key == "ArrowLeft") {
             // console.log("left")
@@ -93,8 +98,6 @@
         }
 
       }
-
-
       let heldkeys = {};
       function onDocumentKeyDownUp(event) {
         heldkeys[event.key] = event.type == 'keydown';
@@ -120,6 +123,7 @@
 
 
     </script>
+
   </body>
 </html>
 
