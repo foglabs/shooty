@@ -5,10 +5,20 @@ DOWN = 3
 
 class Enemy extends Character {
   constructor(base_color){
+    // de mesh
+    let mesh
+    let dna = Math.random()
+    if(dna > 0.5){
+      mesh = new THREE.BoxGeometry(0.02,0.02,0.6)
+    } else {
+      mesh = new THREE.CircleGeometry( 5, 32 )
+    }
+    
     super(
-      // de mesh
+
       new THREE.Mesh(
-        new THREE.BoxGeometry(0.02,0.02,0.6),
+
+        mesh,
         new THREE.MeshBasicMaterial( { color: 0x228849 })
       ),
 
@@ -16,6 +26,18 @@ class Enemy extends Character {
       new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()),
       base_color
     )
+
+    this.dna = dna
+
+    if(Math.random() > 0.8){
+      // sometimes, make one with a weird scale
+
+      // if we're in here, were doing somethin right
+      this.scaleFactor = Math.random() * 5
+      this.mesh.scale.x = Math.random() * this.scaleFactor
+      this.mesh.scale.y = Math.random() * this.scaleFactor
+      this.mesh.scale.z = Math.random() * this.scaleFactor
+    }
 
     this.health = 10
     this.direction = 0

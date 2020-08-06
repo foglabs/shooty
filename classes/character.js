@@ -13,22 +13,43 @@ class Character {
     this.u = 0.0
     this.baseColor = base_color
     this.hitColor = [255,0,0]
+    this.color = base_color
+    this.scaleFactor = 1.0
+
+    this.dna = Math.random()
 
     // so far just for enemy
     this.isHit = false
     this.lastIsHit = false
 
     this.hitTimer = new Timer()
+    
+    
+    let spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap } )
+    this.sprite = new THREE.Sprite( spriteMaterial )
+    scene.add(this.sprite)
   }
 
-  die(){
+  remove(){
     this.mesh.geometry.dispose()
     this.mesh.material.dispose()
     scene.remove(this.mesh)
   }
+
+  red(){
+    this.color[0]
+  }
   
-  setColor(color){
-    this.mesh.material.color.setHex(color)
+  green(){
+    this.color[1]
+  }
+
+  blue(){
+    this.color[2]
+  }
+  
+  setColor(r,g,b){
+    this.mesh.material.color.setRGB(r,g,b)
   }
 
   calcMovement(speed, acc) {
@@ -50,13 +71,14 @@ class Character {
 
   // placholder
   customMovement(){}
+  customAnimation(){}
 
   handleMovement(){
     // decide accelaration
     this.customMovement()
 
-    let posx = this.mesh.position.x + this.calcMovement(0.04, this.accx)
-    let posy = this.mesh.position.y + this.calcMovement(0.04, this.accy)
+    let posx = this.mesh.position.x + this.calcMovement(0.08, this.accx)
+    let posy = this.mesh.position.y + this.calcMovement(0.08, this.accy)
     
     if(Math.abs(posx) >= this.maxX){
       // stop it if it hits the edge
@@ -72,6 +94,8 @@ class Character {
 
     this.mesh.position.x = posx
     this.mesh.position.y = posy
+
+    this.sprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
 
     // whoa there
     this.accx = this.slowDown(this.accx)
@@ -169,6 +193,8 @@ class Character {
   }
 
   animation(){
+    this.customAnimation()
+
     this.rotation()
     // set bounding box from mesh baby
     this.bbox.setFromObject(this.mesh)

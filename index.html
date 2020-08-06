@@ -7,7 +7,10 @@
   </head>
 
   <body>
-    <div id="info"></div>
+    <div id="info">
+      <div id="score"></div>
+      <div id="timer"></div>
+    </div>
 
     <script src="three.js"></script>
     <script src="classes/game.js"></script>
@@ -19,9 +22,17 @@
 
       // run every frame
       function animate() {
-        if(enemyTimer.running && enemyTimer.time() > 10 ){
+        if(!enemyTimer.running){
+          enemyTimer.start()
+        }
 
-          game.generateEnemies( Math.round(Math.random() * 50) )
+        let remaining = enemyTimer.time()
+        game.drawTimer(remaining)
+
+        if(remaining == 0 ){
+
+          game.generateEnemies( Math.round(Math.random() * 100) )
+
           enemyTimer.reset()
         }
 
@@ -43,6 +54,10 @@
 
       // scene contains objects
       var scene = new THREE.Scene();
+
+      let spriteMap = new THREE.TextureLoader().load( "sprite.png" )
+
+      
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
       camera.position.z = 5;
@@ -51,9 +66,8 @@
 
       let game = new Game()
 
-      // to generate enemies every so often
-      let enemyTimer = new Timer()
-      enemyTimer.start()      
+      // countdown to generate enemies every so often
+      let enemyTimer = new Timer(20000)
 
 
       let player = new Player([22,88,49])
@@ -61,7 +75,7 @@
       scene.add( player.mesh );
       // create bounding box object for intersection
 
-      game.generateEnemies(20)
+      game.generateEnemies(100)
 
 
       // add grid

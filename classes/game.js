@@ -11,8 +11,12 @@ class Game {
     this.score += change
   }
 
+  drawTimer(time){
+    document.getElementById("timer").innerHTML = time;
+  }
+
   drawScore(){
-    document.getElementById("info").innerHTML = this.score;
+    document.getElementById("score").innerHTML = this.score;
   }
 
   addEnemy(){
@@ -61,14 +65,16 @@ class Game {
         let hitresult = this.enemies[i].handleHit(player)
         if(hitresult){
           this.enemies[i].takeDamage(2)
-        }
 
+          // start eating animation, which shuts itself off after timer
+          player.eating = true
+        }
 
         if(this.enemies[i].health <= 0){
           // reward your KILLING
           game.changeScore(1)
 
-          this.enemies[i].die()
+          this.enemies[i].remove()
           delete this.enemies[i]
         }  
       }
