@@ -31,12 +31,12 @@ class Game {
   }
 
   generateEnemies(num){
-    let initial_num_enemies = game.enemies.length;
+    let initial_num_enemies = this.enemies.length;
     for(var i=0;i<num; i++){
 
       let enemy = this.addEnemy()
       this.enemies.push(enemy)
-      scene.add(game.enemies[initial_num_enemies+i].mesh)
+      scene.add(this.enemies[initial_num_enemies+i].mesh)
     }
   }
 

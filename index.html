@@ -36,10 +36,7 @@
           enemyTimer.reset()
         }
 
-
         player.handleMovement()
-
-
 
         game.moveEnemies()
         game.handleLife()
@@ -54,9 +51,19 @@
 
       // scene contains objects
       var scene = new THREE.Scene();
+      scene.background = new THREE.Color( 0xffffff )
 
-      let spriteMap = new THREE.TextureLoader().load( "sprite.png" )
 
+      // load this crap here so we only do it once
+      let spriteMaterial
+      let loader = new THREE.TextureLoader()
+      console.log( 'helloooo' )
+      let spriteMap = loader.load( "https://fogtower.s3.amazonaws.com/sprite.png",
+        (tx) => {  console.log( 'success!' )  },
+        null,
+        (err) => { console.log( 'i fucked way up ' ); console.log( err)}
+       )
+      spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, alphaTest: 0.5, transparent: true } )
       
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -78,7 +85,7 @@
       game.generateEnemies(100)
 
 
-      // add grid
+      // // add grid
       var size = 10;
       var divisions = 10;
       var gridHelper = new THREE.GridHelper( size, divisions );
@@ -88,6 +95,7 @@
       // render has the beef (webgl) to draw each frame
       var renderer = new THREE.WebGLRenderer();
       renderer.setSize( window.innerWidth, window.innerHeight );
+      renderer.setClearColor( 0xffffff, 0);
 
       animate();
 

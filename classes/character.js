@@ -23,11 +23,15 @@ class Character {
     this.lastIsHit = false
 
     this.hitTimer = new Timer()
-    
-    
-    let spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap } )
+
+    // let spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap } )
     this.sprite = new THREE.Sprite( spriteMaterial )
+    this.sprite.center.set( 1.0, 1.0 )
+    this.sprite.scale.set( 0.4, 0.4, 0.4 )
     scene.add(this.sprite)
+
+    this.opacity = 1
+    this.opacityTimer = new Timer()
   }
 
   remove(){
@@ -193,6 +197,7 @@ class Character {
   }
 
   animation(){
+    // override this in your subclass to do extra stuff in addition to the reggies here
     this.customAnimation()
 
     this.rotation()
@@ -200,5 +205,17 @@ class Character {
     this.bbox.setFromObject(this.mesh)
 
     this.colorCycle()
+
+    if(!this.opacityTimer.running){
+      this.opacityTimer.start()
+    }
+
+    if(this.opacityTimer.time() > 200){
+      this.opacityTimer.reset()
+      // console.log( 'fading....' + this.sprite.opacity )
+      this.opacity = this.opacity > 1 ? 0 : this.opacity + 0.01
+      this.sprite.material.opacity = this.opacity
+    }
+    
   }
 }
