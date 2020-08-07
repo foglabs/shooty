@@ -58,12 +58,12 @@
       let spriteMaterial
       let loader = new THREE.TextureLoader()
       console.log( 'helloooo' )
-      let spriteMap = loader.load( "https://fogtower.s3.amazonaws.com/sprite.png",
+      let spriteMap = loader.load( "sprites/sprite.png",
         (tx) => {  console.log( 'success!' )  },
         null,
         (err) => { console.log( 'i fucked way up ' ); console.log( err)}
        )
-      spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap, alphaTest: 0.5, transparent: true } )
+      spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap } )
       
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
