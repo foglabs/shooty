@@ -11,7 +11,7 @@ class Enemy extends Character {
     if(dna > 0.5){
       mesh = new THREE.BoxGeometry(0.02,0.02,0.6)
     } else {
-      mesh = new THREE.CircleGeometry( 5, 32 )
+      mesh = new THREE.CircleGeometry( 0.315, 32 )
     }
     
     super(
@@ -33,7 +33,7 @@ class Enemy extends Character {
       // sometimes, make one with a weird scale
 
       // if we're in here, were doing somethin right
-      this.scaleFactor = Math.random() * 5
+      this.scaleFactor = Math.random() * 2
       this.mesh.scale.x = Math.random() * this.scaleFactor
       this.mesh.scale.y = Math.random() * this.scaleFactor
       this.mesh.scale.z = Math.random() * this.scaleFactor

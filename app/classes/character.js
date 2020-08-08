@@ -1,5 +1,10 @@
+const ALIVE = 0
+const DYING = 1
+const DEAD = 2
+
 class Character {
   constructor(mesh, bbox, base_color){
+    
     this.maxX = 3
     this.maxY = 3
 
@@ -24,20 +29,39 @@ class Character {
 
     this.hitTimer = new Timer()
 
-    // let spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap } )
-    this.sprite = new THREE.Sprite( spriteMaterial )
-    this.sprite.center.set( 1.0, 1.0 )
-    this.sprite.scale.set( 0.4, 0.4, 0.4 )
-    scene.add(this.sprite)
+    this.lifecycle = 'ALIVE'
 
-    this.opacity = 1
+    this.spriteOpacity = 1
     this.opacityTimer = new Timer()
   }
 
   remove(){
+    // add sprite, then start fading it out - has to come before removing mesh to get position!
+    console.log( 'I removed mesh..' )
+    this.addSprite()
+
     this.mesh.geometry.dispose()
     this.mesh.material.dispose()
     scene.remove(this.mesh)
+
+  }
+
+  addSprite(){
+    let mat = spriteMaterial.clone()
+    this.deadSprite = new THREE.Sprite( mat )
+
+    // center rotation anchor
+    this.deadSprite.center.set( 0.5, 0.5 )
+    this.deadSprite.scale.set( 0.388, 0.388, 0.388 )
+    // random radian baby
+    this.deadSprite.material.rotation = Math.random() * 2 * Math.PI
+    this.deadSprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+    scene.add(this.deadSprite)
+  }
+
+  removeSprite(){
+    this.deadSprite.material.dispose()
+    scene.remove(this.deadSprite)
   }
 
   red(){
@@ -99,7 +123,8 @@ class Character {
     this.mesh.position.x = posx
     this.mesh.position.y = posy
 
-    this.sprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+    // this will be for sprites attached to living moving things
+    // this.sprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
 
     // whoa there
     this.accx = this.slowDown(this.accx)
@@ -206,16 +231,31 @@ class Character {
 
     this.colorCycle()
 
-    if(!this.opacityTimer.running){
-      this.opacityTimer.start()
-    }
+    if(this.lifecycle == 'DYING'){
 
-    if(this.opacityTimer.time() > 200){
-      this.opacityTimer.reset()
-      // console.log( 'fading....' + this.sprite.opacity )
-      this.opacity = this.opacity > 1 ? 0 : this.opacity + 0.01
-      this.sprite.material.opacity = this.opacity
+      // if a sprite exists, start fading it out
+      if(!this.opacityTimer.running){
+        this.opacityTimer.start()
+      }
+
+      if(this.opacityTimer.time() > 200){
+        this.opacityTimer.reset()
+
+        this.spriteOpacity = this.spriteOpacity - 0.1
+        // console.log( 'reduced spriteopac '+ this.spriteOpacity )
+        this.deadSprite.material.opacity = this.spriteOpacity
+
+        if(this.spriteOpacity <= 0){
+          // if we hit 0 opacity, remove sprite from scene
+          this.removeSprite()
+
+          // this will allow the enemy maintenance loop in game to actually dispose of the CORPSE
+          this.lifecycle = 'DEAD'
+        }
+      }
+
     }
+    
     
   }
 }

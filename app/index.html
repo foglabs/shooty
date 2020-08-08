@@ -19,7 +19,6 @@
     <script src="classes/player.js"></script>
     <script src="classes/enemy.js"></script>
     <script>
-
       // run every frame
       function animate() {
         if(!enemyTimer.running){
@@ -31,7 +30,7 @@
 
         if(remaining == 0 ){
 
-          game.generateEnemies( Math.round(Math.random() * 100) )
+          game.generateEnemies( Math.round(Math.random() * 10) )
 
           enemyTimer.reset()
         }
@@ -51,14 +50,14 @@
 
       // scene contains objects
       var scene = new THREE.Scene();
-      scene.background = new THREE.Color( 0xffffff )
+      // scene.background = new THREE.Color( 0xffffff )
 
 
       // load this crap here so we only do it once
       let spriteMaterial
       let loader = new THREE.TextureLoader()
       console.log( 'helloooo' )
-      let spriteMap = loader.load( "sprites/sprite.png",
+      let spriteMap = loader.load( "sprites/sprite2.png",
         (tx) => {  console.log( 'success!' )  },
         null,
         (err) => { console.log( 'i fucked way up ' ); console.log( err)}
@@ -74,7 +73,7 @@
       let game = new Game()
 
       // countdown to generate enemies every so often
-      let enemyTimer = new Timer(20000)
+      let enemyTimer = new Timer(2000)
 
 
       let player = new Player([22,88,49])
@@ -82,7 +81,7 @@
       scene.add( player.mesh );
       // create bounding box object for intersection
 
-      game.generateEnemies(100)
+      // game.generateEnemies(100)
 
 
       // // add grid

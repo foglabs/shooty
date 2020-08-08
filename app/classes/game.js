@@ -1,5 +1,6 @@
 class Game {
   constructor(){
+
     this.playing = false
     this.score = 0
 
@@ -72,14 +73,22 @@ class Game {
 
         if(this.enemies[i].health <= 0){
           // reward your KILLING
-          game.changeScore(1)
 
-          this.enemies[i].remove()
-          delete this.enemies[i]
+          // this removes the mesh right now
+          if(this.enemies[i].lifecycle == 'ALIVE'){
+
+            // only score once
+            game.changeScore(1)
+            this.enemies[i].lifecycle = 'DYING'
+            this.enemies[i].remove()
+          }
+
+          if(this.enemies[i].lifecycle == 'DEAD'){
+            // WAIT to actually delete enemy until we have faded out the sprite
+            delete this.enemies[i]
+          }
         }  
       }
-      
-
     }
 
     // strip out nulls
