@@ -30,7 +30,7 @@
 
         if(remaining == 0 ){
 
-          game.generateEnemies( Math.round(Math.random() * 10) )
+          game.generateEnemies( Math.round(Math.random() * 3) )
 
           enemyTimer.reset()
         }
@@ -73,7 +73,7 @@
       let game = new Game()
 
       // countdown to generate enemies every so often
-      let enemyTimer = new Timer(2000)
+      let enemyTimer = new Timer(5000)
 
 
       let player = new Player([22,88,49])

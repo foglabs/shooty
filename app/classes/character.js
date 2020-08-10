@@ -1,7 +1,3 @@
-const ALIVE = 0
-const DYING = 1
-const DEAD = 2
-
 class Character {
   constructor(mesh, bbox, base_color){
     
@@ -28,6 +24,7 @@ class Character {
     this.lastIsHit = false
 
     this.hitTimer = new Timer()
+    this.hitColorTimer = new Timer()
 
     this.lifecycle = 'ALIVE'
 
@@ -150,64 +147,122 @@ class Character {
   }
 
   colorCycle(){
-    // if hit just changed
-    if(this.isHit != this.lastIsHit){
-      if(this.isHit){
-        // console.log('just got hit, set hit color')
 
-        let r = this.hitColor[0]
-        let g = this.hitColor[1]
-        let b = this.hitColor[2]
-        this.mesh.material.color.setRGB(r,g,b)
-      } else if(!this.isHit){
-        // console.log('start hit timer')
+    if(this.isHit || this.color != this.baseColor){
+
+      if(!this.hitTimer.running){
         this.hitTimer.start()
       }
-    }
 
-    if(!this.isHit && this.hitTimer.running){
-      // console.log( 'timer running' )
-      if(this.hitTimer.time() > 5){
-        // if we're not currently hit, and timer is up, stop and go back to base color
-        this.hitTimer.stop()
-
-        let r = this.baseColor[0]
-        let g = this.baseColor[1]
-        let b = this.baseColor[2]
-        // console.log( 'basecolor is ' )
-        // console.log( r,g,b )
-        this.mesh.material.color.setRGB(r,g,b)
+      let tocolor;
+      let fromcolor;
+      if(this.isHit){
+        tocolor = this.hitColor
+        fromcolor = this.baseColor
       } else {
-        // otherwise fade towards basecolor
+        tocolor = this.baseColor
+        fromcolor = this.hitColor
+      }
+
+      if(this.hitTimer.time() > 200){
+        this.hitTimer.reset()
 
         var steps = 200
         var step_u = 1.0 / steps;
 
-        let base_r = this.baseColor[0]
-        let base_g = this.baseColor[1]
-        let base_b = this.baseColor[2]
+        let to_r = tocolor[0]
+        let to_g = tocolor[1]
+        let to_b = tocolor[2]
 
 
-        let hit_r = this.hitColor[0]
-        let hit_g = this.hitColor[1]
-        let hit_b = this.hitColor[2]
+        let from_r = fromcolor[0]
+        let from_g = fromcolor[1]
+        let from_b = fromcolor[2]
 
-        let r = Math.round(this.lerp(hit_r, base_r, this.u))
-        let g = Math.round(this.lerp(hit_g, base_g, this.u))
-        let b = Math.round(this.lerp(hit_b, base_b, this.u))
+        let r = Math.round(this.lerp(from_r, to_r, this.u))
+        let g = Math.round(this.lerp(from_g, to_g, this.u))
+        let b = Math.round(this.lerp(from_b, to_b, this.u))
 
         this.u += step_u
         // console.log("u is " + this.u)
-        if(this.u >= 1.0){
-          this.hitTimer.stop()
-        }
+
 
         // console.log('fading')
         // console.log(r,g,b)
-        this.mesh.material.color.setRGB(r,g,b)
-      }
 
+        // record this so we can compare above
+        this.color = [r,g,b]
+        this.mesh.material.color.setRGB(r,g,b)
+
+        console.log( 'red is '+r )
+        console.log( 'green is '+g )
+        console.log( 'blue is '+b )
+
+      }
     }
+
+
+
+
+
+    // // if hit just changed
+    // if(this.isHit != this.lastIsHit){
+    //   if(this.isHit){
+    //     // console.log('just got hit, set hit color')
+
+    //     let r = this.hitColor[0]
+    //     let g = this.hitColor[1]
+    //     let b = this.hitColor[2]
+    //     this.mesh.material.color.setRGB(r,g,b)
+    //   } else if(!this.isHit){
+    //     // console.log('start hit timer')
+    //     this.hitTimer.start()
+    //   }
+    // }
+
+    // if(!this.isHit && this.hitTimer.running){
+    //   // console.log( 'timer running' )
+    //   if(this.hitTimer.time() > 5){
+    //     // if we're not currently hit, and timer is up, stop and go back to base color
+    //     this.hitTimer.stop()
+
+    //     let r = this.baseColor[0]
+    //     let g = this.baseColor[1]
+    //     let b = this.baseColor[2]
+    //     // console.log( 'basecolor is ' )
+    //     // console.log( r,g,b )
+    //     this.mesh.material.color.setRGB(r,g,b)
+    //   } else {
+    //     // otherwise fade towards basecolor
+
+    //     var steps = 200
+    //     var step_u = 1.0 / steps;
+
+    //     let base_r = this.baseColor[0]
+    //     let base_g = this.baseColor[1]
+    //     let base_b = this.baseColor[2]
+
+
+    //     let hit_r = this.hitColor[0]
+    //     let hit_g = this.hitColor[1]
+    //     let hit_b = this.hitColor[2]
+
+    //     let r = Math.round(this.lerp(hit_r, base_r, this.u))
+    //     let g = Math.round(this.lerp(hit_g, base_g, this.u))
+    //     let b = Math.round(this.lerp(hit_b, base_b, this.u))
+
+    //     this.u += step_u
+    //     // console.log("u is " + this.u)
+    //     if(this.u >= 1.0){
+    //       this.hitTimer.stop()
+    //     }
+
+    //     // console.log('fading')
+    //     // console.log(r,g,b)
+    //     this.mesh.material.color.setRGB(r,g,b)
+    //   }
+
+    // }
 
   }
   
@@ -255,7 +310,5 @@ class Character {
       }
 
     }
-    
-    
   }
 }
