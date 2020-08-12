@@ -19,6 +19,9 @@ class Player extends Character {
 
     this.animTimer = new Timer()
     this.eatingTimer = new Timer()
+
+    // this builds up the more you EAT
+    this.power = 0
   }
   
   rotation(){
@@ -34,10 +37,20 @@ class Player extends Character {
     this.health -= dmg
   }
 
+  changePower(pow){
+    this.power += pow
+
+    // lock em in 
+    if(pow < 0){
+      pow = 0
+    } else if(pow > 100){
+      pow = 100
+    }
+  }
+
   customAnimation(){
     this.eatAnimation()    
   }
-
 
   eatAnimation(){
     if(this.eating){
@@ -69,7 +82,7 @@ class Player extends Character {
             this.setColor(red, this.green(), blue )
 
             this.scaleFactor += 0.005
-            console.log( 'going up' )
+            // console.log( 'going up' )
           }
 
         } else {

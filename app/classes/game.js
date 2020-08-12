@@ -20,6 +20,10 @@ class Game {
     document.getElementById("score").innerHTML = this.score;
   }
 
+  drawPower(){
+    document.getElementById("power").value = player.power;
+  }
+
   addEnemy(){
     let killer = new Enemy([0,88,255*Math.round(Math.random())]);
 
@@ -79,6 +83,7 @@ class Game {
 
             // only score once
             game.changeScore(1)
+            player.changePower(5)
             this.enemies[i].lifecycle = 'DYING'
             this.enemies[i].remove()
           }
@@ -99,4 +104,26 @@ class Game {
     }
 
   }
+
+  handleCorruption(){
+    for(var i=0;i<this.enemies.length;i++){
+
+      let chance
+      let chance_mag
+      if(!this.enemies[i].corrupted){
+
+        // up to a max of 3
+        // chance = 1 + 2 * 
+        // divide by maximum possible value
+        chance_mag = Math.random()/2 + (2^(player.power/10))/1024
+        console.log('chance mag was ' + chance_mag )
+
+        if( chance_mag > 0.85 ){
+          console.log( 'i really should be corrupting' )
+          this.enemies[i].corrupt()
+        }
+      }
+    }
+  }
+
 }

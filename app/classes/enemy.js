@@ -41,6 +41,7 @@ class Enemy extends Character {
 
     this.health = 10
     this.direction = 0
+    this.corrupted = false
   }
 
   rotation(){
@@ -58,6 +59,11 @@ class Enemy extends Character {
 
   chooseDirection(){
     this.direction = Math.round(Math.random() * 4)
+  }
+
+  corrupt(){
+    this.corrupted = true
+    this.mesh.material.color.setRGB(0xff0000)
   }
 
   customMovement(){

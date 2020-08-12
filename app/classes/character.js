@@ -194,9 +194,9 @@ class Character {
         this.color = [r,g,b]
         this.mesh.material.color.setRGB(r,g,b)
 
-        console.log( 'red is '+r )
-        console.log( 'green is '+g )
-        console.log( 'blue is '+b )
+        // console.log( 'red is '+r )
+        // console.log( 'green is '+g )
+        // console.log( 'blue is '+b )
 
       }
     }

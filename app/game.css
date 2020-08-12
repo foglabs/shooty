@@ -3,7 +3,7 @@ canvas { display: block; }
 
 div#info {
   font-family: courier;
-  font-size: 72px; 
+  font-size: 36px; 
   color: #fff;
   position: absolute;
   top: 10px;
@@ -12,3 +12,20 @@ div#info {
   z-index: 100;
   display:block;
 }
+
+div.bar-ele {
+  display: inline;
+  min-width: 10vw;
+}
+
+#power {
+  width: 80vw;
+  border: 0px;
+  background-color: #222;
+  color: #ff2;
+  height: 2vh;
+  top: -5px;
+  position: relative;
+}
+progress::-moz-progress-bar { background: #ff2; }
+progress::-webkit-progress-value { background: #ff2; }
