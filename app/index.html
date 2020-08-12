@@ -22,6 +22,15 @@
     <script src="classes/player.js"></script>
     <script src="classes/enemy.js"></script>
     <script>
+      LEFT = 0
+      UP = 1
+      RIGHT = 2
+      DOWN = 3
+
+      ALIVE = 0
+      DYING = 1
+      DEAD = 2
+
       // run every frame
       function animate() {
         if(!enemyTimer.running){
@@ -40,9 +49,7 @@
 
         player.handleMovement()
 
-        game.moveEnemies()
-        game.handleLife()
-        game.handleCorruption()
+        game.handleEnemies()
 
         player.animation()
 

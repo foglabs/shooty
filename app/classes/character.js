@@ -26,7 +26,7 @@ class Character {
     this.hitTimer = new Timer()
     this.hitColorTimer = new Timer()
 
-    this.lifecycle = 'ALIVE'
+    this.lifecycle = ALIVE
 
     this.spriteOpacity = 1
     this.opacityTimer = new Timer()
@@ -94,10 +94,11 @@ class Character {
     return acc;
   }
 
-  // placholder
+  // this gets redefined in subclasses to contain other every-loop movement logic specific to the class
   customMovement(){}
   customAnimation(){}
 
+  // this is momentum for anything that moves
   handleMovement(){
     // decide accelaration
     this.customMovement()
@@ -286,7 +287,7 @@ class Character {
 
     this.colorCycle()
 
-    if(this.lifecycle == 'DYING'){
+    if(this.lifecycle == DYING){
 
       // if a sprite exists, start fading it out
       if(!this.opacityTimer.running){
@@ -305,7 +306,7 @@ class Character {
           this.removeSprite()
 
           // this will allow the enemy maintenance loop in game to actually dispose of the CORPSE
-          this.lifecycle = 'DEAD'
+          this.lifecycle = DEAD
         }
       }
 

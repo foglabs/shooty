@@ -1,8 +1,3 @@
-LEFT = 0
-UP = 1
-RIGHT = 2
-DOWN = 3
-
 class Enemy extends Character {
   constructor(base_color){
     // de mesh
