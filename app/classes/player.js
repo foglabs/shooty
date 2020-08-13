@@ -40,11 +40,12 @@ class Player extends Character {
   changePower(pow){
     this.power += pow
 
+
     // lock em in 
-    if(pow < 0){
-      pow = 0
-    } else if(pow > 100){
-      pow = 100
+    if(this.power < 0){
+      this.power = 0
+    } else if(this.power > game.powerMax){
+      this.power = game.powerMax
     }
   }
 
