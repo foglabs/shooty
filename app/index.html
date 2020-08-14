@@ -142,25 +142,25 @@
 
       document.addEventListener("keydown", onDocumentKeyDownUp, false);
       document.addEventListener("keyup", onDocumentKeyDownUp, false);
-      function changeSpeed(key){
-        if (key == "ArrowLeft") {
+      function keyEvents(key){
+        if (key == "ArrowLeft"){
             // console.log("left")
             player.accx -= 0.5;
-        } else if (key == "ArrowUp") {
+        } else if (key == "ArrowUp"){
             // console.log("up")
-            player.accy += 0.5;
-        } else if (key == "ArrowRight") {
+            player.accy += 0.5
+        } else if (key == "ArrowRight"){
             // console.log("right")
-            player.accx += 0.5;
-        } else if (key == "ArrowDown") {
+            player.accx += 0.5
+        } else if (key == "ArrowDown"){
             // console.log("down")
-            player.accy   -= 0.5;
-        } else if (key == 32) {
-            // console.log("fuck")
-            playercube.position.set(0, 0, 0);
+            player.accy   -= 0.5
+        } else if (key == " " || key == "Spacebar"){
+          // SPACE BAR
+          player.useKillingCircle()
         }
-
       }
+
       let heldkeys = {};
       function onDocumentKeyDownUp(event) {
         heldkeys[event.key] = event.type == 'keydown';
@@ -173,13 +173,16 @@
             // is the key held down?
             let key = heldkeys_keys[i];
             if(heldkeys[key]){
-              changeSpeed(event.key)
+              keyEvents(event.key)
             }
           }
         }
-        
-        // console.log("playercube position is")
-        // console.log(playercube.position)
+
+        // clear out stuff from nonheld keys
+        if(event.type == "keyup" && event.key == " " || event.key == "Spacebar"){
+          player.stopKillingCircle()
+        }
+
       }
 
       document.body.appendChild( renderer.domElement )

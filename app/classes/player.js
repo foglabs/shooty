@@ -22,6 +22,8 @@ class Player extends Character {
 
     // this builds up the more you EAT
     this.power = 0
+    this.killingCircle = null
+    this.killingCircleTimer = new Timer()
   }
   
   rotation(){
@@ -39,8 +41,6 @@ class Player extends Character {
 
   changePower(pow){
     this.power += pow
-
-
     // lock em in 
     if(this.power < 0){
       this.power = 0
@@ -49,8 +49,59 @@ class Player extends Character {
     }
   }
 
+  addKillingCircle(){
+    // bigger power, bigger circle
+    let geometry = new THREE.Geometry()
+    this.killingCircle = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xFFFFFF }))
+    scene.add(this.killingCircle)
+  }
+
+  drawKillingCircle(){
+    let segmentCount = 32
+    let radius
+    // why doesnt this work
+    radius = this.power/game.powerMax*2
+    console.log(  radius )
+    // this works
+    radius = 2
+    this.killingCircle.geometry.vertices = []
+    for (var i = 0; i <= segmentCount; i++) {
+      var theta = (i / segmentCount) * Math.PI * 2
+      this.killingCircle.geometry.vertices.push( new THREE.Vector3( Math.cos(theta) * radius, Math.sin(theta) * radius, 0 ) )
+    }
+  }
+
+  useKillingCircle(){
+    if(!this.killingCircle){
+      this.addKillingCircle()
+      this.drawKillingCircle()
+    } else {
+      this.killingCircle.visible = true
+    }
+
+    if(!this.killingCircleTimer.running){
+      this.killingCircleTimer.start()
+    }
+
+    if(this.killingCircleTimer.time() > 60){
+      this.drawKillingCircle()
+    }
+  }
+
+  stopKillingCircle(){
+    if(this.killingCircle){
+      this.killingCircle.visible = false
+    }
+  }
+
+  customMovement(){
+    if(this.killingCircle){
+      this.killingCircle.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+    }
+  }
+
   customAnimation(){
-    this.eatAnimation()    
+    this.eatAnimation()
   }
 
   eatAnimation(){
