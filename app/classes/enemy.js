@@ -49,6 +49,7 @@ class Enemy extends Character {
   }
 
   takeDamage(dmg){
+    console.log( 'take damage ', dmg )
     this.health -= dmg
   }
 

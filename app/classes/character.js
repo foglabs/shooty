@@ -24,7 +24,7 @@ class Character {
     this.lastIsHit = false
 
     this.hitTimer = new Timer()
-    this.hitColorTimer = new Timer()
+    this.healthTimer = new Timer()
 
     this.lifecycle = ALIVE
 
@@ -34,7 +34,7 @@ class Character {
 
   remove(){
     // add sprite, then start fading it out - has to come before removing mesh to get position!
-    console.log( 'I removed mesh..' )
+    // console.log( 'I removed mesh..' )
     this.addSprite()
 
     this.mesh.geometry.dispose()
@@ -134,13 +134,19 @@ class Character {
   handleHit(other_char){
     // record last hitstate
     this.lastIsHit = this.isHit
-    // 
-    if(this.bbox.intersectsBox(other_char.bbox)){
+
+    // make sure there is something to intersect right now
+    if(other_char.bbox && this.bbox.intersectsBox(other_char.bbox)){
 
       // hittin it
       this.isHit = true
-      this.health -= 1
+
+      if(!this.corrupted){
+        this.health -= 1
+      }
+
     } else {
+
       this.isHit = false
     }
 

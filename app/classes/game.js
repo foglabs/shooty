@@ -8,7 +8,7 @@ class Game {
     this.enemies = []
     this.percentCorrupted = 0
     // bump this up to get more difficult
-    this.corruptionMax = 0.2
+    this.corruptionMax = 0.8
     this.corruptionTimer = new Timer()
     
     // max playe rpower
@@ -89,30 +89,20 @@ class Game {
         if(!enemy.corrupted){
           let hitresult = enemy.handleHit(player)
           if(hitresult){
-            enemy.takeDamage(2)
+            if(!enemy.healthTimer.running){
+              enemy.healthTimer.start()
+            }
+
+            if(enemy.healthTimer.time() > 400){
+              enemy.healthTimer.reset()
+              enemy.takeDamage(2)
+            }
 
             // start eating animation, which shuts itself off after timer
             player.eating = true
           }
 
-          if(enemy.health <= 0){
-            // reward your KILLING
-
-            // this removes the mesh right now
-            if(enemy.lifecycle == ALIVE){
-
-              // only score once
-              game.changeScore(1)
-              player.changePower(1)
-              enemy.lifecycle = DYING
-              enemy.remove()
-            }
-
-            if(enemy.lifecycle == DEAD){
-              // WAIT to actually delete enemy until we have faded out the sprite
-              delete this.enemies[i]
-            }
-          } else if(this.corruptionTimer.time() > 1000) {
+          if(this.corruptionTimer.time() > 1000) {
             // only need to handleCorruption if we're not dying
             this.corruptionTimer.reset()
 
@@ -125,8 +115,8 @@ class Game {
             // multiply by this teeny tiny so we (mostly) get back something within the realm of 0-1
             let corruption_chance = Math.random() + ( 0.00002 * Math.pow(player.power, 2) )
 
-            console.log( 'corr chance ' + corruption_chance )
-            console.log( 'adjusted by ' + ( 0.00003 * Math.pow(player.power, 2)) )
+            // console.log( 'corr chance ' + corruption_chance )
+            // console.log( 'adjusted by ' + ( 0.00003 * Math.pow(player.power, 2)) )
             if( this.percentCorrupted < this.corruptionMax && corruption_chance > 0.80 ){
               // console.log( 'i really *should* be corrupting ' + chance_mag )
               enemy.corrupt()
@@ -134,9 +124,50 @@ class Game {
             }
           }  
         } else {
-          // els if corrupted
+          // this is els if corrupted
+          // console.log( player.killingCircleArea.geometry )
+          if(player.killingCircle && player.killingCircle.visible){
+
+            let hit = enemy.handleHit( player.killingCircleArea )
+
+            if(hit){
+              if(!enemy.healthTimer.running){
+                enemy.healthTimer.start()
+              }
+
+              if(enemy.healthTimer.time() > 400){
+                enemy.healthTimer.reset()
+
+                console.log( 'hitttin itiitt' )
+                enemy.takeDamage(1)
+                enemy.setColor(0,0,255)
+              }  
+            }
+            
+          }
           numCorrupted += 1
+
         }
+
+       if(enemy.health <= 0){
+          // reward your KILLING
+
+          // this removes the mesh right now
+          if(enemy.lifecycle == ALIVE){
+
+            // only score once
+            game.changeScore(1)
+            player.changePower(1)
+            enemy.lifecycle = DYING
+            enemy.remove()
+          }
+
+          if(enemy.lifecycle == DEAD){
+            // WAIT to actually delete enemy until we have faded out the sprite
+            delete this.enemies[i]
+          }
+        }
+
       }
     }
 

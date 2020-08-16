@@ -117,7 +117,7 @@
       let game = new Game()
 
       // countdown to generate enemies every so often
-      let enemyTimer = new Timer(5000)
+      let enemyTimer = new Timer(2000)
 
 
       let player = new Player([22,88,49])
@@ -157,14 +157,14 @@
             player.accy   -= 0.5
         } else if (key == " " || key == "Spacebar"){
           // SPACE BAR
-          player.useKillingCircle()
+          player.startKillingCircle()
         }
       }
 
       let heldkeys = {};
       function onDocumentKeyDownUp(event) {
         heldkeys[event.key] = event.type == 'keydown';
-        
+
         heldkeys_keys = Object.keys(heldkeys)
 
         // are any keys held down 
@@ -182,7 +182,6 @@
         if(event.type == "keyup" && event.key == " " || event.key == "Spacebar"){
           player.stopKillingCircle()
         }
-
       }
 
       document.body.appendChild( renderer.domElement )

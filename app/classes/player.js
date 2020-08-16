@@ -22,7 +22,14 @@ class Player extends Character {
 
     // this builds up the more you EAT
     this.power = 0
+    // so we can limit power-related drawing
+    this.lastPower = 0
     this.killingCircle = null
+    this.killingCircleArea = {}
+    this.killingCircleArea.mesh = null
+    this.killingCircleArea.bbox = null
+    this.killingCircleActive = false
+
     this.killingCircleTimer = new Timer()
   }
   
@@ -40,6 +47,7 @@ class Player extends Character {
   }
 
   changePower(pow){
+    this.lastPower = this.power
     this.power += pow
     // lock em in 
     if(this.power < 0){
@@ -53,55 +61,102 @@ class Player extends Character {
     // bigger power, bigger circle
     let geometry = new THREE.Geometry()
     this.killingCircle = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0xFFFFFF }))
-    scene.add(this.killingCircle)
+    this.killingCircle.geometry.verticesNeedUpdate = true
+    // console.log( 'we addin that damn cirlce bitch  ' )
+    
+
+    // toprad, bottomrad, height, segments
+    this.killingCircleArea.mesh = new THREE.Mesh( new THREE.CylinderGeometry(1, 1, 1, 32), new THREE.MeshBasicMaterial({ color: 0xffff00 }) )
+    this.killingCircleArea.mesh.rotation.x = 1.57
+    this.killingCircleArea.mesh.visible = false
+
+
+    this.drawKillingCircle()
+    scene.add(this.killingCircle, this.killingCircleArea.mesh)
+  }
+
+  removeKillingCircle(){
+    this.killingCircle.geometry.dispose()
+    this.killingCircle.material.dispose()
+    scene.remove(this.killingCircle)
+    this.killingCircle = null
+
+    this.killingCircleArea.mesh.geometry.dispose()
+    this.killingCircleArea.mesh.material.dispose()
+    scene.remove(this.killingCircleArea.mesh)
+    this.killingCircleArea.mesh = null
+    this.killingCircleArea = {}
+
   }
 
   drawKillingCircle(){
+
     let segmentCount = 32
     let radius
     // why doesnt this work
     radius = this.power/game.powerMax*2
-    console.log(  radius )
+    // console.log( 'rad is ', radius )
     // this works
-    radius = 2
+    // radius = 1
+    // only redraw if we changed size
+
     this.killingCircle.geometry.vertices = []
+    var theta
     for (var i = 0; i <= segmentCount; i++) {
-      var theta = (i / segmentCount) * Math.PI * 2
+      theta = (i / segmentCount) * Math.PI * 2
       this.killingCircle.geometry.vertices.push( new THREE.Vector3( Math.cos(theta) * radius, Math.sin(theta) * radius, 0 ) )
     }
+
+    // update
+    this.killingCircleArea.mesh.scale.set( radius*1.1, radius*1.1, radius*1.1 )
   }
 
-  useKillingCircle(){
+  startKillingCircle(){
     if(!this.killingCircle){
       this.addKillingCircle()
-      this.drawKillingCircle()
-    } else {
-      this.killingCircle.visible = true
     }
 
+    this.killingCircle.visible = true
     if(!this.killingCircleTimer.running){
+      // console.log( 'bgegin circ timer' )
       this.killingCircleTimer.start()
-    }
-
-    if(this.killingCircleTimer.time() > 60){
-      this.drawKillingCircle()
     }
   }
 
   stopKillingCircle(){
-    if(this.killingCircle){
+    if(this.killingCircle && this.killingCircle.visible){
+      // console.log( 'stop that circle' )
       this.killingCircle.visible = false
     }
   }
 
   customMovement(){
-    if(this.killingCircle){
+    if(this.killingCircle && this.killingCircle.visible){
+      // console.log( 'move tha tcircle' )
       this.killingCircle.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+      this.killingCircleArea.mesh.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
     }
   }
 
   customAnimation(){
     this.eatAnimation()
+    if(this.killingCircle && this.killingCircle.visible){
+        
+      if(this.killingCircleTimer.time() > 100){
+        this.killingCircleTimer.reset()
+        // console.log( 'time to draw bitch' )
+        this.removeKillingCircle()
+        this.addKillingCircle()
+      }
+
+      this.drawKillingCircle()
+    
+
+      if(this.killingCircleArea && this.killingCircleArea.mesh){
+        this.killingCircleArea.bbox = new THREE.Box3().setFromObject( this.killingCircleArea.mesh )
+      }
+
+    }
   }
 
   eatAnimation(){
