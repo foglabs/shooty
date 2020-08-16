@@ -147,9 +147,14 @@ class Player extends Character {
         // console.log( 'time to draw bitch' )
         this.removeKillingCircle()
         this.addKillingCircle()
+
+
+        // spend power to have killing circle open
+        this.changePower(-2.4)
       }
 
       this.drawKillingCircle()
+
     
 
       if(this.killingCircleArea && this.killingCircleArea.mesh){

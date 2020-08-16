@@ -30,11 +30,13 @@ class Character {
 
     this.spriteOpacity = 1
     this.opacityTimer = new Timer()
+
+    this.duster = null
+    this.dusterTimer = new Timer()
   }
 
   remove(){
     // add sprite, then start fading it out - has to come before removing mesh to get position!
-    // console.log( 'I removed mesh..' )
     this.addSprite()
 
     this.mesh.geometry.dispose()
@@ -44,12 +46,21 @@ class Character {
   }
 
   addSprite(){
-    let mat = spriteMaterial.clone()
+    let mat
+    let scale
+    // if yous a enemy
+    if(this.corrupted){
+      mat = corruptorMaterial.clone()
+      scale = 0.688
+    } else {
+      mat = bloodspriteMaterial.clone()
+      scale = 0.388
+    }
     this.deadSprite = new THREE.Sprite( mat )
 
     // center rotation anchor
     this.deadSprite.center.set( 0.5, 0.5 )
-    this.deadSprite.scale.set( 0.388, 0.388, 0.388 )
+    this.deadSprite.scale.set( scale, scale, scale )
     // random radian baby
     this.deadSprite.material.rotation = Math.random() * 2 * Math.PI
     this.deadSprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
@@ -121,6 +132,12 @@ class Character {
     this.mesh.position.x = posx
     this.mesh.position.y = posy
 
+    // stop moving duster once were dying
+    if(this.lifecycle == ALIVE && this.duster){
+      // console.log( 'move my particles baby' )
+      this.duster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
+    }
+
     // this will be for sprites attached to living moving things
     // this.sprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
 
@@ -153,6 +170,33 @@ class Character {
     return this.isHit
   }
 
+  addParticles(){
+    // little blod splats
+    this.duster = new Duster(bloodspriteMap, 0.01, 64, 0.4, this.mesh.position, 1)
+  }
+
+  takeDamage(dmg){
+    // console.log( 'take damage ', dmg )
+    this.health -= dmg
+
+    if(!this.duster){
+      this.addParticles()
+      this.dusterTimer.start()
+    }
+  }
+
+  // lineToTarget(target){
+  //   var targetPosition = new THREE.Vector3(x,y,z);
+  //   var objectToMove;
+  //   var group = new THREE.Group();
+  //   group.add(objectToMove);
+  //   var targetNormalizedVector = new THREE.Vector3(0,0,0);
+  //   targetNormalizedVector.x = targetPosition.x - group.position.x;
+  //   targetNormalizedVector.y = targetPosition.y - group.position.y;
+  //   targetNormalizedVector.z = targetPosition.z - group.position.z;
+  //   targetNormalizedVector.normalize()
+  // }
+
   colorCycle(){
 
     if(this.isHit || this.color != this.baseColor){
@@ -161,8 +205,8 @@ class Character {
         this.hitTimer.start()
       }
 
-      let tocolor;
-      let fromcolor;
+      let tocolor
+      let fromcolor
       if(this.isHit){
         tocolor = this.hitColor
         fromcolor = this.baseColor
@@ -292,6 +336,24 @@ class Character {
     this.bbox.setFromObject(this.mesh)
 
     this.colorCycle()
+
+    if(this.duster){
+      // run dis
+      this.duster.animation()
+      if(this.dusterTimer.time() > 20){
+        this.dusterTimer.reset()
+
+         this.duster.particleSystem.material.opacity -= 0.1
+         // console.log( 'reduce', this.duster.particleSystem.material.opacity )
+        if(this.duster.particleSystem.material.opacity <= 0){
+
+          // console.log( 'bye!' )
+          this.duster.remove()
+          this.duster = null
+        }
+      }
+      
+    }
 
     if(this.lifecycle == DYING){
 

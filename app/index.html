@@ -18,6 +18,7 @@
     <script src="three.js"></script>
     <script src="classes/game.js"></script>
     <script src="classes/timer.js"></script>
+    <script src="classes/duster.js"></script>
     <script src="classes/character.js"></script>
     <script src="classes/player.js"></script>
     <script src="classes/enemy.js"></script>
@@ -42,7 +43,7 @@
 
         if(remaining == 0 ){
 
-          game.generateEnemies( Math.round(Math.random() * 50) )
+          game.generateEnemies( Math.round(Math.random() * 20 ) )
 
           enemyTimer.reset()
         }
@@ -52,6 +53,8 @@
         game.handleEnemies()
 
         player.animation()
+
+        duster.animation()
 
         game.drawScore()
         game.drawPower()
@@ -70,15 +73,20 @@
 
 
       // load this crap here so we only do it once
-      let spriteMaterial
+      let bloodspriteMaterial
       let loader = new THREE.TextureLoader()
       console.log( 'helloooo' )
-      let spriteMap = loader.load( "sprites/sprite2.png",
+      let bloodspriteMap = loader.load( "sprites/bloodsprite.png",
         (tx) => {  console.log( 'success!' )  },
         null,
         (err) => { console.log( 'i fucked way up ' ); console.log( err)}
        )
-      spriteMaterial = new THREE.SpriteMaterial( { map: spriteMap } )
+
+      bloodspriteMaterial = new THREE.SpriteMaterial( { map: bloodspriteMap } )
+      let corruptorMatMap = new THREE.TextureLoader().load("sprites/corruptsprite.png")
+      let corruptorMaterial = new THREE.SpriteMaterial( { map: corruptorMatMap } )
+      // we pass this in to select
+      let pointMatMap = new THREE.TextureLoader().load("sprites/pointsprite.png")
       
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -122,7 +130,10 @@
 
       let player = new Player([22,88,49])
 
-      scene.add( player.mesh );
+      scene.add( player.mesh )
+
+      let duster = new Duster(pointMatMap, 0.2, 2000, 30)
+
       // create bounding box object for intersection
 
       // // add grid

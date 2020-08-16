@@ -1,19 +1,19 @@
 class Enemy extends Character {
   constructor(base_color){
     // de mesh
-    let mesh
+    let geometry
     let dna = Math.random()
-    if(dna > 0.5){
-      mesh = new THREE.BoxGeometry(0.02,0.02,0.6)
+    if(dna > 0.2){
+      geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
     } else {
-      mesh = new THREE.CircleGeometry( 0.315, 32 )
+      geometry = new THREE.CircleGeometry( 0.315, 32 )
     }
     
     super(
 
       new THREE.Mesh(
 
-        mesh,
+        geometry,
         new THREE.MeshBasicMaterial( { color: 0x228849 })
       ),
 
@@ -46,11 +46,6 @@ class Enemy extends Character {
     fac = Math.random() * 0.010
     // sign = Math.random() > 0.5 ? 1 : -1
     this.mesh.rotation.y += 0.18 * fac
-  }
-
-  takeDamage(dmg){
-    console.log( 'take damage ', dmg )
-    this.health -= dmg
   }
 
   chooseDirection(){

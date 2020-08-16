@@ -138,15 +138,14 @@ class Game {
               if(enemy.healthTimer.time() > 400){
                 enemy.healthTimer.reset()
 
-                console.log( 'hitttin itiitt' )
                 enemy.takeDamage(1)
                 enemy.setColor(0,0,255)
               }  
             }
             
           }
-          numCorrupted += 1
 
+          numCorrupted += 1
         }
 
        if(enemy.health <= 0){
@@ -156,8 +155,17 @@ class Game {
           if(enemy.lifecycle == ALIVE){
 
             // only score once
-            game.changeScore(1)
-            player.changePower(1)
+
+            let score
+            if(enemy.corrupted){
+              score = 5
+            } else {
+
+              // reg enemy
+              score = 1
+              player.changePower(1)
+            }
+            game.changeScore(score)
             enemy.lifecycle = DYING
             enemy.remove()
           }
