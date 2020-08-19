@@ -12,7 +12,7 @@ class Player extends Character {
       base_color
     )
 
-    this.health = 100
+    this.health = 10
     
     // flag for animation etc
     this.eating = false
@@ -66,9 +66,11 @@ class Player extends Character {
     
 
     // toprad, bottomrad, height, segments
-    this.killingCircleArea.mesh = new THREE.Mesh( new THREE.CylinderGeometry(1, 1, 1, 32), new THREE.MeshBasicMaterial({ color: 0xffff00 }) )
+    this.killingCircleArea.mesh = new THREE.Mesh( new THREE.CylinderGeometry(1, 1, 0.2, 32), new THREE.MeshBasicMaterial({ color: 0xffdd22, transparent: true  }) )
+    // about face on to camera
     this.killingCircleArea.mesh.rotation.x = 1.57
-    this.killingCircleArea.mesh.visible = false
+    this.killingCircleArea.mesh.material.opacity = 0.1
+    console.log( 'opacity ',  this.killingCircleArea.mesh.material.opacity  )
 
 
     this.drawKillingCircle()
@@ -117,6 +119,8 @@ class Player extends Character {
     }
 
     this.killingCircle.visible = true
+    this.killingCircleArea.mesh.visible = true
+
     if(!this.killingCircleTimer.running){
       // console.log( 'bgegin circ timer' )
       this.killingCircleTimer.start()
@@ -127,6 +131,7 @@ class Player extends Character {
     if(this.killingCircle && this.killingCircle.visible){
       // console.log( 'stop that circle' )
       this.killingCircle.visible = false
+      this.killingCircleArea.mesh.visible = false
     }
   }
 
@@ -139,29 +144,59 @@ class Player extends Character {
   }
 
   customAnimation(){
-    this.eatAnimation()
-    if(this.killingCircle && this.killingCircle.visible){
-        
-      if(this.killingCircleTimer.time() > 100){
-        this.killingCircleTimer.reset()
-        // console.log( 'time to draw bitch' )
-        this.removeKillingCircle()
-        this.addKillingCircle()
+    if(this.lifecycle == DYING || this.lifecycle == DEAD){
+
+      this.deathAnimation()
+    } else {
 
 
-        // spend power to have killing circle open
-        this.changePower(-2.4)
+      this.eatAnimation()
+      if(this.killingCircle && this.killingCircle.visible){
+          
+        if(this.killingCircleTimer.time() > 100){
+          this.killingCircleTimer.reset()
+          // console.log( 'time to draw bitch' )
+          this.removeKillingCircle()
+          this.addKillingCircle()
+          this.killingCircleArea.mesh.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+
+
+          // spend power to have killing circle open
+          this.changePower(-4)
+        }
+
+        this.drawKillingCircle()
+        this.killingCircle.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+        this.killingCircleArea.mesh.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+
+        if(this.killingCircleArea && this.killingCircleArea.mesh){
+          this.killingCircleArea.bbox = new THREE.Box3().setFromObject( this.killingCircleArea.mesh )
+        }
+
       }
-
-      this.drawKillingCircle()
-
-    
-
-      if(this.killingCircleArea && this.killingCircleArea.mesh){
-        this.killingCircleArea.bbox = new THREE.Box3().setFromObject( this.killingCircleArea.mesh )
-      }
-
     }
+  }
+
+  deathAnimation(){
+    if(!this.animTimer.running){
+      this.animTimer.start()
+    }
+
+    if(this.animTimer.time() > 20){
+      this.animTimer.reset()
+
+      let x,y,z
+      x = this.mesh.scale.x * 1.0401
+      y = this.mesh.scale.y * 1.0004
+      z = this.mesh.scale.z * 1.0009
+      this.mesh.scale.set(x,y,z)
+      this.mesh.material.opacity -= 0.1
+
+      if(this.mesh.material.opacity <= 0){
+        this.lifecycle = DEAD
+      }
+    }
+
   }
 
   eatAnimation(){
@@ -179,7 +214,7 @@ class Player extends Character {
       } 
 
       // how often should we actually change mesh
-      if(this.animTimer.time() > 100){
+      if(this.animTimer.time() > 1000){
         // 20ms
         this.animTimer.reset()
         

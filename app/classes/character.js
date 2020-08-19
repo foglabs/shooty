@@ -13,7 +13,7 @@ class Character {
     // this.colorfadetime = 10
     this.u = 0.0
     this.baseColor = base_color
-    this.hitColor = [255,0,0]
+    this.hitColor = this.hitColor || [255,0,0]
     this.color = base_color
     this.scaleFactor = 1.0
 
@@ -23,7 +23,7 @@ class Character {
     this.isHit = false
     this.lastIsHit = false
 
-    this.hitTimer = new Timer()
+    this.colorTimer = new Timer()
     this.healthTimer = new Timer()
 
     this.lifecycle = ALIVE
@@ -172,7 +172,7 @@ class Character {
 
   addParticles(){
     // little blod splats
-    this.duster = new Duster(bloodspriteMap, 0.01, 64, 0.4, this.mesh.position, 1)
+    this.duster = new Duster(bloodspriteMap, 0.0422, 28, 0.32, this.mesh.position, 1)
   }
 
   takeDamage(dmg){
@@ -199,10 +199,10 @@ class Character {
 
   colorCycle(){
 
-    if(this.isHit || this.color != this.baseColor){
+    if(this.lifecycle == ALIVE && this.isHit || this.color != this.baseColor){
 
-      if(!this.hitTimer.running){
-        this.hitTimer.start()
+      if(!this.colorTimer.running){
+        this.colorTimer.start()
       }
 
       let tocolor
@@ -215,8 +215,8 @@ class Character {
         fromcolor = this.hitColor
       }
 
-      if(this.hitTimer.time() > 200){
-        this.hitTimer.reset()
+      if(this.colorTimer.time() > 200){
+        this.colorTimer.reset()
 
         var steps = 200
         var step_u = 1.0 / steps;
@@ -267,15 +267,15 @@ class Character {
     //     this.mesh.material.color.setRGB(r,g,b)
     //   } else if(!this.isHit){
     //     // console.log('start hit timer')
-    //     this.hitTimer.start()
+    //     this.colorTimer.start()
     //   }
     // }
 
-    // if(!this.isHit && this.hitTimer.running){
+    // if(!this.isHit && this.colorTimer.running){
     //   // console.log( 'timer running' )
-    //   if(this.hitTimer.time() > 5){
+    //   if(this.colorTimer.time() > 5){
     //     // if we're not currently hit, and timer is up, stop and go back to base color
-    //     this.hitTimer.stop()
+    //     this.colorTimer.stop()
 
     //     let r = this.baseColor[0]
     //     let g = this.baseColor[1]
@@ -305,7 +305,7 @@ class Character {
     //     this.u += step_u
     //     // console.log("u is " + this.u)
     //     if(this.u >= 1.0){
-    //       this.hitTimer.stop()
+    //       this.colorTimer.stop()
     //     }
 
     //     // console.log('fading')
@@ -364,6 +364,13 @@ class Character {
 
       if(this.opacityTimer.time() > 200){
         this.opacityTimer.reset()
+
+        let sx, sy, sz
+        sx = this.mesh.scale.x + 0.4
+        sy = this.mesh.scale.y + 0.4
+        sz = this.mesh.scale.z + 0.4
+
+        this.mesh.scale.set(sx,sy,sz)
 
         this.spriteOpacity = this.spriteOpacity - 0.1
         // console.log( 'reduced spriteopac '+ this.spriteOpacity )

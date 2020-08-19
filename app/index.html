@@ -12,8 +12,16 @@
       <div class="bar-ele">
         <progress id="power" value="10" max="100"></progress>
       </div>
+
       <div class="bar-ele" id="timer"></div>
     </div>
+
+    <div id="info2">
+      <div class="bar-ele">
+        <progress id="health" value="100" max="100"></progress>
+      </div>
+    </div>
+
 
     <script src="three.js"></script>
     <script src="classes/game.js"></script>
@@ -43,7 +51,7 @@
 
         if(remaining == 0 ){
 
-          game.generateEnemies( Math.round(Math.random() * 20 ) )
+          game.generateEnemies( Math.round(Math.random() * 48 ) )
 
           enemyTimer.reset()
         }
@@ -58,6 +66,7 @@
 
         game.drawScore()
         game.drawPower()
+        game.drawHealth()
 
         requestAnimationFrame( animate )
         // draw de cool scene
@@ -125,8 +134,7 @@
       let game = new Game()
 
       // countdown to generate enemies every so often
-      let enemyTimer = new Timer(2000)
-
+      let enemyTimer = new Timer(8000)
 
       let player = new Player([22,88,49])
 

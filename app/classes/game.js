@@ -38,6 +38,10 @@ class Game {
     document.getElementById("power").value = player.power;
   }
 
+  drawHealth(){
+    document.getElementById("health").value = player.health;
+  }
+
   addEnemy(){
     let killer = new Enemy([0,88,255*Math.round(Math.random())]);
 
@@ -76,7 +80,8 @@ class Game {
 
         // MOVEMENT
         chance = Math.random()
-        if(chance > 0.8){
+        if(chance > 0.8 && enemy.directionTimer.time() > 200){
+          enemy.directionTimer.reset()
           enemy.chooseDirection()
         }
 
@@ -102,7 +107,7 @@ class Game {
             player.eating = true
           }
 
-          if(this.corruptionTimer.time() > 1000) {
+          if(this.corruptionTimer.time() > 200) {
             // only need to handleCorruption if we're not dying
             this.corruptionTimer.reset()
 
@@ -138,11 +143,32 @@ class Game {
               if(enemy.healthTimer.time() > 400){
                 enemy.healthTimer.reset()
 
-                enemy.takeDamage(1)
+                enemy.takeDamage(6)
                 enemy.setColor(0,0,255)
               }  
             }
-            
+          }
+
+          let corrupthit = enemy.handleHit(player)
+          if(corrupthit){
+
+            if(!enemy.healthTimer.running){
+              enemy.healthTimer.start()
+            }
+
+            if(enemy.healthTimer.time() > 500){
+              enemy.healthTimer.reset()
+  
+              player.takeDamage(4)
+
+              if(player.health <= 0){
+                player.addSprite()
+                player.lifecycle = DYING 
+              }
+
+            }
+
+
           }
 
           numCorrupted += 1
@@ -158,12 +184,12 @@ class Game {
 
             let score
             if(enemy.corrupted){
-              score = 5
+              score = 12
             } else {
 
               // reg enemy
               score = 1
-              player.changePower(1)
+              player.changePower(5)
             }
             game.changeScore(score)
             enemy.lifecycle = DYING
