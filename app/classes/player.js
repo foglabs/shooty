@@ -4,7 +4,7 @@ class Player extends Character {
       // de mesh
       new THREE.Mesh(
         new THREE.BoxGeometry(0.2,0.2,0.3),
-        new THREE.MeshBasicMaterial( { color: 0xdf8849 } )
+        new THREE.MeshBasicMaterial( { color: 0xdf8849, transparent: true } )
       ),
       
       // de box
@@ -31,6 +31,8 @@ class Player extends Character {
     this.killingCircleActive = false
 
     this.killingCircleTimer = new Timer()
+
+    this.mesh.material.needsUpdate = true
   }
   
   rotation(){
@@ -70,7 +72,6 @@ class Player extends Character {
     // about face on to camera
     this.killingCircleArea.mesh.rotation.x = 1.57
     this.killingCircleArea.mesh.material.opacity = 0.1
-    console.log( 'opacity ',  this.killingCircleArea.mesh.material.opacity  )
 
 
     this.drawKillingCircle()
@@ -144,11 +145,8 @@ class Player extends Character {
   }
 
   customAnimation(){
-    if(this.lifecycle == DYING || this.lifecycle == DEAD){
-
-      this.deathAnimation()
-    } else {
-
+    if(this.lifecycle == ALIVE){
+      this.rotation()
 
       this.eatAnimation()
       if(this.killingCircle && this.killingCircle.visible){
@@ -174,6 +172,8 @@ class Player extends Character {
         }
 
       }
+    } else if(this.lifecycle == DYING){
+      this.deathAnimation()
     }
   }
 
@@ -185,14 +185,18 @@ class Player extends Character {
     if(this.animTimer.time() > 20){
       this.animTimer.reset()
 
+      this.mesh.rotation.y += 0.08
+
       let x,y,z
-      x = this.mesh.scale.x * 1.0401
-      y = this.mesh.scale.y * 1.0004
-      z = this.mesh.scale.z * 1.0009
+      x = this.mesh.scale.x * 1.009
+      y = this.mesh.scale.y * 1.004
+      z = this.mesh.scale.z * 1.009
       this.mesh.scale.set(x,y,z)
-      this.mesh.material.opacity -= 0.1
+
+      this.mesh.material.opacity -= 0.01
 
       if(this.mesh.material.opacity <= 0){
+        console.log( 'YOU HAVE DIED' )
         this.lifecycle = DEAD
       }
     }
@@ -207,7 +211,7 @@ class Player extends Character {
     }
 
     if(this.eating || this.scaleFactor > 1 || this.scaleFactor < 1){
-
+      console.log('eatters')
       // console.log( 'scaleFactor ' + this.scaleFactor )
       if(!this.animTimer.running){
         this.animTimer.start()

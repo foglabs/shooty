@@ -10,7 +10,7 @@
     <div id="info">
       <div class="bar-ele" id="score"></div>
       <div class="bar-ele">
-        <progress id="power" value="10" max="100"></progress>
+        <progress id="power" value="00" max="100"></progress>
       </div>
 
       <div class="bar-ele" id="timer"></div>
@@ -22,6 +22,9 @@
       </div>
     </div>
 
+    <div id="stage-info">
+
+    </div>
 
     <script src="three.js"></script>
     <script src="classes/game.js"></script>
@@ -36,37 +39,23 @@
       RIGHT = 2
       DOWN = 3
 
+      // char lifecycle
       ALIVE = 0
       DYING = 1
       DEAD = 2
 
+      // game stage
+      TITLE = 0
+      LOADING = 1
+      PLAYING = 2
+      ENDING = 3
+      GAMEOVER = 4
+
       // run every frame
       function animate() {
-        if(!enemyTimer.running){
-          enemyTimer.start()
-        }
 
-        let remaining = enemyTimer.time()
-        game.drawTimer(remaining)
 
-        if(remaining == 0 ){
-
-          game.generateEnemies( Math.round(Math.random() * 48 ) )
-
-          enemyTimer.reset()
-        }
-
-        player.handleMovement()
-
-        game.handleEnemies()
-
-        player.animation()
-
-        duster.animation()
-
-        game.drawScore()
-        game.drawPower()
-        game.drawHealth()
+        game.handleGame()
 
         requestAnimationFrame( animate )
         // draw de cool scene
@@ -134,10 +123,10 @@
       let game = new Game()
 
       // countdown to generate enemies every so often
-      let enemyTimer = new Timer(8000)
+      let enemyTimer = new Timer(2000)
 
       let player = new Player([22,88,49])
-
+      player.mesh.visible = false
       scene.add( player.mesh )
 
       let duster = new Duster(pointMatMap, 0.2, 2000, 30)
@@ -175,8 +164,13 @@
             // console.log("down")
             player.accy   -= 0.5
         } else if (key == " " || key == "Spacebar"){
+          
           // SPACE BAR
-          player.startKillingCircle()
+          if(game.stage == TITLE){
+            game.newGame()
+          } else if(game.stage == PLAYING){
+            player.startKillingCircle()
+          }
         }
       }
 

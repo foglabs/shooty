@@ -37,7 +37,9 @@ class Character {
 
   remove(){
     // add sprite, then start fading it out - has to come before removing mesh to get position!
-    this.addSprite()
+    if(this.lifecycle == DYING){
+      this.addSprite()
+    }
 
     this.mesh.geometry.dispose()
     this.mesh.material.dispose()
@@ -328,10 +330,10 @@ class Character {
   }
 
   animation(){
-    // override this in your subclass to do extra stuff in addition to the reggies here
+      // override dis in your subclass to do extra stuff in addition to the reggies here
+
     this.customAnimation()
 
-    this.rotation()
     // set bounding box from mesh baby
     this.bbox.setFromObject(this.mesh)
 
@@ -355,36 +357,6 @@ class Character {
       
     }
 
-    if(this.lifecycle == DYING){
 
-      // if a sprite exists, start fading it out
-      if(!this.opacityTimer.running){
-        this.opacityTimer.start()
-      }
-
-      if(this.opacityTimer.time() > 200){
-        this.opacityTimer.reset()
-
-        let sx, sy, sz
-        sx = this.mesh.scale.x + 0.4
-        sy = this.mesh.scale.y + 0.4
-        sz = this.mesh.scale.z + 0.4
-
-        this.mesh.scale.set(sx,sy,sz)
-
-        this.spriteOpacity = this.spriteOpacity - 0.1
-        // console.log( 'reduced spriteopac '+ this.spriteOpacity )
-        this.deadSprite.material.opacity = this.spriteOpacity
-
-        if(this.spriteOpacity <= 0){
-          // if we hit 0 opacity, remove sprite from scene
-          this.removeSprite()
-
-          // this will allow the enemy maintenance loop in game to actually dispose of the CORPSE
-          this.lifecycle = DEAD
-        }
-      }
-
-    }
   }
 }

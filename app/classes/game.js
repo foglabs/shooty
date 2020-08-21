@@ -13,6 +13,124 @@ class Game {
     
     // max playe rpower
     this.powerMax = 100
+    this.stage = false
+    this.stageTimer = new Timer()
+  }
+
+  gameRunning(){
+    this.stage == LOADING || this.stage == PLAYING
+  }
+
+  initGame(){
+    // opening animation when we load
+    this.stageTimer.start()
+  }
+
+  newGame(){
+    if(!this.gameRunning()){
+
+      this.cleanEnemies()
+
+      player.health = 100
+      player.power = 0
+
+      this.stage = LOADING
+      this.stageTimer.start()
+    }
+  }
+
+  endGame(){
+    this.stageTimer.start()
+    this.stage = ENDING    
+  }
+
+  handleGame(){
+
+    if(this.stage == TITLE){      
+      this.drawTitle()
+
+    } else if(this.stage == LOADING){
+
+      player.mesh.visible = true
+      
+      this.drawLoading()
+
+      if(this.stageTimer.time() > 5000){
+        this.stage = PLAYING
+        document.getElementById("stage-info").innerHTML = ""
+      }
+
+    } else if(this.stage == PLAYING){
+      this.drawPlaying()
+    } else if(this.stage == ENDING){
+
+      this.drawEnding()
+
+      if(this.stageTimer.time() > 5000){
+        this.stage = GAMEOVER
+      }
+    } else if(this.stage == GAMEOVER) {
+      // ended
+      console.log("GAME OVA")
+    }
+
+    duster.animation()
+  }
+
+  drawTitle(){
+    // gridHelper.rotation.x = 80
+    if(this.stageTimer.time() > 20){
+      gridHelper.rotation.x  -= 0.4
+    }
+
+  }
+
+  drawLoading(){
+    document.getElementById("stage-info").innerHTML = "LOADING"
+  }
+
+  drawPlaying(){
+    if(!enemyTimer.running){
+      enemyTimer.start()
+    }
+
+    let remaining = enemyTimer.time()
+    this.drawTimer(remaining)
+
+    if(remaining == 0 ){
+
+      this.generateEnemies( Math.round(Math.random() * 48 ) )
+
+      enemyTimer.reset()
+    }
+
+    if(player.lifecycle == ALIVE){
+      // stop moving if we DEAD
+      player.handleMovement()
+    }
+
+    this.handleEnemies()
+
+    player.animation()
+
+    this.drawScore()
+    this.drawPower()
+    this.drawHealth()
+  }
+
+  drawGameover(){
+    document.getElementById("stage-info").innerHTML = "GAME OVER"
+  }
+
+  cleanEnemies(){
+    for(var i=0; i<this.enemies.length; i++){
+      if(this.enemies[i]){
+        // do this so we dont make a sprite
+        this.enemies[i].lifecycle = ALIVE
+        this.enemies[i].remove()
+        delete this.enemies[i]
+      }
+    }
   }
 
   changeScore(change){
@@ -93,7 +211,7 @@ class Game {
         // LIFE
         if(!enemy.corrupted){
           let hitresult = enemy.handleHit(player)
-          if(hitresult){
+          if(player.lifecycle == ALIVE && hitresult){
             if(!enemy.healthTimer.running){
               enemy.healthTimer.start()
             }
@@ -150,7 +268,7 @@ class Game {
           }
 
           let corrupthit = enemy.handleHit(player)
-          if(corrupthit){
+          if(player.lifecycle == ALIVE && corrupthit){
 
             if(!enemy.healthTimer.running){
               enemy.healthTimer.start()
@@ -161,7 +279,7 @@ class Game {
   
               player.takeDamage(4)
 
-              if(player.health <= 0){
+              if(player.lifecycle == ALIVE && player.health <= 0){
                 player.addSprite()
                 player.lifecycle = DYING 
               }

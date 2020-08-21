@@ -18,7 +18,7 @@ class Enemy extends Character {
     } else if(dna > 0.4 && dna <= 0.6) {
       // circle
       health = 20
-      geometry = new THREE.CircleGeometry( 0.315, 32 )
+      geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [78,78,100]
     } else if(dna > 0.6 && dna <= 0.8) {
       // octa
@@ -50,10 +50,17 @@ class Enemy extends Character {
       // sometimes, make one with a weird scale
 
       // if we're in here, were doing somethin right
-      this.scaleFactor = Math.random() * 2
-      this.mesh.scale.x = Math.random() * this.scaleFactor
-      this.mesh.scale.y = Math.random() * this.scaleFactor
-      this.mesh.scale.z = Math.random() * this.scaleFactor
+
+      if(this.dna > 0.4 && this.dna <= 0.6){
+        // circle
+        this.scaleFactor = 1 + Math.random() * 0.4
+      } else {
+        this.scaleFactor = 1 + Math.random() * 1.3
+        this.mesh.scale.x = 1 + Math.random() * this.scaleFactor
+        this.mesh.scale.y = 1 + Math.random() * this.scaleFactor
+        this.mesh.scale.z = 1 + Math.random() * this.scaleFactor        
+      }
+
     }
 
     // base enemy health
@@ -122,8 +129,47 @@ class Enemy extends Character {
     this.mesh.material.color.setRGB(0xff0000)
   }
 
+  customAnimation(){
+
+    // dont do it, if yA DEAD
+    if(this.lifecycle == ALIVE){
+      this.rotation()
+
+    } else if(this.lifecycle == DYING){
+
+      // if a sprite exists, start fading it out
+      if(!this.opacityTimer.running){
+        this.opacityTimer.start()
+      }
+
+      if(this.opacityTimer.time() > 200){
+        this.opacityTimer.reset()
+
+        let sx, sy, sz
+        sx = this.mesh.scale.x + 0.4
+        sy = this.mesh.scale.y + 0.4
+        sz = this.mesh.scale.z + 0.4
+
+        this.mesh.scale.set(sx,sy,sz)
+
+        this.spriteOpacity = this.spriteOpacity - 0.1
+        // console.log( 'reduced spriteopac '+ this.spriteOpacity )
+        this.deadSprite.material.opacity = this.spriteOpacity
+
+        if(this.spriteOpacity <= 0){
+          // if we hit 0 opacity, remove sprite from scene
+          this.removeSprite()
+
+          // this will allow the enemy maintenance loop in game to actually dispose of the CORPSE
+          this.lifecycle = DEAD
+        }
+      }
+
+    }
+  }
+
   customMovement(){
-    let speed =  Math.random()*0.05
+    let speed =  Math.random()*0.03
 
     if(this.direction == LEFT){
       this.accx -= speed
