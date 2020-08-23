@@ -23,10 +23,11 @@
     </div>
 
     <div id="stage-info">
-
+      PRESS SPACEBAR
     </div>
 
     <script src="three.js"></script>
+    <script src="classes/sound.js"></script>
     <script src="classes/game.js"></script>
     <script src="classes/timer.js"></script>
     <script src="classes/duster.js"></script>
@@ -51,6 +52,11 @@
       ENDING = 3
       GAMEOVER = 4
 
+      // sound type
+      FX = 0
+      BGM = 1
+      AMB = 2
+
       // run every frame
       function animate() {
 
@@ -73,22 +79,115 @@
       // load this crap here so we only do it once
       let bloodspriteMaterial
       let loader = new THREE.TextureLoader()
-      console.log( 'helloooo' )
-      let bloodspriteMap = loader.load( "sprites/bloodsprite.png",
-        (tx) => {  console.log( 'success!' )  },
-        null,
-        (err) => { console.log( 'i fucked way up ' ); console.log( err)}
-       )
 
+      let bloodspriteMap = loader.load( "sprites/bloodsprite.png")
       bloodspriteMaterial = new THREE.SpriteMaterial( { map: bloodspriteMap } )
       let corruptorMatMap = new THREE.TextureLoader().load("sprites/corruptsprite.png")
       let corruptorMaterial = new THREE.SpriteMaterial( { map: corruptorMatMap } )
       // we pass this in to select
       let pointMatMap = new THREE.TextureLoader().load("sprites/pointsprite.png")
-      
+      let pbloodspriteMap = loader.load( "sprites/playerblood.png")
+      let pbloodspriteMaterial = new THREE.SpriteMaterial( { map: bloodspriteMap } )
+      let healthenemyMap = loader.load( "sprites/healthenemy.png")
+      let healthenemyMaterial = new THREE.SpriteMaterial( { map: healthenemyMap } )
+
       // camera is passed into renderer, rather than as scene object
-      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-      camera.position.z = 5;
+      var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
+      camera.position.z = 5
+
+      let listener = new THREE.AudioListener()
+      let audioLoader = new THREE.AudioLoader()
+
+      let ekill1 = new THREE.Audio(listener)
+      audioLoader.load('sounds/ekill1.wav', function(buff) {
+        ekill1.setBuffer( buff )
+      })
+      let fx_ekill1 = new Sound(ekill1)
+      let ekill2 = new THREE.Audio(listener)
+      audioLoader.load('sounds/ekill2.wav', function(buff) {
+        ekill2.setBuffer( buff )
+      })
+      let fx_ekill2 = new Sound(ekill2)
+      let ekill3 = new THREE.Audio(listener)
+      audioLoader.load('sounds/ekill3.wav', function(buff) {
+        ekill3.setBuffer( buff )
+      })
+      let fx_ekill3 = new Sound(ekill3)
+      let ekill4 = new THREE.Audio(listener)
+      audioLoader.load('sounds/ekill4.wav', function(buff) {
+        ekill4.setBuffer( buff )
+      })
+      let fx_ekill4 = new Sound(ekill4)
+      let ekill5 = new THREE.Audio(listener)
+      audioLoader.load('sounds/ekill5.wav', function(buff) {
+        ekill5.setBuffer( buff )
+      })
+      let fx_ekill5 = new Sound(ekill5)
+      let ekill6 = new THREE.Audio(listener)
+      audioLoader.load('sounds/ekill6.wav', function(buff) {
+        ekill6.setBuffer( buff )
+      })
+      let fx_ekill6 = new Sound(ekill6)
+
+      let edmg1 = new THREE.Audio(listener)
+      audioLoader.load('sounds/edmg1.wav', function(buff) {
+        edmg1.setBuffer( buff )
+      })
+      let fx_edmg1 = new Sound(edmg1)
+      let edmg2 = new THREE.Audio(listener)
+      audioLoader.load('sounds/edmg2.wav', function(buff) {
+        edmg2.setBuffer( buff )
+      })
+      let fx_edmg2 = new Sound(edmg2)
+      let edmg3 = new THREE.Audio(listener)
+      audioLoader.load('sounds/edmg3.wav', function(buff) {
+        edmg3.setBuffer( buff )
+      })
+      let fx_edmg3 = new Sound(edmg3)
+      let edmg4 = new THREE.Audio(listener)
+      audioLoader.load('sounds/edmg4.wav', function(buff) {
+        edmg4.setBuffer( buff )
+      })
+      let fx_edmg4 = new Sound(edmg4)
+      let edmg5 = new THREE.Audio(listener)
+      audioLoader.load('sounds/edmg5.wav', function(buff) {
+        edmg5.setBuffer( buff )
+      })
+      let fx_edmg5 = new Sound(edmg5)
+
+      let ckill1 = new THREE.Audio(listener)
+      audioLoader.load('sounds/ckill1.wav', function(buff) {
+        ckill1.setBuffer( buff )
+      })
+      let fx_ckill1 = new Sound(ckill1)
+      let ckill2 = new THREE.Audio(listener)
+      audioLoader.load('sounds/ckill2.wav', function(buff) {
+        ckill2.setBuffer( buff )
+      })
+      let fx_ckill2 = new Sound(ckill2)
+      let ckill3 = new THREE.Audio(listener)
+      audioLoader.load('sounds/ckill3.wav', function(buff) {
+        ckill3.setBuffer( buff )
+      })
+      let fx_ckill3 = new Sound(ckill3)
+
+      let phealth1 = new THREE.Audio(listener)
+      audioLoader.load('sounds/phealth1.wav', function(buff) {
+        phealth1.setBuffer( buff )
+      })
+      let fx_phealth1 = new Sound(phealth1)
+      let phealth2 = new THREE.Audio(listener)
+      audioLoader.load('sounds/phealth2.wav', function(buff) {
+        phealth2.setBuffer( buff )
+      })
+      let fx_phealth2 = new Sound(phealth2)
+      let phealth3 = new THREE.Audio(listener)
+      audioLoader.load('sounds/phealth3.wav', function(buff) {
+        phealth3.setBuffer( buff )
+      })
+      let fx_phealth3 = new Sound(phealth3)
+
+
 
       // this is for the gui
       let width = window.innerWidth
@@ -122,9 +221,6 @@
 
       let game = new Game()
 
-      // countdown to generate enemies every so often
-      let enemyTimer = new Timer(2000)
-
       let player = new Player([22,88,49])
       player.mesh.visible = false
       scene.add( player.mesh )
@@ -134,11 +230,11 @@
       // create bounding box object for intersection
 
       // // add grid
-      var size = 10;
-      var divisions = 10;
-      var gridHelper = new THREE.GridHelper( size, divisions );
-      gridHelper.rotation.x = 80;
-      scene.add( gridHelper );
+      // var size = 10;
+      // var divisions = 10;
+      // var gridHelper = new THREE.GridHelper( size, divisions );
+      // gridHelper.rotation.x = 80;
+      // scene.add( gridHelper );
 
       // render has the beef (webgl) to draw each frame
       var renderer = new THREE.WebGLRenderer();
@@ -168,6 +264,7 @@
           // SPACE BAR
           if(game.stage == TITLE){
             game.newGame()
+
           } else if(game.stage == PLAYING){
             player.startKillingCircle()
           }

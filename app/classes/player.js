@@ -1,18 +1,17 @@
 class Player extends Character {
   constructor(base_color){
+    let geometry = new THREE.BoxGeometry(0.2,0.2,0.3)
     super(
-      // de mesh
-      new THREE.Mesh(
-        new THREE.BoxGeometry(0.2,0.2,0.3),
-        new THREE.MeshBasicMaterial( { color: 0xdf8849, transparent: true } )
-      ),
-      
+      // de geo
+      geometry,
       // de box
       new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()),
       base_color
     )
 
-    this.health = 10
+    this.isPlayer = true
+
+    this.health = 100
     
     // flag for animation etc
     this.eating = false
@@ -33,6 +32,10 @@ class Player extends Character {
     this.killingCircleTimer = new Timer()
 
     this.mesh.material.needsUpdate = true
+
+    this.playerHealthSounds = [fx_phealth1, fx_phealth2, fx_phealth3]
+
+    this.color = this.baseColor
   }
   
   rotation(){
@@ -44,8 +47,19 @@ class Player extends Character {
     this.mesh.rotation.y += 0.08 * fac
   }
 
-  takeDamage(dmg){
-    this.health -= dmg
+  takeDamageSound(){
+    if(this.damageSoundTimer.time() > 30){
+      this.damageSoundTimer.reset()
+
+      if(this.health >= 66){
+        phealth1.play()
+      } else if(this.health >= 33){
+        phealth2.play()
+      } else if(this.health > 0){
+        phealth2.play()
+      }  
+    }
+    
   }
 
   changePower(pow){
@@ -211,7 +225,6 @@ class Player extends Character {
     }
 
     if(this.eating || this.scaleFactor > 1 || this.scaleFactor < 1){
-      console.log('eatters')
       // console.log( 'scaleFactor ' + this.scaleFactor )
       if(!this.animTimer.running){
         this.animTimer.start()

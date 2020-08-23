@@ -1,20 +1,26 @@
 class Game {
   constructor(){
 
-    this.playing = false
+    this.ping = false
     this.score = 0
 
     // this gets filled in index
     this.enemies = []
     this.percentCorrupted = 0
     // bump this up to get more difficult
-    this.corruptionMax = 0.8
+    this.corruptionMax = 0.2
     this.corruptionTimer = new Timer()
     
     // max playe rpower
     this.powerMax = 100
     this.stage = false
     this.stageTimer = new Timer()
+
+    // countdown to generate enemies every so often
+    this.enemyInterval = 30000
+    this.enemyMax = 5
+
+    this.roundCount = 1
   }
 
   gameRunning(){
@@ -28,15 +34,43 @@ class Game {
 
   newGame(){
     if(!this.gameRunning()){
-
-      this.cleanEnemies()
-
-      player.health = 100
-      player.power = 0
-
-      this.stage = LOADING
-      this.stageTimer.start()
+      this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax)
     }
+  }
+
+  nextRound(){
+    // ramp up difficulty for next round
+    // exponential, but dull it down so we get to about x20 base #enemies by round 8
+    let maxBump = 0.3 * Math.pow(this.roundCount, 2)
+    // make the max # of enemeis per gen bigger
+    let newEnemyMax = Math.round(this.enemyMax * maxBump)
+    // make the enemy timer shorter
+    let newEnemyInterval = Math.round(this.enemyInterval * 0.8)
+    // increase maximum % of corurpted by 8%
+    let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
+
+    this.roundCount += 1
+    this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax)
+  }
+
+  newRound(enemyMax, enemyInterval, corruptionMax){
+    this.enemyMax = enemyMax
+    this.enemyInterval = enemyInterval
+    this.corruptionMax = corruptionMax
+
+    this.cleanEnemies()
+
+    player.health = 100
+    player.power = 0
+
+    this.stage = LOADING
+    duster.animTimer.start()
+    this.stageTimer.start()
+
+    this.enemyTimer = new Timer(this.enemyInterval)
+
+    let numEnemies = Math.round( this.enemyMax/2 +  Math.random() * this.enemyMax/2 )
+    this.generateEnemies( numEnemies )
   }
 
   endGame(){
@@ -55,7 +89,7 @@ class Game {
       
       this.drawLoading()
 
-      if(this.stageTimer.time() > 5000){
+      if(this.stageTimer.time() > 2000){
         this.stage = PLAYING
         document.getElementById("stage-info").innerHTML = ""
       }
@@ -66,11 +100,12 @@ class Game {
 
       this.drawEnding()
 
-      if(this.stageTimer.time() > 5000){
+      if(this.stageTimer.time() > 2000){
         this.stage = GAMEOVER
       }
     } else if(this.stage == GAMEOVER) {
       // ended
+      this.drawGameover()
       console.log("GAME OVA")
     }
 
@@ -80,33 +115,40 @@ class Game {
   drawTitle(){
     // gridHelper.rotation.x = 80
     if(this.stageTimer.time() > 20){
-      gridHelper.rotation.x  -= 0.4
+      // gridHelper.rotation.x  -= 0.4
     }
-
   }
 
   drawLoading(){
-    document.getElementById("stage-info").innerHTML = "LOADING"
+    document.getElementById("stage-info").innerHTML = "ROUND " + this.roundCount +  " LOADING..."
+    duster.loadingAnimation()
   }
 
   drawPlaying(){
-    if(!enemyTimer.running){
-      enemyTimer.start()
+    if(!this.enemyTimer.running){
+      this.enemyTimer.start()
     }
 
-    let remaining = enemyTimer.time()
+    let remaining = this.enemyTimer.time()
     this.drawTimer(remaining)
 
+    // if enemy timer finishesa, add more enemies
     if(remaining == 0 ){
 
-      this.generateEnemies( Math.round(Math.random() * 48 ) )
+      // add a random # of enemies
+      this.generateEnemies( Math.round(Math.random() * this.enemyMax ) )
 
-      enemyTimer.reset()
+      this.enemyTimer.reset()
     }
 
     if(player.lifecycle == ALIVE){
       // stop moving if we DEAD
       player.handleMovement()
+    }
+
+    //  if everybody's dead... 
+    if(this.enemies.length == 0){
+      this.nextRound()
     }
 
     this.handleEnemies()
@@ -116,6 +158,10 @@ class Game {
     this.drawScore()
     this.drawPower()
     this.drawHealth()
+  }
+
+  drawEnding(){
+    duster.loadingAnimation()
   }
 
   drawGameover(){
@@ -191,6 +237,8 @@ class Game {
       this.corruptionTimer.start()
     }
 
+    console.log('tehre are enemies ', this.enemies.length)
+
     for(var i=0, e_len=this.enemies.length; i<e_len; i++){
 
       enemy = this.enemies[i]
@@ -198,7 +246,7 @@ class Game {
 
         // MOVEMENT
         chance = Math.random()
-        if(chance > 0.8 && enemy.directionTimer.time() > 200){
+        if(chance > 0.3 && enemy.directionTimer.time() > 200){
           enemy.directionTimer.reset()
           enemy.chooseDirection()
         }
@@ -229,17 +277,9 @@ class Game {
             // only need to handleCorruption if we're not dying
             this.corruptionTimer.reset()
 
-            // let power_mag = Math.pow(2, (player.power/10) )
-            // let max_power_mag = Math.pow(2, player.powerMax/10)
-
-            // get a 1.something factor to bump up the chance roll
-            // square that ho so it ramps up
-
             // multiply by this teeny tiny so we (mostly) get back something within the realm of 0-1
             let corruption_chance = Math.random() + ( 0.00002 * Math.pow(player.power, 2) )
 
-            // console.log( 'corr chance ' + corruption_chance )
-            // console.log( 'adjusted by ' + ( 0.00003 * Math.pow(player.power, 2)) )
             if( this.percentCorrupted < this.corruptionMax && corruption_chance > 0.80 ){
               // console.log( 'i really *should* be corrupting ' + chance_mag )
               enemy.corrupt()
@@ -278,10 +318,11 @@ class Game {
               enemy.healthTimer.reset()
   
               player.takeDamage(4)
-
+  
               if(player.lifecycle == ALIVE && player.health <= 0){
                 player.addSprite()
-                player.lifecycle = DYING 
+                player.lifecycle = DYING
+                this.endGame()
               }
 
             }
@@ -307,10 +348,11 @@ class Game {
 
               // reg enemy
               score = 1
-              player.changePower(5)
+              player.changePower( enemy.nutritionalValue )
             }
             game.changeScore(score)
             enemy.lifecycle = DYING
+            enemy.killSound()
             enemy.remove()
           }
 

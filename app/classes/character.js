@@ -1,5 +1,5 @@
 class Character {
-  constructor(mesh, bbox, base_color){
+  constructor(geo, bbox, base_color){
     
     this.maxX = 3
     this.maxY = 3
@@ -7,7 +7,9 @@ class Character {
     this.accx = 0
     this.accy = 0
 
-    this.mesh = mesh
+    let basestr = '#' + this.componentToHex(base_color[0]) + this.componentToHex(base_color[1]) + this.componentToHex(base_color[2])
+    this.mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial( { color: basestr, transparent: true }))
+
     this.bbox = bbox
 
     // this.colorfadetime = 10
@@ -26,6 +28,11 @@ class Character {
     this.colorTimer = new Timer()
     this.healthTimer = new Timer()
 
+    this.damageSounds = null
+    this.damageSoundTimer = new Timer()
+    // get this running because ima about to do some dmg
+    this.damageSoundTimer.start()
+
     this.lifecycle = ALIVE
 
     this.spriteOpacity = 1
@@ -35,16 +42,20 @@ class Character {
     this.dusterTimer = new Timer()
   }
 
+  componentToHex(c) {
+    var hex = c.toString(16)
+    return hex.length == 1 ? "0" + hex : hex
+  }
+
   remove(){
     // add sprite, then start fading it out - has to come before removing mesh to get position!
     if(this.lifecycle == DYING){
-      this.addSprite()
+      this.addSprite() 
     }
 
     this.mesh.geometry.dispose()
     this.mesh.material.dispose()
     scene.remove(this.mesh)
-
   }
 
   addSprite(){
@@ -54,6 +65,9 @@ class Character {
     if(this.corrupted){
       mat = corruptorMaterial.clone()
       scale = 0.688
+    } else if(this.isPlayer){
+      mat = pbloodspriteMaterial.clone()
+      scale = 0.388
     } else {
       mat = bloodspriteMaterial.clone()
       scale = 0.388
@@ -172,17 +186,28 @@ class Character {
     return this.isHit
   }
 
-  addParticles(){
-    // little blod splats
-    this.duster = new Duster(bloodspriteMap, 0.0422, 28, 0.32, this.mesh.position, 1)
+  dmgSpriteMap(){
+    return this.isPlayer ? pbloodspriteMap : bloodspriteMap
   }
 
+  addParticles(map){
+    // little blod splats
+    this.duster = new Duster(map, 0.0422, 28, 0.32, this.mesh.position, 1)
+  }
+
+  killSound(){}
+
+  // you already know
+  takeDamageSound(){}
+
   takeDamage(dmg){
+    this.takeDamageSound()
+
     // console.log( 'take damage ', dmg )
     this.health -= dmg
 
     if(!this.duster){
-      this.addParticles()
+      this.addParticles( this.dmgSpriteMap() )
       this.dusterTimer.start()
     }
   }
@@ -204,20 +229,23 @@ class Character {
     if(this.lifecycle == ALIVE && this.isHit || this.color != this.baseColor){
 
       if(!this.colorTimer.running){
+        // console.log( 'start ctimer' )
         this.colorTimer.start()
       }
 
       let tocolor
       let fromcolor
       if(this.isHit){
+        // console.log( 'to hit c, from base c' )
         tocolor = this.hitColor
         fromcolor = this.baseColor
       } else {
+        // console.log( 'to base c, from hit c' )
         tocolor = this.baseColor
         fromcolor = this.hitColor
       }
 
-      if(this.colorTimer.time() > 200){
+      if(this.colorTimer.time() > 20){
         this.colorTimer.reset()
 
         var steps = 200
@@ -245,6 +273,7 @@ class Character {
 
         // record this so we can compare above
         this.color = [r,g,b]
+        // console.log( 'setting to ', r,g,b )
         this.mesh.material.color.setRGB(r,g,b)
 
         // console.log( 'red is '+r )
@@ -254,68 +283,6 @@ class Character {
       }
     }
 
-
-
-
-
-    // // if hit just changed
-    // if(this.isHit != this.lastIsHit){
-    //   if(this.isHit){
-    //     // console.log('just got hit, set hit color')
-
-    //     let r = this.hitColor[0]
-    //     let g = this.hitColor[1]
-    //     let b = this.hitColor[2]
-    //     this.mesh.material.color.setRGB(r,g,b)
-    //   } else if(!this.isHit){
-    //     // console.log('start hit timer')
-    //     this.colorTimer.start()
-    //   }
-    // }
-
-    // if(!this.isHit && this.colorTimer.running){
-    //   // console.log( 'timer running' )
-    //   if(this.colorTimer.time() > 5){
-    //     // if we're not currently hit, and timer is up, stop and go back to base color
-    //     this.colorTimer.stop()
-
-    //     let r = this.baseColor[0]
-    //     let g = this.baseColor[1]
-    //     let b = this.baseColor[2]
-    //     // console.log( 'basecolor is ' )
-    //     // console.log( r,g,b )
-    //     this.mesh.material.color.setRGB(r,g,b)
-    //   } else {
-    //     // otherwise fade towards basecolor
-
-    //     var steps = 200
-    //     var step_u = 1.0 / steps;
-
-    //     let base_r = this.baseColor[0]
-    //     let base_g = this.baseColor[1]
-    //     let base_b = this.baseColor[2]
-
-
-    //     let hit_r = this.hitColor[0]
-    //     let hit_g = this.hitColor[1]
-    //     let hit_b = this.hitColor[2]
-
-    //     let r = Math.round(this.lerp(hit_r, base_r, this.u))
-    //     let g = Math.round(this.lerp(hit_g, base_g, this.u))
-    //     let b = Math.round(this.lerp(hit_b, base_b, this.u))
-
-    //     this.u += step_u
-    //     // console.log("u is " + this.u)
-    //     if(this.u >= 1.0){
-    //       this.colorTimer.stop()
-    //     }
-
-    //     // console.log('fading')
-    //     // console.log(r,g,b)
-    //     this.mesh.material.color.setRGB(r,g,b)
-    //   }
-
-    // }
 
   }
   

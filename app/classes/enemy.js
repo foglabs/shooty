@@ -1,51 +1,59 @@
 class Enemy extends Character {
   constructor(base_color){
     let health
+    let nutritionalValue
 
     // de mesh
     let geometry
     let dna = Math.random()
     if(dna <= 0.2){
       // cube
-      geometry = new THREE.BoxGeometry(0.02,0.02,0.02)
+      geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
       health = 30
-      base_color = [34,100,100]
+      nutritionalValue = 40
+      base_color = [189,52,147]
     } else if(dna > 0.2 && dna <= 0.4){
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
-      health = 10
-      base_color = [0,200,120]
+      health = 2
+      nutritionalValue = 5
+      base_color = [72,201,46]
     } else if(dna > 0.4 && dna <= 0.6) {
       // circle
-      health = 20
+      health = 12
+      nutritionalValue = 10
       geometry = new THREE.CircleGeometry( 0.240, 32 )
-      base_color = [78,78,100]
+      base_color = [214,189,58]
     } else if(dna > 0.6 && dna <= 0.8) {
       // octa
-      health = 10
+      health = 12
+      nutritionalValue = 18
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
     } else {
       // 
       health = 10
+      nutritionalValue = 18
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
-      base_color = [20,78,20]
+      base_color = [114,194,189]
     }
+
     
     super(
-
-      new THREE.Mesh(
-
-        geometry,
-        new THREE.MeshBasicMaterial( { color: 0x228849 })
-      ),
-
+      // de ge
+      geometry,
       // de box
       new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()),
       base_color
     )
 
     this.dna = dna
+
+    // cube
+    if(this.dna <= 0.2){
+      this.addParticles(healthenemyMap)
+    }
+
     if(Math.random() > 0.6){
       // sometimes, make one with a weird scale
 
@@ -65,15 +73,32 @@ class Enemy extends Character {
 
     // base enemy health
     this.health = health
+    this.damageSounds = [fx_edmg1, fx_edmg2, fx_edmg3]
+
+    this.killSounds = [fx_ekill1, fx_ekill2, fx_ekill3, fx_ekill4, fx_ekill5, fx_ekill6]
 
     this.direction = 0
     this.corrupted = false
 
-    this.hitColor = [this.baseColor[0] * 1.3,this.baseColor[1] * 1.3,this.baseColor[2] * 1.3]
+    let hitr = this.calcHitColor(this.baseColor[0])
+    let hitg = this.calcHitColor(this.baseColor[1])
+    let hitb = this.calcHitColor(this.baseColor[2])
+    this.hitColor = [hitr, hitg, hitb]
+
+    console.log( 'hitcolor is ', this.hitColor )
 
     this.directionTimer = new Timer()
     // start this up because were going to add to scene right now anyway
     this.directionTimer.start()
+
+    this.color = this.baseColor
+    this.nutritionalValue = nutritionalValue
+  }
+
+  calcHitColor(val){
+    // the higher val is, the smaller the increase
+    // subtract 8 to push line down to keep unde 255
+    return val + Math.floor(val * 2000/ ( Math.pow(val, 2) ) - 8)
   }
 
   rotation(){
@@ -85,6 +110,17 @@ class Enemy extends Character {
     this.mesh.rotation.y += 0.18 * fac
   }
 
+  takeDamageSound(){
+    // pick a random one from this array
+    if(this.damageSoundTimer.time() > 30){
+      this.damageSoundTimer.reset()
+      
+      let roll = Math.floor( Math.random() * this.damageSounds.length )
+      this.damageSounds[ roll ].play()  
+    }
+    
+  }
+
   chooseDirection(){
     
     let width = window.innerWidth
@@ -94,7 +130,7 @@ class Enemy extends Character {
     let x = this.mesh.position.x
     let y = this.mesh.position.y
 
-    let edge = 0.8
+    let edge = 0.6
     let awidth = Math.abs(width)
     let aheight = Math.abs(height)
 
@@ -127,6 +163,14 @@ class Enemy extends Character {
     this.corrupted = true
     // this.baseColor = 0xff0000
     this.mesh.material.color.setRGB(0xff0000)
+
+    // same proportions as a before, diff sounds
+    this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+  }
+
+  killSound(){
+    let roll = Math.floor(Math.random() * this.killSounds.length)
+    this.killSounds[ roll ].play()
   }
 
   customAnimation(){
@@ -135,7 +179,16 @@ class Enemy extends Character {
     if(this.lifecycle == ALIVE){
       this.rotation()
 
+      if(this.dna <= 0.2){
+        // health cube
+        this.duster.particleSystem.rotation.x += 0.01
+      }
+
     } else if(this.lifecycle == DYING){
+      // start this, will fade down in animation (for health cube)
+      if(!this.dusterTimer.running){
+        this.dusterTimer.start()
+      }
 
       // if a sprite exists, start fading it out
       if(!this.opacityTimer.running){
@@ -163,6 +216,7 @@ class Enemy extends Character {
           // this will allow the enemy maintenance loop in game to actually dispose of the CORPSE
           this.lifecycle = DEAD
         }
+
       }
 
     }

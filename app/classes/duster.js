@@ -47,6 +47,8 @@ class Duster {
       this.particleSystem.position.set( this.position )
     }
 
+    this.animTimer = new Timer()
+
     scene.add( this.particleSystem )
   }
 
@@ -56,9 +58,15 @@ class Duster {
     scene.remove(this.particleSystem)    
   }
 
+  loadingAnimation(){
+    if(duster.animTimer.time() > 20){
+      duster.particleSystem.rotation.y += 0.01
+    }
+  }
+
   animation(){
 
-    this.particleSystem.rotation.y += 0.000
+    this.particleSystem.rotation.y += 0.00006
     this.particleSystem.rotation.x += 0.0002
   }
 }

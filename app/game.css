@@ -53,12 +53,15 @@ progress#power::-webkit-progress-value { background: #ff2; }
 }
 
 #stage-info {
+  opacity: 0.2;
   font-family: courier;
   font-size: 72px;
   color: #fff;
   position: absolute;
   top: 50vh;
-  left: 50vw;
+  left: 40vw;
+  text-align: center;
+  vertical-align: middle;
 }
 
 progress#health::-moz-progress-bar { background: #0d4; }
