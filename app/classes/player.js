@@ -35,6 +35,7 @@ class Player extends Character {
 
     this.playerHealthSounds = [fx_phealth1, fx_phealth2, fx_phealth3]
 
+    this.hitColor = [193,29,209]
     this.color = this.baseColor
   }
   
@@ -236,31 +237,37 @@ class Player extends Character {
         this.animTimer.reset()
         
         if(this.eating){
+          console.log( 'turn hit on' )
+          this.isHit = true
+
           // if we eatin, scale that badboy up
           if(this.scaleFactor < 3){
 
-            let red = this.red()
-            let blue = this.blue()
-            red = red < 180 ? red + 1 : 180
-            blue = blue > 40 ? blue - 40 : 40
-            this.setColor(red, this.green(), blue )
+            // let red = this.red()
+            // let blue = this.blue()
+            // red = red < 180 ? red + 1 : 180
+            // blue = blue > 40 ? blue - 40 : 40
+            // this.setColor(red, this.green(), blue )
 
-            this.scaleFactor += 0.005
+            this.scaleFactor += 0.05
             // console.log( 'going up' )
           }
 
         } else {
 
+          console.log( 'turn hit off' )
+          this.isHit = false
+
           if(this.scaleFactor > 1) {
 
             // if we're full, but still big, shrink on down
-            this.scaleFactor -= 0.005
+            this.scaleFactor -= 0.05
 
-            let red = this.red()
-            let blue = this.blue()
-            blue = blue < 180 ? blue + 1 : 180
-            red = red > 40 ? red - 2 : 40
-            this.setColor(red, this.green(), blue )
+            // let red = this.red()
+            // let blue = this.blue()
+            // blue = blue < 180 ? blue + 1 : 180
+            // red = red > 40 ? red - 2 : 40
+            // this.setColor(red, this.green(), blue )
 
             // console.log( 'reduced to ' + this.scaleFactor )
 
@@ -282,7 +289,7 @@ class Player extends Character {
     if(this.eatingTimer.time() > 200){
       this.eating = false
       this.eatingTimer.stop()
-      // console.log( 'stop eating' )
+      console.log( 'stop eating' )
     }
 
   }

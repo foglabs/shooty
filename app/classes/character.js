@@ -7,7 +7,7 @@ class Character {
     this.accx = 0
     this.accy = 0
 
-    let basestr = '#' + this.componentToHex(base_color[0]) + this.componentToHex(base_color[1]) + this.componentToHex(base_color[2])
+    let basestr = this.rgbToHex(base_color[0], base_color[1], base_color[2])
     this.mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial( { color: basestr, transparent: true }))
 
     this.bbox = bbox
@@ -25,6 +25,7 @@ class Character {
     this.isHit = false
     this.lastIsHit = false
 
+    this.fading = false
     this.colorTimer = new Timer()
     this.healthTimer = new Timer()
 
@@ -40,6 +41,33 @@ class Character {
 
     this.duster = null
     this.dusterTimer = new Timer()
+  }
+
+  moveTowardsPoint(destx, desty){
+    let startx = this.mesh.position.x
+    let starty = this.mesh.position.y
+
+
+    let xdiff = Math.abs(startx - destx)
+    let ydiff = Math.abs(starty - desty)
+    // shoutout to pythagoras
+    // let dist = Math.sqrt(ydiff * ydiff + xdiff * xdiff)
+
+    if(startx < destx){
+      this.accx += 0.04
+    } else {
+      this.accx -= 0.04
+    }
+
+    if(starty < desty){
+      this.accy += 0.04
+    } else {
+      this.accy -= 0.04
+    }
+  }
+
+  rgbToHex(r,g,b){
+    return '#' + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b)
   }
 
   componentToHex(c) {
@@ -101,7 +129,9 @@ class Character {
   }
   
   setColor(r,g,b){
-    this.mesh.material.color.setRGB(r,g,b)
+    // this.mesh.material.color.setRGB(r,g,b)
+    let hex = this.rgbToHex(r,g,b)
+    this.mesh.material.color.set( hex )
   }
 
   calcMovement(speed, acc) {
@@ -110,7 +140,7 @@ class Character {
 
   slowDown(acc){
     if(acc > 0){
-      // whichever way we're currently moving, accellerate towards the opposite direction
+      // whichever way we're currently moving, accelerate towards the opposite direction
       acc -= 0.009;
       if(acc < 0) {acc = 0};
     } else if(acc < 0){
@@ -226,7 +256,11 @@ class Character {
 
   colorCycle(){
 
-    if(this.lifecycle == ALIVE && this.isHit || this.color != this.baseColor){
+    if(this.isHit){
+      this.fading = true
+    }
+
+    if(this.fading){
 
       if(!this.colorTimer.running){
         // console.log( 'start ctimer' )
@@ -245,16 +279,15 @@ class Character {
         fromcolor = this.hitColor
       }
 
-      if(this.colorTimer.time() > 20){
+      if(this.colorTimer.time() > 2){
         this.colorTimer.reset()
 
-        var steps = 200
-        var step_u = 1.0 / steps;
+        var steps = 50
+        var step_u = 1.0 / steps
 
         let to_r = tocolor[0]
         let to_g = tocolor[1]
         let to_b = tocolor[2]
-
 
         let from_r = fromcolor[0]
         let from_g = fromcolor[1]
@@ -265,24 +298,25 @@ class Character {
         let b = Math.round(this.lerp(from_b, to_b, this.u))
 
         this.u += step_u
+        if(this.u >= 1.0){
+          // done with this fade
+          this.u = 0.0
+          this.fading = false
+        }
         // console.log("u is " + this.u)
-
-
         // console.log('fading')
-        // console.log(r,g,b)
+        // console.log( 'setting thiso ', r,g,b )
 
         // record this so we can compare above
         this.color = [r,g,b]
-        // console.log( 'setting to ', r,g,b )
-        this.mesh.material.color.setRGB(r,g,b)
-
-        // console.log( 'red is '+r )
-        // console.log( 'green is '+g )
-        // console.log( 'blue is '+b )
-
+        // this.mesh.material.color.setRGB(r,g,b)
+        this.setColor(r,g,b)
       }
     }
 
+    if(this.color == this.baseColor || this.color == this.hitColor){
+      this.fading = false
+    }
 
   }
   

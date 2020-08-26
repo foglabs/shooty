@@ -164,6 +164,11 @@ class Enemy extends Character {
     // this.baseColor = 0xff0000
     this.mesh.material.color.setRGB(0xff0000)
 
+    // remove health guy glows if necessary
+    if(this.duster){
+      this.duster.remove()
+    }
+
     // same proportions as a before, diff sounds
     this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
   }
@@ -225,14 +230,20 @@ class Enemy extends Character {
   customMovement(){
     let speed =  Math.random()*0.03
 
-    if(this.direction == LEFT){
-      this.accx -= speed
-    } else if(this.direction == UP){
-      this.accy += speed
-    } else if(this.direction == RIGHT){
-      this.accx += speed
-    } else if(this.direction == DOWN) {
-      this.accy -= speed
+    if(game.percentCorrupted == 1){
+      this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
+    } else {
+
+      if(this.direction == LEFT){
+        this.accx -= speed
+      } else if(this.direction == UP){
+        this.accy += speed
+      } else if(this.direction == RIGHT){
+        this.accx += speed
+      } else if(this.direction == DOWN) {
+        this.accy -= speed
+      }      
     }
+
   }
 }
