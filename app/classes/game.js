@@ -1,6 +1,9 @@
 class Game {
   constructor(){
 
+    this.backgroundColor = [0,0,0]
+    this.roundColor = [0,0,0]
+
     this.ping = false
     this.score = 0
 
@@ -15,6 +18,7 @@ class Game {
     this.powerMax = 100
     this.stage = false
     this.stageTimer = new Timer()
+    this.animTimer = new Timer()
 
     // countdown to generate enemies every so often
     this.enemyInterval = 30000
@@ -34,7 +38,7 @@ class Game {
 
   newGame(){
     if(!this.gameRunning()){
-      this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax)
+      this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax, [0,0,0])
     }
   }
 
@@ -50,13 +54,19 @@ class Game {
     let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
 
     this.roundCount += 1
-    this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax)
+    let r,g,b
+    r = Math.floor(Math.random() * 255)
+    g = Math.floor(Math.random() * 255)
+    b = Math.floor(Math.random() * 255)
+    this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, [r,g,b])
   }
 
-  newRound(enemyMax, enemyInterval, corruptionMax){
+  newRound(enemyMax, enemyInterval, corruptionMax, roundColor){
     this.enemyMax = enemyMax
     this.enemyInterval = enemyInterval
     this.corruptionMax = corruptionMax
+
+    this.roundColor = roundColor
 
     this.cleanEnemies()
 
@@ -82,7 +92,6 @@ class Game {
 
     if(this.stage == TITLE){      
       this.drawTitle()
-
     } else if(this.stage == LOADING){
 
       player.mesh.visible = true
@@ -113,15 +122,15 @@ class Game {
   }
 
   drawTitle(){
-    // gridHelper.rotation.x = 80
-    if(this.stageTimer.time() > 20){
-      // gridHelper.rotation.x  -= 0.4
-    }
+    this.setBackgroundColor(140,180,255)
   }
 
   drawLoading(){
     document.getElementById("stage-info").innerHTML = "ROUND " + this.roundCount +  " LOADING..."
     duster.loadingAnimation()
+
+    // fade toward blac
+    this.fadeBackgroundToward(this.roundColor[0], this.roundColor[1], this.roundColor[2] ,2)
   }
 
   drawPlaying(){
@@ -162,6 +171,18 @@ class Game {
 
   drawEnding(){
     duster.loadingAnimation()
+    if(!this.animTimer.running){
+      this.animTimer.start()
+    }
+
+    if(this.animTimer.time() > 20){
+      this.animTimer.reset()
+      // fade to red
+      // this.backgroundColor[0] = 
+      if(this.backgroundColor[0] < 255){
+        this.setBackgroundColor(this.backgroundColor[0] + 2,this.backgroundColor[1],this.backgroundColor[2])
+      }
+    }
   }
 
   drawGameover(){
@@ -204,6 +225,50 @@ class Game {
 
   drawHealth(){
     document.getElementById("health").value = player.health;
+  }
+
+  rgbToHex(r,g,b){
+    return '#' + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b)
+  }
+
+  componentToHex(c) {
+    c = c < 255 ? c : 255 
+    var hex = c.toString(16)
+    return hex.length == 1 ? "0" + hex : hex
+  }
+
+  setBackgroundColor(r,g,b){
+    // this.mesh.material.color.setRGB(r,g,b)
+    this.backgroundColor[0] = r
+    this.backgroundColor[1] = g
+    this.backgroundColor[2] = b
+    let hex = this.rgbToHex(r,g,b)
+    scene.background = new THREE.Color( hex )
+  }
+
+  fadeBackgroundToward(destR,destG,destB,increment){
+    if(!this.animTimer.running){
+      this.animTimer.start()
+    }
+    if(this.animTimer.time() > 5){
+      this.animTimer.reset()
+
+      let r,g,b
+      r = this.fadeComponent( this.backgroundColor[0], destR, increment )
+      g = this.fadeComponent( this.backgroundColor[1], destG, increment )
+      b = this.fadeComponent( this.backgroundColor[2], destB, increment )
+      console.log( 'back col ',r,g,b )
+      this.setBackgroundColor(r,g,b)
+    }
+  }
+
+  fadeComponent(val, dest, increment){
+    // step towards dest until the last step, when we lock to dest
+    return this.constrainComponent( val - increment > dest ? val - increment : ( val + increment < dest ? val + increment : dest ) )
+  }
+
+  constrainComponent(val){
+    return val > 255 ? 255 : (val < 0 ? 0 : val)
   }
 
   addEnemy(){

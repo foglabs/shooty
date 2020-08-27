@@ -98,7 +98,7 @@ class Enemy extends Character {
   calcHitColor(val){
     // the higher val is, the smaller the increase
     // subtract 8 to push line down to keep unde 255
-    return val + Math.floor(val * 2000/ ( Math.pow(val, 2) ) - 8)
+    return val + Math.floor(val * 800/ ( Math.pow(val, 2) ) - 3)
   }
 
   rotation(){
