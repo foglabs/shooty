@@ -1,8 +1,13 @@
 class Game {
   constructor(){
 
+    this.u = 0
+    // current color
     this.backgroundColor = [0,0,0]
-    this.roundColor = [0,0,0]
+    // preserve this so we can lerp from from to round - starts as title screen color
+    this.lastRoundColor = [140,180,255]
+    // destination color for the round, fades during loading
+    this.roundColor = [140,180,255]
 
     this.ping = false
     this.score = 0
@@ -18,6 +23,7 @@ class Game {
     this.powerMax = 100
     this.stage = false
     this.stageTimer = new Timer()
+    this.loadTime = 2000
     this.animTimer = new Timer()
 
     // countdown to generate enemies every so often
@@ -55,9 +61,9 @@ class Game {
 
     this.roundCount += 1
     let r,g,b
-    r = Math.floor(Math.random() * 255)
-    g = Math.floor(Math.random() * 255)
-    b = Math.floor(Math.random() * 255)
+    r = Math.floor(Math.random() * 180)
+    g = Math.floor(Math.random() * 180)
+    b = Math.floor(Math.random() * 180)
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, [r,g,b])
   }
 
@@ -66,6 +72,11 @@ class Game {
     this.enemyInterval = enemyInterval
     this.corruptionMax = corruptionMax
 
+    console.log( 'roundcolo', roundColor, this.roundColor, this.lastRoundColor )
+
+    // record for loading lerping
+    this.lastRoundColor = this.roundColor
+    // to color
     this.roundColor = roundColor
 
     this.cleanEnemies()
@@ -96,20 +107,23 @@ class Game {
 
       player.mesh.visible = true
       
+      console.log( 'stage time is ', this.stageTimer.time() )
+
       this.drawLoading()
 
-      if(this.stageTimer.time() > 2000){
+      if(this.stageTimer.time() > this.loadTime){
         this.stage = PLAYING
         document.getElementById("stage-info").innerHTML = ""
       }
 
     } else if(this.stage == PLAYING){
+
       this.drawPlaying()
     } else if(this.stage == ENDING){
 
       this.drawEnding()
 
-      if(this.stageTimer.time() > 2000){
+      if(this.stageTimer.time() > this.loadTime){
         this.stage = GAMEOVER
       }
     } else if(this.stage == GAMEOVER) {
@@ -130,7 +144,8 @@ class Game {
     duster.loadingAnimation()
 
     // fade toward blac
-    this.fadeBackgroundToward(this.roundColor[0], this.roundColor[1], this.roundColor[2] ,2)
+    // this.fadeBackgroundToward(this.roundColor[0], this.roundColor[1], this.roundColor[2], 2)
+    this.fadeBackgroundToward()
   }
 
   drawPlaying(){
@@ -246,19 +261,60 @@ class Game {
     scene.background = new THREE.Color( hex )
   }
 
-  fadeBackgroundToward(destR,destG,destB,increment){
+  lerp(a, b, u) {
+    // start val, dest val, interval
+    return (1 - u) * a + u * b;
+  }
+
+  fadeBackgroundToward(){
+    // if(!this.animTimer.running){
+    //   this.animTimer.start()
+    // }
+    // if(this.animTimer.time() > 5){
+    //   this.animTimer.reset()
+
+    //   let r,g,b
+    //   r = this.fadeComponent( this.backgroundColor[0], destR, increment )
+    //   g = this.fadeComponent( this.backgroundColor[1], destG, increment )
+    //   b = this.fadeComponent( this.backgroundColor[2], destB, increment )
+    //   console.log( 'back col ',r,g,b )
+    //   this.setBackgroundColor(r,g,b)
+    // }
+
     if(!this.animTimer.running){
       this.animTimer.start()
     }
+
+    // one step for each animinterval
+    let animinterval = 5
+    let numSteps = this.loadTime / animinterval / 3.361344
+
+    // every 5 ms 
     if(this.animTimer.time() > 5){
       this.animTimer.reset()
 
       let r,g,b
-      r = this.fadeComponent( this.backgroundColor[0], destR, increment )
-      g = this.fadeComponent( this.backgroundColor[1], destG, increment )
-      b = this.fadeComponent( this.backgroundColor[2], destB, increment )
-      console.log( 'back col ',r,g,b )
+      r = Math.floor( this.lerp( this.lastRoundColor[0], this.roundColor[0], this.u ) )
+      g = Math.floor( this.lerp( this.lastRoundColor[1], this.roundColor[1], this.u ) )
+      b = Math.floor( this.lerp( this.lastRoundColor[2], this.roundColor[2], this.u ) )
       this.setBackgroundColor(r,g,b)
+
+      // console.log( 'rgb', r,g,b )
+
+      if(r ==0 && g == 0 && b == 0){
+        console.log("it iwas ", this.u)
+      }
+      // console.log( 'u is ', this.u )
+
+      let step = 1.0/numSteps
+      this.u += step
+
+      console.log( 'step is', this.u )
+
+      // done
+      if(this.u > 1.0){
+        this.u = 0
+      }
     }
   }
 
