@@ -169,6 +169,8 @@ class Enemy extends Character {
       this.duster.remove()
     }
 
+    this.hitColor = [255,0,0]
+
     // same proportions as a before, diff sounds
     this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
   }

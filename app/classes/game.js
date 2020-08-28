@@ -90,7 +90,7 @@ class Game {
 
     this.enemyTimer = new Timer(this.enemyInterval)
 
-    let numEnemies = Math.round( this.enemyMax/2 +  Math.random() * this.enemyMax/2 )
+    let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
     this.generateEnemies( numEnemies )
   }
 
@@ -107,7 +107,7 @@ class Game {
 
       player.mesh.visible = true
       
-      console.log( 'stage time is ', this.stageTimer.time() )
+      // console.log( 'stage time is ', this.stageTimer.time() )
 
       this.drawLoading()
 
@@ -159,8 +159,10 @@ class Game {
     // if enemy timer finishesa, add more enemies
     if(remaining == 0 ){
 
-      // add a random # of enemies
-      this.generateEnemies( Math.round(Math.random() * this.enemyMax ) )
+      // add a random # of enemies, ensure at least 50% of max
+      let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
+      console.log( 'generating ene ', numEnemies )
+      this.generateEnemies( numEnemies )
 
       this.enemyTimer.reset()
     }
