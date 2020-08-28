@@ -85,7 +85,7 @@ class Enemy extends Character {
     let hitb = this.calcHitColor(this.baseColor[2])
     this.hitColor = [hitr, hitg, hitb]
 
-    console.log( 'hitcolor is ', this.hitColor )
+    // console.log( 'hitcolor is ', this.hitColor )
 
     this.directionTimer = new Timer()
     // start this up because were going to add to scene right now anyway

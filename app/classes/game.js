@@ -72,7 +72,7 @@ class Game {
     this.enemyInterval = enemyInterval
     this.corruptionMax = corruptionMax
 
-    console.log( 'roundcolo', roundColor, this.roundColor, this.lastRoundColor )
+    // console.log( 'roundcolo', roundColor, this.roundColor, this.lastRoundColor )
 
     // record for loading lerping
     this.lastRoundColor = this.roundColor
@@ -267,20 +267,6 @@ class Game {
   }
 
   fadeBackgroundToward(){
-    // if(!this.animTimer.running){
-    //   this.animTimer.start()
-    // }
-    // if(this.animTimer.time() > 5){
-    //   this.animTimer.reset()
-
-    //   let r,g,b
-    //   r = this.fadeComponent( this.backgroundColor[0], destR, increment )
-    //   g = this.fadeComponent( this.backgroundColor[1], destG, increment )
-    //   b = this.fadeComponent( this.backgroundColor[2], destB, increment )
-    //   console.log( 'back col ',r,g,b )
-    //   this.setBackgroundColor(r,g,b)
-    // }
-
     if(!this.animTimer.running){
       this.animTimer.start()
     }
@@ -302,14 +288,14 @@ class Game {
       // console.log( 'rgb', r,g,b )
 
       if(r ==0 && g == 0 && b == 0){
-        console.log("it iwas ", this.u)
+        // console.log("it iwas ", this.u)
       }
       // console.log( 'u is ', this.u )
 
       let step = 1.0/numSteps
       this.u += step
 
-      console.log( 'step is', this.u )
+      // console.log( 'step is', this.u )
 
       // done
       if(this.u > 1.0){
@@ -358,7 +344,7 @@ class Game {
       this.corruptionTimer.start()
     }
 
-    console.log('tehre are enemies ', this.enemies.length)
+    // console.log('tehre are enemies ', this.enemies.length)
 
     for(var i=0, e_len=this.enemies.length; i<e_len; i++){
 

@@ -237,7 +237,7 @@ class Player extends Character {
         this.animTimer.reset()
         
         if(this.eating){
-          console.log( 'turn hit on' )
+          // console.log( 'turn hit on' )
           this.isHit = true
 
           // if we eatin, scale that badboy up
@@ -255,7 +255,7 @@ class Player extends Character {
 
         } else {
 
-          console.log( 'turn hit off' )
+          // console.log( 'turn hit off' )
           this.isHit = false
 
           if(this.scaleFactor > 1) {
@@ -289,7 +289,7 @@ class Player extends Character {
     if(this.eatingTimer.time() > 200){
       this.eating = false
       this.eatingTimer.stop()
-      console.log( 'stop eating' )
+      // console.log( 'stop eating' )
     }
 
   }

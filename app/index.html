@@ -27,6 +27,7 @@
     </div>
 
     <script src="three.js"></script>
+    <script src="classes/keyHandler.js"></script>
     <script src="classes/sound.js"></script>
     <script src="classes/game.js"></script>
     <script src="classes/timer.js"></script>
@@ -60,8 +61,10 @@
       // run every frame
       function animate() {
 
-
         game.handleGame()
+        // console.log( 'TEMPS', keyHandler.keyHeats )
+        // console.log( 'HELD', keyHandler.heldKeys )
+        keyHandler.handleKeyTemp()
 
         requestAnimationFrame( animate )
         // draw de cool scene
@@ -243,24 +246,13 @@
       renderer.setSize( window.innerWidth, window.innerHeight );
       // renderer.setClearColor( 0xffffff, 0 );
 
-      animate();
+      // contain all those key bits
+      let keyHandler = new KeyHandler()
+      
+      function onDocumentKeyDown(event) {
+        keyHandler.heldKeys[event.key] = true
 
-      document.addEventListener("keydown", onDocumentKeyDownUp, false);
-      document.addEventListener("keyup", onDocumentKeyDownUp, false);
-      function keyEvents(key){
-        if (key == "ArrowLeft"){
-            // console.log("left")
-            player.accx -= 0.5;
-        } else if (key == "ArrowUp"){
-            // console.log("up")
-            player.accy += 0.5
-        } else if (key == "ArrowRight"){
-            // console.log("right")
-            player.accx += 0.5
-        } else if (key == "ArrowDown"){
-            // console.log("down")
-            player.accy   -= 0.5
-        } else if (key == " " || key == "Spacebar"){
+        if (event.key == " " || event.key == "Spacebar"){
           
           // SPACE BAR
           if(game.stage == TITLE){
@@ -271,29 +263,105 @@
           }
         }
       }
-
-      let heldkeys = {};
-      function onDocumentKeyDownUp(event) {
-        heldkeys[event.key] = event.type == 'keydown';
-
-        heldkeys_keys = Object.keys(heldkeys)
-
-        // are any keys held down 
-        if(heldkeys_keys){
-          for(i=0; i<heldkeys_keys.length; i++){
-            // is the key held down?
-            let key = heldkeys_keys[i];
-            if(heldkeys[key]){
-              keyEvents(event.key)
-            }
-          }
-        }
+      function onDocumentKeyUp(event) {
+        keyHandler.heldKeys[event.key] = false
 
         // clear out stuff from nonheld keys
-        if(event.type == "keyup" && event.key == " " || event.key == "Spacebar"){
+        if(event.key == " " || event.key == "Spacebar"){
           player.stopKillingCircle()
         }
       }
+            
+      // set listeners
+      document.addEventListener("keydown", onDocumentKeyDown, false);
+      document.addEventListener("keyup", onDocumentKeyUp, false);
+
+
+
+      // put this here to get event context
+      // function onDocumentKeyDownUp(event) {
+        
+      //   keyHandler.heldKeys[event.key] = event.type == 'keydown'
+      //   let heldkeys_keys = Object.keys(keyHandler.heldKeys)
+
+      //   // are any keys held down 
+      //   if(heldkeys_keys){
+      //     for(i=0; i<heldkeys_keys.length; i++){
+
+      //       // is this particular key held down?
+      //       let key = heldkeys_keys[ i ]
+
+      //       if( keyHandler.heldKeys[ key ] ){
+
+      //         keyHandler.keyEvents(event.key)
+      //       }
+      //     }
+      //   }
+
+      //   // clear out stuff from nonheld keys
+      //   if(event.type == "keyup" && event.key == " " || event.key == "Spacebar"){
+      //     player.stopKillingCircle()
+      //   }
+
+      //   console.log( 'type is ', event.type )
+      //   console.log( 'keys is ', keyHandler.heldKeys )
+      // }
+      
+      // set listeners
+      // document.addEventListener("keydown", onDocumentKeyDownUp, false);
+      // document.addEventListener("keyup", onDocumentKeyDownUp, false);
+      
+
+      animate();
+      // document.addEventListener("keydown", onDocumentKeyDownUp, false);
+      // document.addEventListener("keyup", onDocumentKeyDownUp, false);
+      // function keyEvents(key){
+      //   if (key == "ArrowLeft"){
+      //       // console.log("left")
+      //       player.accx -= 0.5;
+      //   } else if (key == "ArrowUp"){
+      //       // console.log("up")
+      //       player.accy += 0.5
+      //   } else if (key == "ArrowRight"){
+      //       // console.log("right")
+      //       player.accx += 0.5
+      //   } else if (key == "ArrowDown"){
+      //       // console.log("down")
+      //       player.accy   -= 0.5
+      //   } else if (key == " " || key == "Spacebar"){
+          
+      //     // SPACE BAR
+      //     if(game.stage == TITLE){
+      //       game.newGame()
+
+      //     } else if(game.stage == PLAYING){
+      //       player.startKillingCircle()
+      //     }
+      //   }
+      // }
+
+      // let heldkeys = {}
+      // function onDocumentKeyDownUp(event) {
+      //   heldkeys[event.key] = event.type == 'keydown'
+
+      //   heldkeys_keys = Object.keys(heldkeys)
+
+      //   // are any keys held down 
+      //   if(heldkeys_keys){
+      //     for(i=0; i<heldkeys_keys.length; i++){
+      //       // is the key held down?
+      //       let key = heldkeys_keys[i];
+      //       if(heldkeys[key]){
+      //         keyEvents(event.key)
+      //       }
+      //     }
+      //   }
+
+      //   // clear out stuff from nonheld keys
+      //   if(event.type == "keyup" && event.key == " " || event.key == "Spacebar"){
+      //     player.stopKillingCircle()
+      //   }
+      // }
 
       document.body.appendChild( renderer.domElement )
     </script>
