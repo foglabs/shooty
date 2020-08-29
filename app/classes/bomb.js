@@ -1,5 +1,5 @@
 class Bomb extends Character {
-  constructor(base_color, strength){
+  constructor(base_color, playerLevel){
     let geometry = new THREE.SphereGeometry( 0.06, 32, 32 )
     super(
       // de geo
@@ -9,29 +9,41 @@ class Bomb extends Character {
       base_color
     )
 
-    this.strength = strength
+    this.strength = playerLevel * 5
 
+    this.exploded = false
     this.explodeTimer = new Timer()
     this.explodeTimer.start()
 
-    this.explodeTime = 1000
-    this.disappearTime = 3000
+    // when will it start exploding
+    this.explodeTime = 800
+    // when will it begin to fade out, lvl 1 is 1800ms
+    this.disappearTime = this.strength * 360
 
     this.boomColor = [255,191,103]
-    this.timeToBoomColor = 1000
+    this.timeToBoomColor = 300
     this.u = 0
 
+    this.hotstepper = 0
+
     this.animTimer = new Timer()
+
+    // gate damage so we dont OBLITERATE
+    this.damageTimer = new Timer()
+    this.damageTimer.start()
   }
 
   handleExplode(){
-    if(this.explodeTimer.time() > this.explodeTime){
+    if(this.explodeTimer.time() > this.disappearTime){
+      // start fadeout
+      this.lifecycle = DYING
+    } else if(this.explodeTimer.time() > this.explodeTime){
       this.explode()
+      this.exploded = true
     }
   }
 
   explode(){
-    console.log( 'you as plode' )
     if(!this.animTimer.running){
       this.animTimer.start()
     }
@@ -42,24 +54,29 @@ class Bomb extends Character {
       if(this.color != this.boomColor){
         this.fadeColor()
       }
-      
-      if(this.mesh.scale.x < 5){
-        this.mesh.scale.x += 0.04 * this.strength 
+
+      // strength is when to stop growing aka max size
+      if(this.mesh.scale.x < this.strength){
+        this.mesh.scale.x += 0.18
       }
-      if(this.mesh.scale.y < 5){
-        this.mesh.scale.y += 0.04 * this.strength
+      if(this.mesh.scale.y < this.strength){
+        this.mesh.scale.y += 0.18
       }
-      if(this.mesh.scale.y < 5){
-        this.mesh.scale.z += 0.04 * this.strength 
+      if(this.mesh.scale.y < this.strength){
+        this.mesh.scale.z += 0.18
       }  
     }
   }
 
   fadeOut(){
-
     if(this.animTimer.time() > 5){
       this.animTimer.reset()
       this.mesh.material.opacity -= 0.04
+
+      if(this.mesh.material.opacity <= 0){
+        // mark for DELETION
+        this.lifecycle = DEAD
+      }
     }
   }
 

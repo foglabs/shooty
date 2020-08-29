@@ -21,13 +21,14 @@ class Game {
     
     // max playe rpower
     this.powerMax = 100
+    this.knowledgeMax = 100
     this.stage = false
     this.stageTimer = new Timer()
     this.loadTime = 2000
     this.animTimer = new Timer()
 
     // countdown to generate enemies every so often
-    this.enemyInterval = 30000
+    this.enemyInterval = 16000
     this.enemyMax = 5
 
     this.bombs = []
@@ -46,6 +47,9 @@ class Game {
 
   newGame(){
     if(!this.gameRunning()){
+      player.health = 100
+      player.lifecycle = ALIVE
+
       this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax, [0,0,0])
     }
   }
@@ -82,8 +86,9 @@ class Game {
     this.roundColor = roundColor
 
     this.cleanEnemies()
+    this.cleanBombs()
 
-    player.health = 100
+    // player.health = 100
     player.power = 0
 
     this.stage = LOADING
@@ -180,31 +185,13 @@ class Game {
     }
 
     if(this.bombs.length > 0){
-      let bomb
-      for(var i=0; i<this.bombs.length; i++){
-        bomb = this.bombs[i]
-        if(bomb.lifecycle == ALIVE ){
-          // blowin up
-          bomb.handleExplode()
-
-        } else if(bomb.lifecycle == DYING){
-          // you fadin out
-          bomb.fadeOut()
-        } else {
-          // you dead
-          bomb.remove()
-          delete this.bombs[i]
-        }
-      }
+      this.handleBombs()
     }
 
     this.handleEnemies()
 
     player.animation()
-
-    this.drawScore()
-    this.drawPower()
-    this.drawHealth()
+    this.drawUI()
   }
 
   drawEnding(){
@@ -238,6 +225,17 @@ class Game {
     }
   }
 
+  cleanBombs(){
+    for(var i=0; i<this.bombs.length; i++){
+      if(this.bombs[i]){
+        // do this so we dont make a sprite
+        this.bombs[i].lifecycle = ALIVE
+        this.bombs[i].remove()
+        delete this.bombs[i]
+      }
+    }
+  }
+
   changeScore(change){
     this.score += change
   }
@@ -249,20 +247,31 @@ class Game {
      document.getElementById("power").max = newpower
   }
 
+  drawUI(){
+    this.drawScore()
+    this.drawPower()
+    this.drawHealth()
+    this.drawKnowledge()
+  }
+
   drawTimer(time){
-    document.getElementById("timer").innerHTML = time;
+    document.getElementById("timer").innerHTML = time
   }
 
   drawScore(){
-    document.getElementById("score").innerHTML = this.score;
+    document.getElementById("score").innerHTML = this.score
   }
 
   drawPower(){
-    document.getElementById("power").value = player.power;
+    document.getElementById("power").value = player.power
   }
 
   drawHealth(){
-    document.getElementById("health").value = player.health;
+    document.getElementById("health").value = player.health
+  }
+
+  drawKnowledge(){
+    document.getElementById("knowledge").value = player.knowledge
   }
 
   setBackgroundColor(r,g,b){
@@ -272,11 +281,6 @@ class Game {
     this.backgroundColor[2] = b
     let hex = rgbToHex(r,g,b)
     scene.background = new THREE.Color( hex )
-  }
-
-  lerp(a, b, u) {
-    // start val, dest val, interval
-    return (1 - u) * a + u * b;
   }
 
   fadeBackgroundToward(){
@@ -331,6 +335,38 @@ class Game {
     }
   }
 
+  handleBombs(){
+    let bomb
+    for(var i=0; i<this.bombs.length; i++){
+      bomb = this.bombs[i]
+      if(bomb){
+        bomb.animation()
+
+        if(bomb.lifecycle == ALIVE ){
+          // blowin up
+          bomb.handleExplode()
+
+        } else if(bomb.lifecycle == DYING){
+          // you fadin out
+
+          bomb.fadeOut()
+        } else {
+          // you dead
+          bomb.remove()
+          delete this.bombs[i]
+        }
+
+      }
+    }
+
+    // strip nulls out once were done monkeying around above
+    for(var i=0;i<this.bombs.length;i++){
+      if(!this.bombs[i]){
+        this.bombs.splice(i, 1)
+      }
+    }
+  }
+
   handleEnemies(){
     let enemy
     let chance
@@ -359,6 +395,11 @@ class Game {
         enemy.handleMovement()
         // draw other crap thats changing
         enemy.animation()
+
+        if(this.bombs.length > 0){
+          // if theres bombs, hannel em
+          enemy.handleBombs()
+        }
 
         // LIFE
         if(!enemy.corrupted){
@@ -428,10 +469,7 @@ class Game {
                 player.lifecycle = DYING
                 this.endGame()
               }
-
             }
-
-
           }
 
           numCorrupted += 1
@@ -444,7 +482,6 @@ class Game {
           if(enemy.lifecycle == ALIVE){
 
             // only score once
-
             let score
             if(enemy.corrupted){
               score = 12
@@ -453,7 +490,12 @@ class Game {
               // reg enemy
               score = 1
               player.changePower( enemy.nutritionalValue )
+
+              if(enemy.knowledgeValue > 0){
+                player.changeKnowledge( enemy.knowledgeValue )
+              }
             }
+
             game.changeScore(score)
             enemy.lifecycle = DYING
             enemy.killSound()

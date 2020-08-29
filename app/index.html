@@ -49,7 +49,7 @@
       }
 
       function incInRange(val, inc, min, max){
-        return( Math.min( Math.max( val+inc, min ), max ) )
+        return Math.min( Math.max( val+inc, min ), max )
       }
 
     </script>
@@ -302,7 +302,7 @@
         if (event.key == " " || event.key == "Spacebar"){
           
           // SPACE BAR
-          if(game.stage == TITLE){
+          if(game.stage == TITLE || game.stage == GAMEOVER){
             game.newGame()
 
           } else if(game.stage == PLAYING){

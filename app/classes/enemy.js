@@ -1,7 +1,13 @@
 class Enemy extends Character {
   constructor(base_color){
+
+    // enemy's health
     let health
+    // how much power the player gets 
     let nutritionalValue
+    // how much knowl player gets
+    let knowledgeValue = 0
+
 
     // de mesh
     let geometry
@@ -30,6 +36,7 @@ class Enemy extends Character {
       nutritionalValue = 18
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
+      knowledgeValue = 20
     } else {
       // 
       health = 10
@@ -93,6 +100,7 @@ class Enemy extends Character {
 
     this.color = this.baseColor
     this.nutritionalValue = nutritionalValue
+    this.knowledgeValue = knowledgeValue
   }
 
   calcHitColor(val){
@@ -118,7 +126,6 @@ class Enemy extends Character {
       let roll = Math.floor( Math.random() * this.damageSounds.length )
       this.damageSounds[ roll ].play()  
     }
-    
   }
 
   chooseDirection(){
@@ -161,7 +168,7 @@ class Enemy extends Character {
   corrupt(){
     this.health = 24
     this.corrupted = true
-    // this.baseColor = 0xff0000
+    this.baseColor = [255,0,0]
     this.mesh.material.color.setRGB(0xff0000)
 
     // remove health guy glows if necessary
@@ -178,6 +185,18 @@ class Enemy extends Character {
   killSound(){
     let roll = Math.floor(Math.random() * this.killSounds.length)
     this.killSounds[ roll ].play()
+  }
+
+  handleBombs(){
+    let bomb
+    for(var i=0; i<game.bombs.length; i++){
+      bomb = game.bombs[i]
+      if( bomb && bomb.exploded && bomb.damageTimer.time() > 400 && this.handleHit(bomb) ){
+        bomb.damageTimer.reset()
+        console.log( 'yall got bommmed' )
+        this.takeDamage( 20 )
+      }
+    }
   }
 
   customAnimation(){

@@ -30,7 +30,9 @@ class Player extends Character {
     this.killingCircleActive = false
     this.killingCircleTimer = new Timer()
 
-    this.bombStrength = 1
+    // build to level up
+    this.knowledge = 0
+    this.level = 1
 
     this.mesh.material.needsUpdate = true
 
@@ -69,7 +71,32 @@ class Player extends Character {
     // this.power += pow
 
     // lock em in 
-    this.power += incInRange( this.power, powChange, 0, game.powerMax )
+    this.power = incInRange( this.power, powChange, 0, game.powerMax )
+  }
+
+  changeKnowledge(knowChange){
+    // this.lastPower = this.power
+    // this.power += pow
+
+    // lock em in 
+    this.knowledge = incInRange( this.knowledge, knowChange, 0, game.knowledgeMax )
+
+    if(this.knowledge == this.knowledgeMax){
+      this.levelUp      
+    }
+  }
+
+  levelUp(){
+    this.knowledge = 0
+    this.level += 1
+  }
+
+  dropBomb(){
+    let bomb = new Bomb([50,50,50], this.level)
+    bomb.mesh.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
+    scene.add( bomb.mesh )
+
+    game.bombs.push( bomb )
   }
 
   addKillingCircle(){
@@ -111,7 +138,7 @@ class Player extends Character {
     let radius
     // why doesnt this work
     radius = this.power/game.powerMax*2
-    // console.log( 'rad is ', radius )
+    console.log( 'rad is ', radius )
     // this works
     // radius = 1
     // only redraw if we changed size
@@ -147,14 +174,6 @@ class Player extends Character {
       this.killingCircle.visible = false
       this.killingCircleArea.mesh.visible = false
     }
-  }
-
-  dropBomb(){
-    let bomb = new Bomb([50,50,50], this.bombStrength)
-    bomb.mesh.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
-    scene.add( bomb.mesh )
-
-    game.bombs.push( bomb )
   }
 
   customMovement(){

@@ -129,22 +129,7 @@ class Character {
     return speed * acc;
   }
 
-  // this version slows down to 0 very fervently, something about the inc func
-  // slowDown(acc){
-  //   let change
-
-  //   if(acc > 0){
-  //     // whichever way we're currently moving, accelerate towards the opposite direction
-  //     change = -0.009
-  //   } else if(acc < 0){
-  //     change = 0.009
-  //   } else {
-  //     return acc
-  //   }
-
-  //   // no stated max here, use a huge value
-  //   return incInRange( acc, change, 0, 1000 )
-  // }
+  // use this instead of inc in range, because we dont actually want to constrain between range of values, we jus twant to move towards 0
   slowDown(acc){
     if(acc > 0){
       // whichever way we're currently moving, accelerate towards the opposite direction
@@ -334,7 +319,6 @@ class Character {
 
   animation(){
       // override dis in your subclass to do extra stuff in addition to the reggies here
-
     this.customAnimation()
 
     // set bounding box from mesh baby
