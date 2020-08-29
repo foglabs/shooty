@@ -1,28 +1,26 @@
 body { margin: 0; }
 canvas { display: block; }
 
-div#info {
-  font-family: courier;
-  font-size: 36px; 
+div.info-bar {
+  height: 1.2vh;
   color: #fff;
   position: absolute;
-  top: 10px;
   width: 100%;
   text-align: center;
   z-index: 100;
   display:block;
 }
 
+div#info {
+  top: 1.2vh;
+}
+
 div#info2 {
-  font-family: courier;
-  font-size: 36px; 
-  color: #fff;
-  position: absolute;
-  top: 30px;
-  width: 100%;
-  text-align: center;
-  z-index: 100;
-  display:block; 
+  top: 2.4vh;
+}
+
+div#info3 {
+  top: 3.6vh;
 }
 
 div.bar-ele {
@@ -35,7 +33,7 @@ div.bar-ele {
   border: 0px;
   background-color: #222;
   color: #ff2;
-  height: 2vh;
+  height: 1.2vh;
   top: -5px;
   position: relative;
 }
@@ -47,10 +45,26 @@ progress#power::-webkit-progress-value { background: #ff2; }
   border: 0px;
   background-color: #222;
   color: #2ff;
-  height: 2vh;
+  height: 1.2vh;
   top: -5px;
   position: relative;
 }
+
+progress#health::-moz-progress-bar { background: #0d4; }
+progress#health::-webkit-progress-value { background: #0ff; }
+
+#knowledge {
+  width: 80vw;
+  border: 0px;
+  background-color: #222;
+  color: #2ff;
+  height: 1.2vh;
+  top: -5px;
+  position: relative;
+}
+
+progress#knowledge::-moz-progress-bar { background: #5A1196; }
+progress#knowledge::-webkit-progress-value { background: #5A1196; }
 
 #stage-info {
   opacity: 0.2;
@@ -63,6 +77,3 @@ progress#power::-webkit-progress-value { background: #ff2; }
   text-align: center;
   vertical-align: middle;
 }
-
-progress#health::-moz-progress-bar { background: #0d4; }
-progress#health::-webkit-progress-value { background: #0ff; }

@@ -28,8 +28,9 @@ class Player extends Character {
     this.killingCircleArea.mesh = null
     this.killingCircleArea.bbox = null
     this.killingCircleActive = false
-
     this.killingCircleTimer = new Timer()
+
+    this.bombStrength = 1
 
     this.mesh.material.needsUpdate = true
 
@@ -63,15 +64,12 @@ class Player extends Character {
     
   }
 
-  changePower(pow){
+  changePower(powChange){
     this.lastPower = this.power
-    this.power += pow
+    // this.power += pow
+
     // lock em in 
-    if(this.power < 0){
-      this.power = 0
-    } else if(this.power > game.powerMax){
-      this.power = game.powerMax
-    }
+    this.power += incInRange( this.power, powChange, 0, game.powerMax )
   }
 
   addKillingCircle(){
@@ -149,6 +147,14 @@ class Player extends Character {
       this.killingCircle.visible = false
       this.killingCircleArea.mesh.visible = false
     }
+  }
+
+  dropBomb(){
+    let bomb = new Bomb([50,50,50], this.bombStrength)
+    bomb.mesh.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
+    scene.add( bomb.mesh )
+
+    game.bombs.push( bomb )
   }
 
   customMovement(){
@@ -232,7 +238,7 @@ class Player extends Character {
       } 
 
       // how often should we actually change mesh
-      if(this.animTimer.time() > 1000){
+      if(this.animTimer.time() > 30){
         // 20ms
         this.animTimer.reset()
         
@@ -242,12 +248,6 @@ class Player extends Character {
 
           // if we eatin, scale that badboy up
           if(this.scaleFactor < 3){
-
-            // let red = this.red()
-            // let blue = this.blue()
-            // red = red < 180 ? red + 1 : 180
-            // blue = blue > 40 ? blue - 40 : 40
-            // this.setColor(red, this.green(), blue )
 
             this.scaleFactor += 0.05
             // console.log( 'going up' )
@@ -262,12 +262,6 @@ class Player extends Character {
 
             // if we're full, but still big, shrink on down
             this.scaleFactor -= 0.05
-
-            // let red = this.red()
-            // let blue = this.blue()
-            // blue = blue < 180 ? blue + 1 : 180
-            // red = red > 40 ? red - 2 : 40
-            // this.setColor(red, this.green(), blue )
 
             // console.log( 'reduced to ' + this.scaleFactor )
 

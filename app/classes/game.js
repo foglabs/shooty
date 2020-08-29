@@ -30,6 +30,8 @@ class Game {
     this.enemyInterval = 30000
     this.enemyMax = 5
 
+    this.bombs = []
+
     this.roundCount = 1
   }
 
@@ -61,9 +63,9 @@ class Game {
 
     this.roundCount += 1
     let r,g,b
-    r = Math.floor(Math.random() * 180)
-    g = Math.floor(Math.random() * 180)
-    b = Math.floor(Math.random() * 180)
+    r = Math.floor(Math.random() * 100)
+    g = Math.floor(Math.random() * 100)
+    b = Math.floor(Math.random() * 100)
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, [r,g,b])
   }
 
@@ -177,6 +179,25 @@ class Game {
       this.nextRound()
     }
 
+    if(this.bombs.length > 0){
+      let bomb
+      for(var i=0; i<this.bombs.length; i++){
+        bomb = this.bombs[i]
+        if(bomb.lifecycle == ALIVE ){
+          // blowin up
+          bomb.handleExplode()
+
+        } else if(bomb.lifecycle == DYING){
+          // you fadin out
+          bomb.fadeOut()
+        } else {
+          // you dead
+          bomb.remove()
+          delete this.bombs[i]
+        }
+      }
+    }
+
     this.handleEnemies()
 
     player.animation()
@@ -244,22 +265,12 @@ class Game {
     document.getElementById("health").value = player.health;
   }
 
-  rgbToHex(r,g,b){
-    return '#' + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b)
-  }
-
-  componentToHex(c) {
-    c = c < 255 ? c : 255 
-    var hex = c.toString(16)
-    return hex.length == 1 ? "0" + hex : hex
-  }
-
   setBackgroundColor(r,g,b){
     // this.mesh.material.color.setRGB(r,g,b)
     this.backgroundColor[0] = r
     this.backgroundColor[1] = g
     this.backgroundColor[2] = b
-    let hex = this.rgbToHex(r,g,b)
+    let hex = rgbToHex(r,g,b)
     scene.background = new THREE.Color( hex )
   }
 
@@ -282,17 +293,10 @@ class Game {
       this.animTimer.reset()
 
       let r,g,b
-      r = Math.floor( this.lerp( this.lastRoundColor[0], this.roundColor[0], this.u ) )
-      g = Math.floor( this.lerp( this.lastRoundColor[1], this.roundColor[1], this.u ) )
-      b = Math.floor( this.lerp( this.lastRoundColor[2], this.roundColor[2], this.u ) )
+      r = Math.floor( lerp( this.lastRoundColor[0], this.roundColor[0], this.u ) )
+      g = Math.floor( lerp( this.lastRoundColor[1], this.roundColor[1], this.u ) )
+      b = Math.floor( lerp( this.lastRoundColor[2], this.roundColor[2], this.u ) )
       this.setBackgroundColor(r,g,b)
-
-      // console.log( 'rgb', r,g,b )
-
-      if(r ==0 && g == 0 && b == 0){
-        // console.log("it iwas ", this.u)
-      }
-      // console.log( 'u is ', this.u )
 
       let step = 1.0/numSteps
       this.u += step
@@ -304,15 +308,6 @@ class Game {
         this.u = 0
       }
     }
-  }
-
-  fadeComponent(val, dest, increment){
-    // step towards dest until the last step, when we lock to dest
-    return this.constrainComponent( val - increment > dest ? val - increment : ( val + increment < dest ? val + increment : dest ) )
-  }
-
-  constrainComponent(val){
-    return val > 255 ? 255 : (val < 0 ? 0 : val)
   }
 
   addEnemy(){

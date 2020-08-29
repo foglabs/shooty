@@ -7,7 +7,7 @@
   </head>
 
   <body>
-    <div id="info">
+    <div id="info" class="info-bar">
       <div class="bar-ele" id="score"></div>
       <div class="bar-ele">
         <progress id="power" value="00" max="100"></progress>
@@ -16,15 +16,43 @@
       <div class="bar-ele" id="timer"></div>
     </div>
 
-    <div id="info2">
+    <div id="info2" class="info-bar">
       <div class="bar-ele">
         <progress id="health" value="100" max="100"></progress>
+      </div>
+    </div>
+
+    <div id="info3" class="info-bar">
+      <div class="bar-ele">
+        <progress id="knowledge" value="0" max="100"></progress>
       </div>
     </div>
 
     <div id="stage-info">
       PRESS SPACEBAR
     </div>
+
+    <script type="text/javascript">
+      function lerp(a, b, u) {
+        // start val, dest val, interval
+        return (1 - u) * a + u * b;
+      }
+
+      function rgbToHex(r,g,b){
+        return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b)
+      }
+
+      function componentToHex(c) {
+        c = c < 255 ? c : 255 
+        var hex = c.toString(16)
+        return hex.length == 1 ? "0" + hex : hex
+      }
+
+      function incInRange(val, inc, min, max){
+        return( Math.min( Math.max( val+inc, min ), max ) )
+      }
+
+    </script>
 
     <script src="three.js"></script>
     <script src="classes/keyHandler.js"></script>
@@ -35,7 +63,9 @@
     <script src="classes/character.js"></script>
     <script src="classes/player.js"></script>
     <script src="classes/enemy.js"></script>
+    <script src="classes/bomb.js"></script>
     <script>
+
       LEFT = 0
       UP = 1
       RIGHT = 2
@@ -103,89 +133,106 @@
       let ekill1 = new THREE.Audio(listener)
       audioLoader.load('sounds/ekill1.wav', function(buff) {
         ekill1.setBuffer( buff )
+        ekill1.setVolume( 3.0 )
       })
       let fx_ekill1 = new Sound(ekill1)
       let ekill2 = new THREE.Audio(listener)
       audioLoader.load('sounds/ekill2.wav', function(buff) {
         ekill2.setBuffer( buff )
+        ekill2.setVolume( 3.0 )
       })
       let fx_ekill2 = new Sound(ekill2)
       let ekill3 = new THREE.Audio(listener)
       audioLoader.load('sounds/ekill3.wav', function(buff) {
         ekill3.setBuffer( buff )
+        ekill3.setVolume( 3.0 )
       })
       let fx_ekill3 = new Sound(ekill3)
       let ekill4 = new THREE.Audio(listener)
       audioLoader.load('sounds/ekill4.wav', function(buff) {
         ekill4.setBuffer( buff )
+        ekill4.setVolume( 3.0 )
       })
       let fx_ekill4 = new Sound(ekill4)
       let ekill5 = new THREE.Audio(listener)
       audioLoader.load('sounds/ekill5.wav', function(buff) {
         ekill5.setBuffer( buff )
+        ekill5.setVolume( 3.0 )
       })
       let fx_ekill5 = new Sound(ekill5)
       let ekill6 = new THREE.Audio(listener)
       audioLoader.load('sounds/ekill6.wav', function(buff) {
         ekill6.setBuffer( buff )
+        ekill6.setVolume( 3.0 )
       })
       let fx_ekill6 = new Sound(ekill6)
 
       let edmg1 = new THREE.Audio(listener)
       audioLoader.load('sounds/edmg1.wav', function(buff) {
         edmg1.setBuffer( buff )
+        edmg1.setVolume( 3.0 )
       })
       let fx_edmg1 = new Sound(edmg1)
       let edmg2 = new THREE.Audio(listener)
       audioLoader.load('sounds/edmg2.wav', function(buff) {
         edmg2.setBuffer( buff )
+        edmg2.setVolume( 3.0 )
       })
       let fx_edmg2 = new Sound(edmg2)
       let edmg3 = new THREE.Audio(listener)
       audioLoader.load('sounds/edmg3.wav', function(buff) {
         edmg3.setBuffer( buff )
+        edmg3.setVolume( 3.0 )
       })
       let fx_edmg3 = new Sound(edmg3)
       let edmg4 = new THREE.Audio(listener)
       audioLoader.load('sounds/edmg4.wav', function(buff) {
         edmg4.setBuffer( buff )
+        edmg4.setVolume( 3.0 )
       })
       let fx_edmg4 = new Sound(edmg4)
       let edmg5 = new THREE.Audio(listener)
       audioLoader.load('sounds/edmg5.wav', function(buff) {
         edmg5.setBuffer( buff )
+        edmg5.setVolume( 3.0 )
       })
       let fx_edmg5 = new Sound(edmg5)
 
       let ckill1 = new THREE.Audio(listener)
       audioLoader.load('sounds/ckill1.wav', function(buff) {
         ckill1.setBuffer( buff )
+        ckill1.setVolume( 3.0 )
       })
       let fx_ckill1 = new Sound(ckill1)
       let ckill2 = new THREE.Audio(listener)
       audioLoader.load('sounds/ckill2.wav', function(buff) {
         ckill2.setBuffer( buff )
+        ckill2.setVolume( 3.0 )
       })
       let fx_ckill2 = new Sound(ckill2)
       let ckill3 = new THREE.Audio(listener)
       audioLoader.load('sounds/ckill3.wav', function(buff) {
         ckill3.setBuffer( buff )
+        ckill3.setVolume( 3.0 )
       })
       let fx_ckill3 = new Sound(ckill3)
 
       let phealth1 = new THREE.Audio(listener)
       audioLoader.load('sounds/phealth1.wav', function(buff) {
         phealth1.setBuffer( buff )
+        phealth1.setVolume( 3.0 )
       })
       let fx_phealth1 = new Sound(phealth1)
       let phealth2 = new THREE.Audio(listener)
       audioLoader.load('sounds/phealth2.wav', function(buff) {
         phealth2.setBuffer( buff )
+        phealth2.setVolume( 3.0 )
       })
       let fx_phealth2 = new Sound(phealth2)
       let phealth3 = new THREE.Audio(listener)
       audioLoader.load('sounds/phealth3.wav', function(buff) {
         phealth3.setBuffer( buff )
+        phealth3.setVolume( 3.0 )
       })
       let fx_phealth3 = new Sound(phealth3)
 
@@ -261,6 +308,8 @@
           } else if(game.stage == PLAYING){
             player.startKillingCircle()
           }
+        } else if(event.key == "z"){
+          player.dropBomb()
         }
       }
       function onDocumentKeyUp(event) {

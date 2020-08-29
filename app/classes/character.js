@@ -7,7 +7,7 @@ class Character {
     this.accx = 0
     this.accy = 0
 
-    let basestr = this.rgbToHex(base_color[0], base_color[1], base_color[2])
+    let basestr = rgbToHex(base_color[0], base_color[1], base_color[2])
     this.mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial( { color: basestr, transparent: true }))
 
     this.bbox = bbox
@@ -66,15 +66,6 @@ class Character {
     }
   }
 
-  rgbToHex(r,g,b){
-    return '#' + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b)
-  }
-
-  componentToHex(c) {
-    var hex = c.toString(16)
-    return hex.length == 1 ? "0" + hex : hex
-  }
-
   remove(){
     // add sprite, then start fading it out - has to come before removing mesh to get position!
     if(this.lifecycle == DYING){
@@ -130,7 +121,7 @@ class Character {
   
   setColor(r,g,b){
     // this.mesh.material.color.setRGB(r,g,b)
-    let hex = this.rgbToHex(r,g,b)
+    let hex = rgbToHex(r,g,b)
     this.mesh.material.color.set( hex )
   }
 
@@ -138,6 +129,22 @@ class Character {
     return speed * acc;
   }
 
+  // this version slows down to 0 very fervently, something about the inc func
+  // slowDown(acc){
+  //   let change
+
+  //   if(acc > 0){
+  //     // whichever way we're currently moving, accelerate towards the opposite direction
+  //     change = -0.009
+  //   } else if(acc < 0){
+  //     change = 0.009
+  //   } else {
+  //     return acc
+  //   }
+
+  //   // no stated max here, use a huge value
+  //   return incInRange( acc, change, 0, 1000 )
+  // }
   slowDown(acc){
     if(acc > 0){
       // whichever way we're currently moving, accelerate towards the opposite direction
@@ -293,9 +300,9 @@ class Character {
         let from_g = fromcolor[1]
         let from_b = fromcolor[2]
 
-        let r = Math.round(this.lerp(from_r, to_r, this.u))
-        let g = Math.round(this.lerp(from_g, to_g, this.u))
-        let b = Math.round(this.lerp(from_b, to_b, this.u))
+        let r = Math.round(lerp(from_r, to_r, this.u))
+        let g = Math.round(lerp(from_g, to_g, this.u))
+        let b = Math.round(lerp(from_b, to_b, this.u))
 
         this.u += step_u
         if(this.u >= 1.0){
@@ -318,11 +325,6 @@ class Character {
       this.fading = false
     }
 
-  }
-  
-  lerp(a, b, u) {
-    // start val, dest val, interval
-    return (1 - u) * a + u * b;
   }
 
   position(){
