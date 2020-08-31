@@ -2,6 +2,8 @@ body { margin: 0; }
 canvas { display: block; }
 
 div.info-bar {
+  font-size: 28px; 
+  font-family: courier;
   height: 1.2vh;
   color: #fff;
   position: absolute;
@@ -25,7 +27,16 @@ div#info3 {
 
 div.bar-ele {
   display: inline;
-  min-width: 10vw;
+  margin: 0;
+  padding: 0;
+  max-width: 10vw;
+
+}
+
+div.bar-ele-wide {
+  display: inline;
+  width: 80vw;
+  max-width: 80vw;
 }
 
 #power {
@@ -66,8 +77,20 @@ progress#health::-webkit-progress-value { background: #0ff; }
 progress#knowledge::-moz-progress-bar { background: #5A1196; }
 progress#knowledge::-webkit-progress-value { background: #5A1196; }
 
-#stage-info {
+#stage-info.announcement {
+  opacity: 0.6;
+  transition: opacity 0.6s ease-out;
+}
+
+
+#stage-info.static {
   opacity: 0.2;
+  transition: opacity 0.6s ease-out;
+}
+
+#stage-info {
+  opacity: 0;
+  transition: opacity 2s ease-out;
   font-family: courier;
   font-size: 72px;
   color: #fff;

@@ -80,14 +80,15 @@ class Player extends Character {
 
     // lock em in 
     this.knowledge = incInRange( this.knowledge, knowChange, 0, game.knowledgeMax )
-
-    if(this.knowledge == this.knowledgeMax){
-      this.levelUp      
+    if(this.knowledge >= game.knowledgeMax){
+      console.log( 'I WANT LEVEL UP NOW', this.knowledge, game.knowledgeMax, this.level )
+      this.levelUp()
     }
   }
 
   levelUp(){
     this.knowledge = 0
+    game.knowledgeMax = game.knowledgeMax * 1.25
     this.level += 1
     fx_levelupE2.play()
   }

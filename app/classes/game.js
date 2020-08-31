@@ -28,8 +28,8 @@ class Game {
     this.animTimer = new Timer()
 
     // countdown to generate enemies every so often
-    this.defaultEnemyInterval = 60000
-    this.enemyInterval = 60000
+    this.defaultEnemyInterval = 24000
+    this.enemyInterval = 24000
     this.defaultEnemyMax = 5
     this.enemyMax = 5
 
@@ -43,6 +43,25 @@ class Game {
     // fading in
     // this.musicFadeTimer = new Timer()
 
+    this.announcementTimer = new Timer()
+  }
+
+  announcement(message){
+    document.getElementById('stage-info').innerHTML = message
+    document.getElementById('stage-info').classList.add("announcement")
+    this.announcementTimer.start()
+  }
+
+  handleAnnouncement(){
+    if(this.announcementTimer.running){
+
+      if(this.announcementTimer.time() > 600){
+        // an announcment was added elsewhere, this is just to shut it off
+        document.getElementById('stage-info').classList.remove("announcement")
+        this.announcementTimer.stop()
+      }
+
+    }
   }
 
   gameRunning(){
@@ -56,6 +75,8 @@ class Game {
 
   newGame(){
     if(!this.gameRunning()){
+      document.getElementById("stage-info").classList.remove("static")
+
       player.health = 100
       player.lifecycle = ALIVE
 
@@ -161,13 +182,11 @@ class Game {
       //     }
       //   }
       }
-
-
     }
-    
   }
 
   handleGame(){
+    this.handleAnnouncement()
     this.handleMusic()
 
     if(this.stage == TITLE){      
@@ -180,7 +199,7 @@ class Game {
 
       if(this.stageTimer.time() > this.loadTime){
         this.stage = PLAYING
-        document.getElementById("stage-info").innerHTML = ""
+        // document.getElementById("stage-info").innerHTML = ""
       }
 
     } else if(this.stage == PLAYING){
@@ -209,11 +228,13 @@ class Game {
 
     if( checkSoundsLoaded() ){
       document.getElementById("stage-info").innerHTML = "PRESS SPACEBAR"
+      document.getElementById("stage-info").classList.add("static")
     }
   }
 
   drawLoading(){
-    document.getElementById("stage-info").innerHTML = "ROUND " + this.roundCount +  " LOADING..."
+    // document.getElementById("stage-info").innerHTML = "ROUND " + this.roundCount +  " LOADING..."
+    this.announcement("ROUND " + this.roundCount +  " LOADING...")
     duster.loadingAnimation()
 
     // fade toward blac
@@ -318,6 +339,7 @@ class Game {
 
   drawUI(){
     this.drawScore()
+    this.drawLevel()
     this.drawPower()
     this.drawHealth()
     this.drawKnowledge()
@@ -329,6 +351,10 @@ class Game {
 
   drawScore(){
     document.getElementById("score").innerHTML = this.score
+  }
+
+  drawLevel(){
+    document.getElementById("level").innerHTML = player.level
   }
 
   drawPower(){
@@ -533,7 +559,7 @@ class Game {
           }
 
           let corrupthit = enemy.handleHit(player)
-          if(player.lifecycle == ALIVE && enemy.lifecyle == ALIVE && corrupthit){
+          if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
 
             if(!enemy.healthTimer.running){
               enemy.healthTimer.start()

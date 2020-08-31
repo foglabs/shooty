@@ -41,6 +41,10 @@ class Sound {
       this.soundFile.play()
     }
   }
+
+  stop(){
+    this.soundFile.stop()
+  }
 }
 
 
