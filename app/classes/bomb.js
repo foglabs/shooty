@@ -18,7 +18,7 @@ class Bomb extends Character {
     // when will it start exploding
     this.explodeTime = 800
     // when will it begin to fade out, lvl 1 is 1800ms
-    this.disappearTime = this.strength * 360
+    this.disappearTime = 420 * Math.log( this.strength )
 
     this.boomColor = [255,191,103]
     this.timeToBoomColor = 300
@@ -43,6 +43,10 @@ class Bomb extends Character {
     }
   }
 
+  maxSize(){
+    return 4 * Math.log(this.strength/2)
+  }
+
   explode(){
     if(!this.animTimer.running){
       this.animTimer.start()
@@ -56,13 +60,13 @@ class Bomb extends Character {
       }
 
       // strength is when to stop growing aka max size
-      if(this.mesh.scale.x < this.strength){
+      if(this.mesh.scale.x < this.maxSize()){
         this.mesh.scale.x += 0.18
       }
-      if(this.mesh.scale.y < this.strength){
+      if(this.mesh.scale.y < this.maxSize()){
         this.mesh.scale.y += 0.18
       }
-      if(this.mesh.scale.y < this.strength){
+      if(this.mesh.scale.y < this.maxSize()){
         this.mesh.scale.z += 0.18
       }  
     }

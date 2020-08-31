@@ -601,6 +601,10 @@ class Game {
               if(enemy.knowledgeValue > 0){
                 player.changeKnowledge( enemy.knowledgeValue )
               }
+
+              if(enemy.healthValue > 0){
+                player.changeHealth( enemy.healthValue )
+              }
             }
 
             game.changeScore(score)

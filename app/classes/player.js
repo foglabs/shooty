@@ -66,6 +66,11 @@ class Player extends Character {
     
   }
 
+  changeHealth(healthChange){
+    // this is for healing, dont want to use v similar takeDamage because it makes sounds
+    this.health = incInRange( this.health, healthChange, 0, 100 )
+  }
+
   changePower(powChange){
     this.lastPower = this.power
     // this.power += pow

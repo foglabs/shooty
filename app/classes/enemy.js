@@ -55,10 +55,12 @@ class Enemy extends Character {
     )
 
     this.dna = dna
+    this.healthValue = 0
 
     // cube
     if(this.dna <= 0.2){
       this.addParticles(healthenemyMap)
+      this.healthValue = 20
     }
 
     if(Math.random() > 0.6){
