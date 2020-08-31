@@ -24,59 +24,66 @@ class KeyHandler {
 
     this.keyHeats[ keyName ] += 0.015
 
+    // cool the opposing key so we keep our fake sense of momentum
+    if (keyName == "ArrowLeft"){
+      this.coolKey("ArrowRight")
+    } else if (keyName == "ArrowUp"){
+      this.coolKey("ArrowDown")
+    } else if (keyName == "ArrowRight"){
+      this.coolKey("ArrowLeft")
+    } else if (keyName == "ArrowDown"){
+      this.coolKey("ArrowUp")
+    }        
   }
 
   coolKey(keyName){
-
-     
-    this.keyHeats[ keyName ] -= 0.09
+    this.keyHeats[ keyName ] -= 0.34
+    // this.keyHeats[ keyName ] -= 0.09
     if(this.keyHeats[ keyName ] < 0){
       this.keyHeats[ keyName ] = 0
     }
-
-      // console.log( 'cooled ', keyName, ' to ', this.keyHeats[ keyName ] )
   }
 
   handleKeyTemp(){
 
     // 10 ms response time on heating cooling
-    if( this.tempTimer.time() > 10 ){
+    if( this.tempTimer.time() > 40 ){
       this.tempTimer.reset()
       let keys = ["ArrowLeft","ArrowUp","ArrowRight","ArrowDown"]
 
       for(var i=0; i<4; i++){
-        let thisKey = keys[i]
+        let keyName = keys[i]
         
         // if its held down, heat it and move it
-        if( this.heldKeys[ thisKey ] ){
-          // console.log( 'i heat it', thisKey )
+        if( this.heldKeys[ keyName ] ){
+          // console.log( 'i heat it', keyName )
           // heat it
-          this.heatKey( thisKey )
+          this.heatKey( keyName )
 
           // cheese it
-          let accChange = this.calcAccChange( this.keyHeats[ thisKey ] )
+          let accChange = this.calcAccChange( this.keyHeats[ keyName ] )
 
-          if (thisKey == "ArrowLeft"){
+          if (keyName == "ArrowLeft"){
             // console.log("left")
             player.accx -= accChange
-          } else if (thisKey == "ArrowUp"){
+          } else if (keyName == "ArrowUp"){
             // console.log("up")
             player.accy += accChange
-          } else if (thisKey == "ArrowRight"){
+          } else if (keyName == "ArrowRight"){
             // console.log("right")
             player.accx += accChange
-          } else if (thisKey == "ArrowDown"){
+          } else if (keyName == "ArrowDown"){
             // console.log("down")
             player.accy -= accChange
           }        
 
         } else {
-          // console.log( 'i cool it', thisKey )
+          // console.log( 'i cool it', keyName )
           // its not held, cool it
-          this.coolKey( thisKey )
+          this.coolKey( keyName )
         }
 
-        // console.log( 'current key temp is', thisKey, this.keyHeats[ thisKey ] )
+        // console.log( 'current key temp is', keyName, this.keyHeats[ keyName ] )
       }
 
     }

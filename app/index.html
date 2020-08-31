@@ -28,9 +28,7 @@
       </div>
     </div>
 
-    <div id="stage-info">
-      PRESS SPACEBAR
-    </div>
+    <div id="stage-info"></div>
 
     <script type="text/javascript">
       function lerp(a, b, u) {
@@ -57,6 +55,7 @@
     <script src="three.js"></script>
     <script src="classes/keyHandler.js"></script>
     <script src="classes/sound.js"></script>
+    <script src="classes/music.js"></script>
     <script src="classes/game.js"></script>
     <script src="classes/timer.js"></script>
     <script src="classes/duster.js"></script>
@@ -83,10 +82,31 @@
       ENDING = 3
       GAMEOVER = 4
 
-      // sound type
-      FX = 0
-      BGM = 1
-      AMB = 2
+      function checkSoundsLoaded(){
+        let done = true
+        !fx_ekill1.loaded ? done = false : null
+        !fx_ekill2.loaded ? done = false : null
+        !fx_ekill3.loaded ? done = false : null
+        !fx_ekill4.loaded ? done = false : null
+        !fx_ekill5.loaded ? done = false : null
+        !fx_ekill6.loaded ? done = false : null
+        !fx_edmg1.loaded ? done = false : null
+        !fx_edmg2.loaded ? done = false : null
+        !fx_edmg3.loaded ? done = false : null
+        !fx_edmg4.loaded ? done = false : null
+        !fx_edmg5.loaded ? done = false : null
+        !fx_ckill1.loaded ? done = false : null
+        !fx_ckill2.loaded ? done = false : null
+        !fx_ckill3.loaded ? done = false : null
+        !fx_phealth1.loaded ? done = false : null
+        !fx_phealth2.loaded ? done = false : null
+        !fx_phealth3.loaded ? done = false : null
+        !fx_youredeadE.loaded ? done = false : null
+        !fx_levelupE2.loaded ? done = false : null
+        !fx_startgameE.loaded ? done = false : null
+        !fx_song2.loaded ? done = false : null
+        return done
+      }
 
       // run every frame
       function animate() {
@@ -103,6 +123,32 @@
         // for the HUD
         renderer.render(sceneHUD, cameraHUD)
       }
+
+      let listener = new THREE.AudioListener()
+      let audioLoader = new THREE.AudioLoader()
+
+      let fx_ekill1 = new Sound("sounds/ekill1.wav")
+      let fx_ekill2 = new Sound("sounds/ekill2.wav")
+      let fx_ekill3 = new Sound("sounds/ekill3.wav")
+      let fx_ekill4 = new Sound("sounds/ekill4.wav")
+      let fx_ekill5 = new Sound("sounds/ekill5.wav")
+      let fx_ekill6 = new Sound("sounds/ekill6.wav")
+      let fx_edmg1 = new Sound("sounds/edmg1.wav")
+      let fx_edmg2 = new Sound("sounds/edmg2.wav")
+      let fx_edmg3 = new Sound("sounds/edmg3.wav")
+      let fx_edmg4 = new Sound("sounds/edmg4.wav")
+      let fx_edmg5 = new Sound("sounds/edmg5.wav")
+      let fx_ckill1 = new Sound("sounds/ckill1.wav")
+      let fx_ckill2 = new Sound("sounds/ckill2.wav")
+      let fx_ckill3 = new Sound("sounds/ckill3.wav")
+      let fx_phealth1 = new Sound("sounds/phealth1.wav")
+      let fx_phealth2 = new Sound("sounds/phealth2.wav")
+      let fx_phealth3 = new Sound("sounds/phealth3.wav")
+      let fx_youredeadE = new Sound("sounds/youredeadE.wav", 0.8)
+      let fx_levelupE2 = new Sound("sounds/levelupE2.wav", 0.8)
+      let fx_startgameE = new Sound("sounds/startgameE.wav", 0.8)
+      let fx_song2 = new Music("sounds/song2.wav", 0.8)
+
 
       // scene contains objects
       var scene = new THREE.Scene();
@@ -126,117 +172,6 @@
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
       camera.position.z = 5
-
-      let listener = new THREE.AudioListener()
-      let audioLoader = new THREE.AudioLoader()
-
-      let ekill1 = new THREE.Audio(listener)
-      audioLoader.load('sounds/ekill1.wav', function(buff) {
-        ekill1.setBuffer( buff )
-        ekill1.setVolume( 3.0 )
-      })
-      let fx_ekill1 = new Sound(ekill1)
-      let ekill2 = new THREE.Audio(listener)
-      audioLoader.load('sounds/ekill2.wav', function(buff) {
-        ekill2.setBuffer( buff )
-        ekill2.setVolume( 3.0 )
-      })
-      let fx_ekill2 = new Sound(ekill2)
-      let ekill3 = new THREE.Audio(listener)
-      audioLoader.load('sounds/ekill3.wav', function(buff) {
-        ekill3.setBuffer( buff )
-        ekill3.setVolume( 3.0 )
-      })
-      let fx_ekill3 = new Sound(ekill3)
-      let ekill4 = new THREE.Audio(listener)
-      audioLoader.load('sounds/ekill4.wav', function(buff) {
-        ekill4.setBuffer( buff )
-        ekill4.setVolume( 3.0 )
-      })
-      let fx_ekill4 = new Sound(ekill4)
-      let ekill5 = new THREE.Audio(listener)
-      audioLoader.load('sounds/ekill5.wav', function(buff) {
-        ekill5.setBuffer( buff )
-        ekill5.setVolume( 3.0 )
-      })
-      let fx_ekill5 = new Sound(ekill5)
-      let ekill6 = new THREE.Audio(listener)
-      audioLoader.load('sounds/ekill6.wav', function(buff) {
-        ekill6.setBuffer( buff )
-        ekill6.setVolume( 3.0 )
-      })
-      let fx_ekill6 = new Sound(ekill6)
-
-      let edmg1 = new THREE.Audio(listener)
-      audioLoader.load('sounds/edmg1.wav', function(buff) {
-        edmg1.setBuffer( buff )
-        edmg1.setVolume( 3.0 )
-      })
-      let fx_edmg1 = new Sound(edmg1)
-      let edmg2 = new THREE.Audio(listener)
-      audioLoader.load('sounds/edmg2.wav', function(buff) {
-        edmg2.setBuffer( buff )
-        edmg2.setVolume( 3.0 )
-      })
-      let fx_edmg2 = new Sound(edmg2)
-      let edmg3 = new THREE.Audio(listener)
-      audioLoader.load('sounds/edmg3.wav', function(buff) {
-        edmg3.setBuffer( buff )
-        edmg3.setVolume( 3.0 )
-      })
-      let fx_edmg3 = new Sound(edmg3)
-      let edmg4 = new THREE.Audio(listener)
-      audioLoader.load('sounds/edmg4.wav', function(buff) {
-        edmg4.setBuffer( buff )
-        edmg4.setVolume( 3.0 )
-      })
-      let fx_edmg4 = new Sound(edmg4)
-      let edmg5 = new THREE.Audio(listener)
-      audioLoader.load('sounds/edmg5.wav', function(buff) {
-        edmg5.setBuffer( buff )
-        edmg5.setVolume( 3.0 )
-      })
-      let fx_edmg5 = new Sound(edmg5)
-
-      let ckill1 = new THREE.Audio(listener)
-      audioLoader.load('sounds/ckill1.wav', function(buff) {
-        ckill1.setBuffer( buff )
-        ckill1.setVolume( 3.0 )
-      })
-      let fx_ckill1 = new Sound(ckill1)
-      let ckill2 = new THREE.Audio(listener)
-      audioLoader.load('sounds/ckill2.wav', function(buff) {
-        ckill2.setBuffer( buff )
-        ckill2.setVolume( 3.0 )
-      })
-      let fx_ckill2 = new Sound(ckill2)
-      let ckill3 = new THREE.Audio(listener)
-      audioLoader.load('sounds/ckill3.wav', function(buff) {
-        ckill3.setBuffer( buff )
-        ckill3.setVolume( 3.0 )
-      })
-      let fx_ckill3 = new Sound(ckill3)
-
-      let phealth1 = new THREE.Audio(listener)
-      audioLoader.load('sounds/phealth1.wav', function(buff) {
-        phealth1.setBuffer( buff )
-        phealth1.setVolume( 3.0 )
-      })
-      let fx_phealth1 = new Sound(phealth1)
-      let phealth2 = new THREE.Audio(listener)
-      audioLoader.load('sounds/phealth2.wav', function(buff) {
-        phealth2.setBuffer( buff )
-        phealth2.setVolume( 3.0 )
-      })
-      let fx_phealth2 = new Sound(phealth2)
-      let phealth3 = new THREE.Audio(listener)
-      audioLoader.load('sounds/phealth3.wav', function(buff) {
-        phealth3.setBuffer( buff )
-        phealth3.setVolume( 3.0 )
-      })
-      let fx_phealth3 = new Sound(phealth3)
-
-
 
       // this is for the gui
       let width = window.innerWidth
@@ -303,7 +238,10 @@
           
           // SPACE BAR
           if(game.stage == TITLE || game.stage == GAMEOVER){
-            game.newGame()
+            if( checkSoundsLoaded() ){
+              console.log( 'new game' )
+              game.newGame()
+            }
 
           } else if(game.stage == PLAYING){
             player.startKillingCircle()

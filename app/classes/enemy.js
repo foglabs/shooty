@@ -22,25 +22,25 @@ class Enemy extends Character {
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
       health = 2
-      nutritionalValue = 5
+      nutritionalValue = 10
       base_color = [72,201,46]
     } else if(dna > 0.4 && dna <= 0.6) {
       // circle
       health = 12
-      nutritionalValue = 10
+      nutritionalValue = 18
       geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [214,189,58]
     } else if(dna > 0.6 && dna <= 0.8) {
       // octa
       health = 12
-      nutritionalValue = 18
+      nutritionalValue = 24
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
-      knowledgeValue = 20
+      knowledgeValue = 25
     } else {
       // 
       health = 10
-      nutritionalValue = 18
+      nutritionalValue = 20
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
       base_color = [114,194,189]
     }
@@ -101,6 +101,8 @@ class Enemy extends Character {
     this.color = this.baseColor
     this.nutritionalValue = nutritionalValue
     this.knowledgeValue = knowledgeValue
+
+    this.inScene = false
   }
 
   calcHitColor(val){
@@ -193,7 +195,7 @@ class Enemy extends Character {
       bomb = game.bombs[i]
       if( bomb && bomb.exploded && bomb.damageTimer.time() > 400 && this.handleHit(bomb) ){
         bomb.damageTimer.reset()
-        console.log( 'yall got bommmed' )
+        // console.log( 'yall got bommmed' )
         this.takeDamage( 20 )
       }
     }
@@ -240,6 +242,7 @@ class Enemy extends Character {
           this.removeSprite()
 
           // this will allow the enemy maintenance loop in game to actually dispose of the CORPSE
+          // console.log( 'i hereby pronounce you, fucking dead' )
           this.lifecycle = DEAD
         }
 

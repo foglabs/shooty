@@ -28,12 +28,21 @@ class Game {
     this.animTimer = new Timer()
 
     // countdown to generate enemies every so often
-    this.enemyInterval = 16000
+    this.defaultEnemyInterval = 60000
+    this.enemyInterval = 60000
+    this.defaultEnemyMax = 5
     this.enemyMax = 5
 
     this.bombs = []
 
     this.roundCount = 1
+
+    this.musicVolume = 0.0
+    // wait a bit to start music
+    this.musicTimer = new Timer()
+    // fading in
+    // this.musicFadeTimer = new Timer()
+
   }
 
   gameRunning(){
@@ -50,6 +59,15 @@ class Game {
       player.health = 100
       player.lifecycle = ALIVE
 
+      this.corruptionMax = 0.2
+      this.enemyInterval = this.defaultEnemyInterval
+      this.enemyMax = this.defaultEnemyMax
+
+      this.roundCount = 1
+
+      fx_startgameE.play()
+      this.musicTimer.start()
+
       this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax, [0,0,0])
     }
   }
@@ -58,10 +76,11 @@ class Game {
     // ramp up difficulty for next round
     // exponential, but dull it down so we get to about x20 base #enemies by round 8
     let maxBump = 0.3 * Math.pow(this.roundCount, 2)
-    // make the max # of enemeis per gen bigger
-    let newEnemyMax = Math.round(this.enemyMax * maxBump)
+    // make the max # of enemeis per gen bigger, floor it with 5 so we dont have 3 rounds of 2 enemies
+    // let newEnemyMax = this.defaultEnemyMax + Math.round(this.enemyMax * maxBump)
+    let newEnemyMax = Math.round(this.defaultEnemyMax * maxBump)
     // make the enemy timer shorter
-    let newEnemyInterval = Math.round(this.enemyInterval * 0.8)
+    let newEnemyInterval = Math.round(this.enemyInterval * 0.90)
     // increase maximum % of corurpted by 8%
     let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
 
@@ -70,6 +89,10 @@ class Game {
     r = Math.floor(Math.random() * 100)
     g = Math.floor(Math.random() * 100)
     b = Math.floor(Math.random() * 100)
+
+    this.corruptionTimer.reset()
+
+
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, [r,g,b])
   }
 
@@ -77,8 +100,6 @@ class Game {
     this.enemyMax = enemyMax
     this.enemyInterval = enemyInterval
     this.corruptionMax = corruptionMax
-
-    // console.log( 'roundcolo', roundColor, this.roundColor, this.lastRoundColor )
 
     // record for loading lerping
     this.lastRoundColor = this.roundColor
@@ -96,6 +117,7 @@ class Game {
     this.stageTimer.start()
 
     this.enemyTimer = new Timer(this.enemyInterval)
+    this.enemyTimer.start()
 
     let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
     this.generateEnemies( numEnemies )
@@ -104,9 +126,49 @@ class Game {
   endGame(){
     this.stageTimer.start()
     this.stage = ENDING    
+    fx_youredeadE.play()
+  }
+
+  handleMusic(){
+
+    if(this.stage == TITLE || this.stage == LOADING || this.stage == PLAYING){
+
+
+      // oh forget it!      
+      // music start
+      if(this.musicTimer.running && this.musicTimer.time() > 4000){
+        // fx_song2.setVolume(0.0)
+
+        if(!fx_song2.playing()){
+          fx_song2.play()
+        }
+
+      //   if(!this.musicFadeTimer.running){
+      //     this.musicFadeTimer.start()
+      //   }
+
+      //   // music fade
+      //   if(this.musicFadeTimer.time() > 100){
+      //     this.musicFadeTimer.reset()
+
+      //     this.musicVolume = this.musicVolume + 0.01
+      //     console.log( 'added musicvolume', this.musicVolume )
+      //     fx_song2.setVolume( this.musicVolume )
+
+      //     if(this.musicVolume > 0.6){
+      //       // stop changing once we reach the right volume
+      //       this.musicTimer.stop()
+      //     }
+      //   }
+      }
+
+
+    }
+    
   }
 
   handleGame(){
+    this.handleMusic()
 
     if(this.stage == TITLE){      
       this.drawTitle()
@@ -114,8 +176,6 @@ class Game {
 
       player.mesh.visible = true
       
-      // console.log( 'stage time is ', this.stageTimer.time() )
-
       this.drawLoading()
 
       if(this.stageTimer.time() > this.loadTime){
@@ -124,9 +184,11 @@ class Game {
       }
 
     } else if(this.stage == PLAYING){
-
       this.drawPlaying()
     } else if(this.stage == ENDING){
+      
+      // stop!
+      fx_song2.stop()
 
       this.drawEnding()
 
@@ -144,6 +206,10 @@ class Game {
 
   drawTitle(){
     this.setBackgroundColor(140,180,255)
+
+    if( checkSoundsLoaded() ){
+      document.getElementById("stage-info").innerHTML = "PRESS SPACEBAR"
+    }
   }
 
   drawLoading(){
@@ -156,6 +222,18 @@ class Game {
   }
 
   drawPlaying(){
+
+    if(this.bombs.length > 0){
+      this.handleBombs()
+    }
+
+    this.handleEnemies()
+
+    //  if everybody's dead... 
+    if( this.everybodyDead() ){
+      this.nextRound()
+    }
+
     if(!this.enemyTimer.running){
       this.enemyTimer.start()
     }
@@ -168,6 +246,7 @@ class Game {
 
       // add a random # of enemies, ensure at least 50% of max
       let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
+      console.log( 'ene max is', this.enemyMax )
       console.log( 'generating ene ', numEnemies )
       this.generateEnemies( numEnemies )
 
@@ -178,17 +257,6 @@ class Game {
       // stop moving if we DEAD
       player.handleMovement()
     }
-
-    //  if everybody's dead... 
-    if(this.enemies.length == 0){
-      this.nextRound()
-    }
-
-    if(this.bombs.length > 0){
-      this.handleBombs()
-    }
-
-    this.handleEnemies()
 
     player.animation()
     this.drawUI()
@@ -220,6 +288,7 @@ class Game {
         // do this so we dont make a sprite
         this.enemies[i].lifecycle = ALIVE
         this.enemies[i].remove()
+        this.enemies[i].removeSprite()
         delete this.enemies[i]
       }
     }
@@ -331,7 +400,14 @@ class Game {
 
       let enemy = this.addEnemy()
       this.enemies.push(enemy)
-      scene.add(this.enemies[initial_num_enemies+i].mesh)
+    }
+
+    for(var i=0; i<this.enemies.length; i++){
+      // run through and actually add new meshes
+      if(this.enemies[i] && !this.enemies[i].inScene){
+        scene.add(this.enemies[i].mesh)
+        this.enemies[i].inScene = true
+      }
     }
   }
 
@@ -365,6 +441,10 @@ class Game {
         this.bombs.splice(i, 1)
       }
     }
+  }
+
+  everybodyDead(){
+    return this.enemies.every((enemy) => enemy.lifecycle == DEAD || enemy.lifecycle == DYING)
   }
 
   handleEnemies(){
@@ -453,7 +533,7 @@ class Game {
           }
 
           let corrupthit = enemy.handleHit(player)
-          if(player.lifecycle == ALIVE && corrupthit){
+          if(player.lifecycle == ALIVE && enemy.lifecyle == ALIVE && corrupthit){
 
             if(!enemy.healthTimer.running){
               enemy.healthTimer.start()
@@ -484,6 +564,7 @@ class Game {
             // only score once
             let score
             if(enemy.corrupted){
+
               score = 12
             } else {
 

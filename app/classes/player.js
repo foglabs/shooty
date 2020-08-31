@@ -56,11 +56,11 @@ class Player extends Character {
       this.damageSoundTimer.reset()
 
       if(this.health >= 66){
-        phealth1.play()
+        fx_phealth1.play()
       } else if(this.health >= 33){
-        phealth2.play()
+        fx_phealth2.play()
       } else if(this.health > 0){
-        phealth2.play()
+        fx_phealth2.play()
       }  
     }
     
@@ -89,6 +89,7 @@ class Player extends Character {
   levelUp(){
     this.knowledge = 0
     this.level += 1
+    fx_levelupE2.play()
   }
 
   dropBomb(){
@@ -136,12 +137,9 @@ class Player extends Character {
 
     let segmentCount = 32
     let radius
-    // why doesnt this work
-    radius = this.power/game.powerMax*2
-    console.log( 'rad is ', radius )
-    // this works
-    // radius = 1
-    // only redraw if we changed size
+    // radius = this.power/game.powerMax*2
+    // need more beeg
+    radius = this.power/game.powerMax*3
 
     this.killingCircle.geometry.vertices = []
     var theta
