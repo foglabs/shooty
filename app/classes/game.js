@@ -28,12 +28,14 @@ class Game {
     this.animTimer = new Timer()
 
     // countdown to generate enemies every so often
-    this.defaultEnemyInterval = 24000
-    this.enemyInterval = 24000
+    this.defaultEnemyInterval = 36000
+    this.enemyInterval = 36000
     this.defaultEnemyMax = 5
     this.enemyMax = 5
 
     this.bombs = []
+    this.randomBombsTimer = new Timer()
+    this.randomBombsTimer.start()
 
     this.roundCount = 1
 
@@ -161,7 +163,7 @@ class Game {
         // fx_song2.setVolume(0.0)
 
         if(!fx_song2.playing()){
-          fx_song2.play()
+          // fx_song2.play()
         }
 
       //   if(!this.musicFadeTimer.running){
@@ -242,10 +244,36 @@ class Game {
     this.fadeBackgroundToward()
   }
 
+  randomBombs(){
+    if(this.randomBombsTimer.time() > 3000){
+      this.announcement("NOW BOMBING")
+      this.randomBombsTimer.reset()
+
+      let numBombs = Math.floor(Math.random() * 4 * this.roundCount)
+      let x,y
+      let bomb
+      for(var i=0; i<numBombs; i++){
+        bomb = new Bomb([100,150,50], 3)
+        x = Math.random() * 6 - 3
+        y = Math.random() * 6 - 3
+
+        bomb.mesh.position.set(x, y, 0)
+        scene.add( bomb.mesh )
+        this.bombs.push( bomb )
+      }
+      
+    }
+  }
+
   drawPlaying(){
 
     if(this.bombs.length > 0){
       this.handleBombs()
+    }
+
+    if(player.bombsTimer.time() > player.bombsInterval){
+      player.bombsTimer.reset()
+      player.numBombs = incInRange(player.numBombs, 1, 0, player.numBombsMax)
     }
 
     this.handleEnemies()
@@ -343,6 +371,7 @@ class Game {
     this.drawPower()
     this.drawHealth()
     this.drawKnowledge()
+    this.drawBombs()
   }
 
   drawTimer(time){
@@ -367,6 +396,10 @@ class Game {
 
   drawKnowledge(){
     document.getElementById("knowledge").value = player.knowledge
+  }
+
+  drawBombs(){
+    document.getElementById("bombs").innerHTML = "O".repeat( player.numBombs )
   }
 
   setBackgroundColor(r,g,b){
@@ -552,7 +585,7 @@ class Game {
               if(enemy.healthTimer.time() > 400){
                 enemy.healthTimer.reset()
 
-                enemy.takeDamage(6)
+                enemy.takeDamage( player.killingCircleDamage() )
                 enemy.setColor(0,0,255)
               }  
             }
@@ -631,5 +664,9 @@ class Game {
 
     // record this after we've added new corrupts, and cleaned up dead enemies
     this.percentCorrupted = numCorrupted/this.enemies.length
+    if(player.numBombsMax < 1 && this.percentCorrupted == 1){
+      this.randomBombs()      
+      // add random bombs if we're stuck on all corrupted and dont got bombs yet
+    }
   }  
 }

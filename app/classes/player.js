@@ -30,6 +30,12 @@ class Player extends Character {
     this.killingCircleActive = false
     this.killingCircleTimer = new Timer()
 
+    this.numBombs = 0
+    this.numBombsMax = 0
+    this.bombsTimer = new Timer()
+    this.bombsTimer.start()
+    this.bombsInterval = 1000
+
     // build to level up
     this.knowledge = 0
     this.level = 1
@@ -95,15 +101,24 @@ class Player extends Character {
     this.knowledge = 0
     game.knowledgeMax = game.knowledgeMax * 1.25
     this.level += 1
+
+    this.numBombsMax = Math.floor(0 + this.level/2)
+    this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
+
     fx_levelupE2.play()
   }
 
   dropBomb(){
-    let bomb = new Bomb([50,50,50], this.level)
-    bomb.mesh.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
-    scene.add( bomb.mesh )
+    console.log( 'bmobms', this.numBombs, this.numBombsMax )
+    if(this.numBombs > 0){
+      let bomb = new Bomb([50,50,50], this.level)
+      bomb.mesh.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
+      scene.add( bomb.mesh )
+      game.bombs.push( bomb )  
 
-    game.bombs.push( bomb )
+      this.numBombs = incInRange( this.numBombs, -1, 0, this.numBombsMax )
+    }
+    
   }
 
   addKillingCircle(){
@@ -178,6 +193,10 @@ class Player extends Character {
       this.killingCircle.visible = false
       this.killingCircleArea.mesh.visible = false
     }
+  }
+
+  killingCircleDamage(){
+    return 8 + 5 * Math.pow(this.level / 4, 2)
   }
 
   customMovement(){

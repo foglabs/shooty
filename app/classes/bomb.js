@@ -18,7 +18,7 @@ class Bomb extends Character {
     // when will it start exploding
     this.explodeTime = 800
     // when will it begin to fade out, lvl 1 is 1800ms
-    this.disappearTime = 420 * Math.log( this.strength )
+    this.disappearTime = 800 * Math.log( 10 * player.level )
 
     this.boomColor = [255,191,103]
     this.timeToBoomColor = 300
