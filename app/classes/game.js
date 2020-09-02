@@ -18,7 +18,10 @@ class Game {
     // bump this up to get more difficult
     this.corruptionMax = 0.2
     this.corruptionTimer = new Timer()
-    
+
+    this.corruptedDamageDefault = 4
+    this.corruptedDamage = 4
+
     // max playe rpower
     this.powerMax = 100
     this.knowledgeMax = 100
@@ -103,7 +106,8 @@ class Game {
     // let newEnemyMax = this.defaultEnemyMax + Math.round(this.enemyMax * maxBump)
     let newEnemyMax = Math.round(this.defaultEnemyMax * maxBump)
     // make the enemy timer shorter
-    let newEnemyInterval = Math.round(this.enemyInterval * 0.90)
+    // let newEnemyInterval = Math.round(this.enemyInterval * 0.90)
+    let newEnemyInterval = Math.round(this.defaultEnemyInterval * 100 / ( Math.pow(this.roundCount, 2) + 100 ) )
     // increase maximum % of corurpted by 8%
     let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
 
@@ -114,7 +118,7 @@ class Game {
     b = Math.floor(Math.random() * 100)
 
     this.corruptionTimer.reset()
-
+    this.corruptedDamage = Math.round( this.corruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
 
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, [r,g,b])
   }
@@ -540,6 +544,11 @@ class Game {
           enemy.handleBombs()
         }
 
+        if(player.sword && player.sword.active){
+          // if the swords out, get stabt
+          enemy.handleSword()
+        }
+
         // LIFE
         if(!enemy.corrupted){
           let hitresult = enemy.handleHit(player)
@@ -601,7 +610,7 @@ class Game {
             if(enemy.healthTimer.time() > 500){
               enemy.healthTimer.reset()
   
-              player.takeDamage(4)
+              player.takeDamage( game.corruptedDamage )
   
               if(player.lifecycle == ALIVE && player.health <= 0){
                 player.addSprite()

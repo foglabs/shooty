@@ -7,29 +7,36 @@ class Enemy extends Character {
     let nutritionalValue
     // how much knowl player gets
     let knowledgeValue = 0
-
+    let enemyType
 
     // de mesh
     let geometry
     let dna = Math.random()
+
+    // round weight
+    dna = dna * ( 1 - ( dna * Math.pow(game.roundCount, 2) / 5000 ) )
+
     if(dna <= 0.2){
-      // cube
-      geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
-      health = 30
-      nutritionalValue = 40
-      base_color = [189,52,147]
+      // 
+      health = 10
+      nutritionalValue = 20
+      geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
+      base_color = [114,194,189]
+      enemyType = SPHERE
     } else if(dna > 0.2 && dna <= 0.4){
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
       health = 2
       nutritionalValue = 10
       base_color = [72,201,46]
+      enemyType = STICK
     } else if(dna > 0.4 && dna <= 0.6) {
       // circle
       health = 12
       nutritionalValue = 18
       geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [214,189,58]
+      enemyType = CIRCLE
     } else if(dna > 0.6 && dna <= 0.8) {
       // octa
       health = 12
@@ -37,12 +44,14 @@ class Enemy extends Character {
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
       knowledgeValue = 25
+      enemyType = KNOWLOCTA
     } else {
-      // 
-      health = 10
-      nutritionalValue = 20
-      geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
-      base_color = [114,194,189]
+      // cube
+      geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
+      health = 30
+      nutritionalValue = 40
+      base_color = [189,52,147]
+      enemyType = HEALCUBE
     }
 
     
@@ -56,9 +65,10 @@ class Enemy extends Character {
 
     this.dna = dna
     this.healthValue = 0
+    this.enemyType = enemyType
 
     // cube
-    if(this.dna <= 0.2){
+    if(this.enemyType == HEALCUBE){
       this.addParticles(healthenemyMap)
       this.healthValue = 20
     }
@@ -68,7 +78,7 @@ class Enemy extends Character {
 
       // if we're in here, were doing somethin right
 
-      if(this.dna > 0.4 && this.dna <= 0.6){
+      if(this.enemyType == CIRCLE){
         // circle
         this.scaleFactor = 1 + Math.random() * 0.4
       } else {
@@ -203,13 +213,23 @@ class Enemy extends Character {
     }
   }
 
+  handleSword(){
+    // sword follows the same pattern as character
+    let hit = this.handleHit( player.sword )
+    if(hit && player.sword.damageTimer.time() > 200){
+      player.sword.damageTimer.reset()
+      this.takeDamage( 5 * player.level )
+      console.log( 'fuckin took ', 5*player.level, this.health )
+    }
+  }
+
   customAnimation(){
 
     // dont do it, if yA DEAD
     if(this.lifecycle == ALIVE){
       this.rotation()
 
-      if(this.dna <= 0.2){
+      if(this.enemyType == HEALCUBE){
         // health cube
         this.duster.particleSystem.rotation.x += 0.01
       }

@@ -67,6 +67,7 @@
     <script src="classes/player.js"></script>
     <script src="classes/enemy.js"></script>
     <script src="classes/bomb.js"></script>
+    <script src="classes/sword.js"></script>
     <script>
 
       LEFT = 0
@@ -85,6 +86,13 @@
       PLAYING = 2
       ENDING = 3
       GAMEOVER = 4
+
+      // enemy type
+      SPHERE = 0
+      STICK = 1
+      CIRCLE = 2
+      KNOWLOCTA = 3
+      HEALCUBE = 4
 
       function checkSoundsLoaded(){
         let done = true
@@ -252,7 +260,10 @@
           }
         } else if(event.key == "z"){
           player.dropBomb()
+        } else if(event.key == "x"){
+          player.startSword()
         }
+
       }
       function onDocumentKeyUp(event) {
         keyHandler.heldKeys[event.key] = false
@@ -260,6 +271,8 @@
         // clear out stuff from nonheld keys
         if(event.key == " " || event.key == "Spacebar"){
           player.stopKillingCircle()
+        } else if(event.key == "x"){
+          player.stopSword()
         }
       }
             

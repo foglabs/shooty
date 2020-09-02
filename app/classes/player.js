@@ -196,7 +196,40 @@ class Player extends Character {
   }
 
   killingCircleDamage(){
-    return 8 + 5 * Math.pow(this.level / 4, 2)
+    return 8 + 7 * Math.pow(this.level / 4, 2)
+  }
+
+  // sword
+  addSword(){
+    this.sword = new Sword()
+    this.sword.mesh.visible = false
+    scene.add( this.sword.mesh )
+  }
+
+  startSword(){
+    if(!this.sword){
+      this.addSword()
+    }
+
+    this.sword.active = true
+    this.sword.mesh.visible = true
+  }
+
+  stopSword(){
+    this.sword.active = true
+    this.sword.mesh.visible = false
+  }
+
+  drawSword(){
+
+    if(this.sword.rotateTimer.time() > 20){
+      this.sword.rotateTimer.reset()
+
+      // move the shit around on cirlce around the player
+      this.sword.rotate()
+
+      this.sword.bbox.setFromObject( this.sword.mesh )
+    }
   }
 
   customMovement(){
@@ -212,6 +245,15 @@ class Player extends Character {
       this.rotation()
 
       this.eatAnimation()
+      if(this.sword && this.sword.mesh.visible){
+        this.drawSword()
+
+        if(this.sword.powerTimer.time() > 100){
+          this.sword.powerTimer.reset()
+          this.changePower(-1)
+        }
+      }
+
       if(this.killingCircle && this.killingCircle.visible){
           
         if(this.killingCircleTimer.time() > 100){

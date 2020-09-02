@@ -226,7 +226,8 @@ class Character {
     this.takeDamageSound()
 
     // console.log( 'take damage ', dmg )
-    this.health -= dmg
+    // this.health -= dmg
+    this.health = incInRange( this.health, -1*dmg, 0, 1000 ) 
 
     if(!this.duster){
       this.addParticles( this.dmgSpriteMap() )
