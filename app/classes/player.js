@@ -36,6 +36,10 @@ class Player extends Character {
     this.bombsTimer.start()
     this.bombsInterval = 1000
 
+    this.swordEnabled = false
+    this.defaultSwordSpeed = DEG1
+    this.swordSpeed = DEG1
+
     // build to level up
     this.knowledge = 0
     this.level = 1
@@ -86,8 +90,6 @@ class Player extends Character {
   }
 
   changeKnowledge(knowChange){
-    // this.lastPower = this.power
-    // this.power += pow
 
     // lock em in 
     this.knowledge = incInRange( this.knowledge, knowChange, 0, game.knowledgeMax )
@@ -104,6 +106,14 @@ class Player extends Character {
 
     this.numBombsMax = Math.floor(0 + this.level/2)
     this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
+
+    if(this.level == 3){
+      this.swordEnabled = true
+    }
+   
+    if(this.swordEnabled){
+      this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/10) 
+    }
 
     fx_levelupE2.play()
   }
@@ -222,11 +232,12 @@ class Player extends Character {
 
   drawSword(){
 
-    if(this.sword.rotateTimer.time() > 20){
+    if(this.sword.rotateTimer.time() > 2){
       this.sword.rotateTimer.reset()
 
       // move the shit around on cirlce around the player
-      this.sword.rotate()
+      // this.sword.rotate()
+      this.sword.rotateTowardsMovement(this.accx, this.accy)
 
       this.sword.bbox.setFromObject( this.sword.mesh )
     }
@@ -244,7 +255,7 @@ class Player extends Character {
     if(this.lifecycle == ALIVE){
       this.rotation()
 
-      this.eatAnimation()
+      // this.eatAnimation()
       if(this.sword && this.sword.mesh.visible){
         this.drawSword()
 

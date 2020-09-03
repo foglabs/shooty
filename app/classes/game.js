@@ -167,7 +167,7 @@ class Game {
         // fx_song2.setVolume(0.0)
 
         if(!fx_song2.playing()){
-          // fx_song2.play()
+          fx_song2.play()
         }
 
       //   if(!this.musicFadeTimer.running){

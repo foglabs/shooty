@@ -19,23 +19,69 @@ class Sword {
     this.mesh.rotation.z = 0
   }
 
+  // just revolve like a dummy
   rotate(){
-    this.rotation += 0.01
-    if(this.rotation > 360){
-      this.rotation = 0
+    // this.rotation += 0.01
+    // if(this.rotation > DEG360){
+    //   this.rotation = 0
+    // }
+
+    this.rotateTo(this.rotation + 0.01)
+  }
+
+  rotateTowardsMovement(accx, accy){
+    let signx = Math.sign(accx)
+    let signy = Math.sign(accy)
+
+    let rad = this.rotation
+    // figure out where on circle we WANT to go, then figure out shortest path, then get resulting rad based on increment
+    if(signx == 0 && signy == 1 && !isWithin(rad, 0, 1) ){
+      // 0
+      rad = rotateToward(this.rotation, 0, player.swordSpeed)
+    } else if(signx == 1 && signy == 1 ){
+      // 45
+      rad = rotateToward(this.rotation, DEG45, player.swordSpeed)
+    } else if(signx == 1 && signy == 0 ){
+      // 90
+      rad = rotateToward(this.rotation, DEG90, player.swordSpeed) 
+    } else if(signx == 1 && signy == -1 ){
+      // 135
+      rad = rotateToward(this.rotation, DEG135, player.swordSpeed) 
+    } else if(signx == 0 && signy == -1 ){
+      // 180
+      rad = rotateToward(this.rotation, DEG180, player.swordSpeed) 
+    } else if(signx == -1 && signy == -1 ){
+      // 225
+      rad = rotateToward(this.rotation, DEG225, player.swordSpeed) 
+    } else if(signx == -1 && signy == 0 ){
+      // 270
+      rad = rotateToward(this.rotation, DEG270, player.swordSpeed) 
+    } else if(signx == -1 && signy == 1 ){
+      // 315
+      rad = rotateToward(this.rotation, DEG315, player.swordSpeed) 
     }
 
-    this.rotateTo(this.rotation)
-  }
+    if( !isWithin(rad, this.rotation, DEG1) ){
+      // chill if we're close enough to destination alraedy 
+      this.rotateTo(rad)
+    }
 
-  rotateTo(deg){
     let radius = 0.3
+    // position on sword circle lol
     let x = radius * Math.sin( this.rotation ) + player.mesh.position.x
     let y = radius * Math.cos( this.rotation ) + player.mesh.position.y
-
-    this.mesh.rotation.z = -1 * this.rotation
     this.mesh.position.set( x, y, 0 )
   }
+
+  rotateTo(rad){
+    this.rotation = rad
+
+    // this.mesh.rotation.z = -1 * this.rotation
+    this.mesh.rotation.z = -1 * rad
+  }
+
+
+
 
 
 }
