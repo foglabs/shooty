@@ -104,11 +104,16 @@ class Player extends Character {
     game.knowledgeMax = game.knowledgeMax * 1.25
     this.level += 1
 
-    this.numBombsMax = Math.floor(0 + this.level/2)
+    // start bombs at level 4
+    this.numBombsMax = Math.max(0, Math.floor(-1 + this.level/2))
+    if(this.numBombsMax > 0){
+      game.announcement("BOMBS UNLOCKED (Z)")
+    }
     this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
 
-    if(this.level == 3){
+    if(this.level == 2){
       this.swordEnabled = true
+      game.announcement("SWORD UNLOCKED (X)")
     }
    
     if(this.swordEnabled){

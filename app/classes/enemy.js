@@ -219,7 +219,7 @@ class Enemy extends Character {
     if(hit && player.sword.damageTimer.time() > 200){
       player.sword.damageTimer.reset()
       this.takeDamage( 5 * player.level )
-      console.log( 'fuckin took ', 5*player.level, this.health )
+      // console.log( 'fuckin took ', 5*player.level, this.health )
     }
   }
 

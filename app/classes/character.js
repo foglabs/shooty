@@ -103,8 +103,10 @@ class Character {
   }
 
   removeSprite(){
-    this.deadSprite.material.dispose()
-    scene.remove(this.deadSprite)
+    if(this.deadSprite){
+      this.deadSprite.material.dispose()
+      scene.remove(this.deadSprite)
+    }
   }
 
   red(){

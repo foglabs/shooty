@@ -9,45 +9,15 @@ class Game {
     // destination color for the round, fades during loading
     this.roundColor = [140,180,255]
 
-    this.ping = false
-    this.score = 0
+    this.setDefaultGameValues()
 
-    // this gets filled in index
-    this.enemies = []
-    this.percentCorrupted = 0
-    // bump this up to get more difficult
-    this.corruptionMax = 0.2
-    this.corruptionTimer = new Timer()
-
-    this.corruptedDamageDefault = 4
-    this.corruptedDamage = 4
-
-    // max playe rpower
-    this.powerMax = 100
-    this.knowledgeMax = 100
     this.stage = false
     this.stageTimer = new Timer()
     this.loadTime = 2000
     this.animTimer = new Timer()
 
-    // countdown to generate enemies every so often
-    this.defaultEnemyInterval = 36000
-    this.enemyInterval = 36000
-    this.defaultEnemyMax = 5
-    this.enemyMax = 5
-
-    this.bombs = []
-    this.randomBombsTimer = new Timer()
-    this.randomBombsTimer.start()
-
-    this.roundCount = 1
-
-    this.musicVolume = 0.0
     // wait a bit to start music
     this.musicTimer = new Timer()
-    // fading in
-    // this.musicFadeTimer = new Timer()
-
     this.announcementTimer = new Timer()
   }
 
@@ -78,18 +48,47 @@ class Game {
     this.stageTimer.start()
   }
 
+  setDefaultGameValues(){
+    this.u = 0
+
+    this.score = 0
+
+    // this gets filled in index
+    this.enemies = []
+    this.percentCorrupted = 0
+    // bump this up to get more difficult
+    this.corruptionMax = 0.2
+    this.corruptionTimer = new Timer()
+
+    this.corruptedDamageDefault = 4
+    this.corruptedDamage = 4
+
+    // max playe rpower
+    this.powerMax = 100
+    this.knowledgeMax = 100
+
+    // countdown to generate enemies every so often
+    this.defaultEnemyInterval = 36000
+    this.enemyInterval = 36000
+    this.defaultEnemyMax = 5
+    this.enemyMax = 5
+
+    this.bombs = []
+    this.randomBombsTimer = new Timer()
+    this.randomBombsTimer.start()
+
+    this.roundCount = 1
+  }
+
   newGame(){
     if(!this.gameRunning()){
       document.getElementById("stage-info").classList.remove("static")
 
-      player.health = 100
-      player.lifecycle = ALIVE
+      this.setDefaultGameValues()
+      this.lastRoundColor = this.roundColor
+      // destination color for the round, fades during loading
+      this.roundColor = [0,0,0]
 
-      this.corruptionMax = 0.2
-      this.enemyInterval = this.defaultEnemyInterval
-      this.enemyMax = this.defaultEnemyMax
-
-      this.roundCount = 1
 
       fx_startgameE.play()
       this.musicTimer.start()
@@ -101,7 +100,7 @@ class Game {
   nextRound(){
     // ramp up difficulty for next round
     // exponential, but dull it down so we get to about x20 base #enemies by round 8
-    let maxBump = 0.3 * Math.pow(this.roundCount, 2)
+    let maxBump = 1 + 0.3 * Math.pow(this.roundCount, 2)
     // make the max # of enemeis per gen bigger, floor it with 5 so we dont have 3 rounds of 2 enemies
     // let newEnemyMax = this.defaultEnemyMax + Math.round(this.enemyMax * maxBump)
     let newEnemyMax = Math.round(this.defaultEnemyMax * maxBump)
@@ -332,7 +331,7 @@ class Game {
   }
 
   drawGameover(){
-    document.getElementById("stage-info").innerHTML = "GAME OVER"
+    this.announcement("GAME OVER")
   }
 
   cleanEnemies(){
