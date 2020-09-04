@@ -78,6 +78,10 @@ class Game {
     this.randomBombsTimer.start()
 
     this.roundCount = 1
+
+    player.level = 1
+    player.health = 100
+    player.knowledge = 0
   }
 
   newGame(){
@@ -272,6 +276,10 @@ class Game {
 
     if(this.bombs.length > 0){
       this.handleBombs()
+    }
+
+    if(this.friends.length > 0){
+      this.handleFriends()
     }
 
     if(player.bombsTimer.time() > player.bombsInterval){
@@ -501,6 +509,22 @@ class Game {
     for(var i=0;i<this.bombs.length;i++){
       if(!this.bombs[i]){
         this.bombs.splice(i, 1)
+      }
+    }
+  }
+
+  handleFriends(){
+    let friend
+    for(var i=0; i<this.friends.length; i++){
+      friend = this.friends[i]
+      if(friend){
+        friend.animation()
+
+        if(friend.lifecycle == ALIVE){
+          friend.handleMovement()
+        } else if(friend.lifecycle == DYING){
+          // maybe blow up or something?
+        }
       }
     }
   }

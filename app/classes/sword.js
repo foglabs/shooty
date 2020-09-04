@@ -1,5 +1,5 @@
 class Sword {
-  constructor(){
+  constructor(length, rotation){
     this.length = 0.5
     this.active = false
 

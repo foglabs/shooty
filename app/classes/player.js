@@ -9,8 +9,16 @@ class Player extends Character {
       base_color
     )
 
+    this.mesh.material.needsUpdate = true
+    this.playerHealthSounds = [fx_phealth1, fx_phealth2, fx_phealth3]
+    this.hitColor = [193,29,209]
+    this.color = this.baseColor
     this.isPlayer = true
 
+    this.defaultPlayerValues()
+  }
+
+  defaultPlayerValues(){
     this.health = 100
     
     // flag for animation etc
@@ -40,16 +48,11 @@ class Player extends Character {
     this.defaultSwordSpeed = DEG1
     this.swordSpeed = DEG1
 
+    this.friendsAvailable = 0
+
     // build to level up
     this.knowledge = 0
     this.level = 1
-
-    this.mesh.material.needsUpdate = true
-
-    this.playerHealthSounds = [fx_phealth1, fx_phealth2, fx_phealth3]
-
-    this.hitColor = [193,29,209]
-    this.color = this.baseColor
   }
   
   rotation(){
@@ -245,6 +248,14 @@ class Player extends Character {
       this.sword.rotateTowardsMovement(this.accx, this.accy)
 
       this.sword.bbox.setFromObject( this.sword.mesh )
+    }
+  }
+
+  addFriend(){
+    if(this.friendsAvailable > 0){
+      let friend = new Friend(this.level*20, 20, [110,0,200])
+      game.friends.push( friend )
+      this.friendsAvailable -= 1
     }
   }
 

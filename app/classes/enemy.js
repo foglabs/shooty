@@ -223,6 +223,19 @@ class Enemy extends Character {
     }
   }
 
+  handleFriends(){
+    let hit
+    let friend
+    for(var i=0; i<game.friends.length; i++){
+      friend = game.friends[i]
+      hit = this.handleHit( friend )
+      if(hit && friend.damageTimer.time() > 60){
+        friend.attack( this )        
+      }
+    }
+  }
+
+
   customAnimation(){
 
     // dont do it, if yA DEAD
