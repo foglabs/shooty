@@ -19,7 +19,6 @@ class Player extends Character {
   }
 
   defaultPlayerValues(){
-    this.health = 100
     
     // flag for animation etc
     this.eating = false
@@ -53,6 +52,7 @@ class Player extends Character {
     // build to level up
     this.knowledge = 0
     this.level = 1
+    this.health = 100
   }
   
   rotation(){
@@ -104,7 +104,9 @@ class Player extends Character {
 
   levelUp(){
     this.knowledge = 0
-    game.knowledgeMax = game.knowledgeMax * 1.25
+    game.knowledgeMax = Math.round(game.knowledgeMax * 1.25)
+    document.getElementById("knowledge").max = game.knowledgeMax
+
     this.level += 1
 
     // start bombs at level 4
@@ -121,6 +123,12 @@ class Player extends Character {
    
     if(this.swordEnabled){
       this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/10) 
+    }
+
+    // start at level 4, and every even lvl after
+    if(this.level >= 4 && this.level % 2 == 0){
+      this.friendsAvailable += 1
+      game.announcement("FRIENDS UNLOCKED (C)")
     }
 
     fx_levelupE2.play()
@@ -252,10 +260,14 @@ class Player extends Character {
   }
 
   addFriend(){
+
     if(this.friendsAvailable > 0){
       let friend = new Friend(this.level*20, 20, [110,0,200])
+      scene.add( friend.mesh )
+
       game.friends.push( friend )
       this.friendsAvailable -= 1
+      console.log( 'firend created', this.friendsAvailable, ' left' )
     }
   }
 

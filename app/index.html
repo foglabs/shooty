@@ -32,6 +32,10 @@
       </div>
     </div>
 
+    <div id="info4" class="info-bar">
+      <div id="friend-info"></div>
+    </div>
+
     <div id="stage-info"></div>
 
     <script type="text/javascript">
@@ -106,7 +110,11 @@
     <script src="classes/enemy.js"></script>
     <script src="classes/bomb.js"></script>
     <script src="classes/sword.js"></script>
+    <script src="classes/friend.js"></script>
     <script>
+      WANDER = 0
+      CHASER = 1
+      SOMETHING = 2
 
       LEFT = 0
       UP = 1
@@ -295,23 +303,33 @@
       function onDocumentKeyDown(event) {
         keyHandler.heldKeys[event.key] = true
 
-        if (event.key == " " || event.key == "Spacebar"){
+        // SPACE BAR
+        if(game.stage == TITLE || game.stage == GAMEOVER){
           
-          // SPACE BAR
-          if(game.stage == TITLE || game.stage == GAMEOVER){
+          if (event.key == " " || event.key == "Spacebar"){
+              player.startKillingCircle()
+
             if( checkSoundsLoaded() ){
               console.log( 'new game' )
               game.newGame()
             }
-
-          } else if(game.stage == PLAYING){
-            player.startKillingCircle()
           }
-        } else if(event.key == "z"){
-          player.dropBomb()
-        } else if(event.key == "x"){
-          if(player.swordEnabled){
-            player.startSword()
+
+        } else if(game.stage == PLAYING){
+
+          if (event.key == " " || event.key == "Spacebar"){
+              player.startKillingCircle()
+
+          } else if(event.key == "z"){
+            player.dropBomb()
+          } else if(event.key == "x"){
+            if(player.swordEnabled){
+              player.startSword()
+            }
+          } else if(event.key == "c"){
+            if(player.friendsAvailable > 0){
+              player.addFriend()
+            }
           }
         }
 

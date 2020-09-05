@@ -77,11 +77,9 @@ class Game {
     this.randomBombsTimer = new Timer()
     this.randomBombsTimer.start()
 
-    this.roundCount = 1
+    this.friends = []
 
-    player.level = 1
-    player.health = 100
-    player.knowledge = 0
+    this.roundCount = 1
   }
 
   newGame(){
@@ -377,12 +375,42 @@ class Game {
   }
 
   drawUI(){
+    this.drawFriendIcons()
     this.drawScore()
     this.drawLevel()
     this.drawPower()
     this.drawHealth()
     this.drawKnowledge()
     this.drawBombs()
+  }
+
+  addFriendIcon(name, index){
+    let container = document.createElement("div")
+    container.classList.add("bar-icon")
+
+    let nameEle = document.createElement("div")
+    nameEle.classList.add("friend-name")
+    let meterEle = document.createElement("div")
+    meterEle.classList.add("friend-meter")
+    let meter = document.createElement("progress")
+    meter.id = "friend" + index
+    meterEle.appendChild(meter)
+
+    container.appendChild(nameEle)
+    container.appendChild(meterEle)
+    document.getElementById("friend-info").appendChild(container)
+  }
+
+  drawFriendIcons(){
+    for(var i=0; i<this.friends.length; i++){
+
+      if(!document.getElementById("friend"+i)){
+        // check if icon exists for friend, if not create that ho
+        game.addFriendIcon("friend", i)
+      }
+
+      document.getElementById("friend" + i).value = this.friends[i].power
+    }
   }
 
   drawTimer(time){
@@ -483,6 +511,7 @@ class Game {
 
   handleBombs(){
     let bomb
+    let deletedSomeone
     for(var i=0; i<this.bombs.length; i++){
       bomb = this.bombs[i]
       if(bomb){
@@ -500,21 +529,27 @@ class Game {
           // you dead
           bomb.remove()
           delete this.bombs[i]
+          deletedSomeone = true
         }
 
       }
     }
 
     // strip nulls out once were done monkeying around above
-    for(var i=0;i<this.bombs.length;i++){
-      if(!this.bombs[i]){
-        this.bombs.splice(i, 1)
+
+    if(deletedSomeone){
+      for(var i=0;i<this.bombs.length;i++){
+        if(!this.bombs[i]){
+          this.bombs.splice(i, 1)
+        }
       }
     }
   }
 
   handleFriends(){
     let friend
+    let deletedSomeone = false
+
     for(var i=0; i<this.friends.length; i++){
       friend = this.friends[i]
       if(friend){
@@ -522,8 +557,31 @@ class Game {
 
         if(friend.lifecycle == ALIVE){
           friend.handleMovement()
-        } else if(friend.lifecycle == DYING){
-          // maybe blow up or something?
+
+          if(player.killingCircle && player.killingCircle.visible){
+            // if a friend is in the killing circle, give a lil powe3r!
+            let hit = friend.handleHit( player.killingCircleArea )
+            if(hit){
+              if(friend.rechargeTimer.time() > 60){
+                friend.rechargeTimer.reset()
+                friend.changePower(2)
+                console.log( 'chare him to ', friend.power )
+
+              }
+            }
+          }
+        } else if(friend.lifecycle == DEAD){
+          delete this.friends[i]
+          deletedSomeone = true
+        }
+      }
+    }
+
+    if(deletedSomeone){
+      // only if we did it :)
+      for(var i=0;i<this.friends.length;i++){
+        if(!this.friends[i]){
+          this.friends.splice(i, 1)
         }
       }
     }
@@ -537,6 +595,7 @@ class Game {
     let enemy
     let chance
     let numCorrupted = 0
+    let deletedSomeone = false
 
     // dont be corrupting so much
     if(!this.corruptionTimer.running){
@@ -571,18 +630,22 @@ class Game {
           // if the swords out, get stabt
           enemy.handleSword()
         }
+        
+        if(game.friends.length > 0){
+          // if the swords out, get stabt
+          enemy.handleFriends()
+        }
 
         // LIFE
         if(!enemy.corrupted){
           let hitresult = enemy.handleHit(player)
-          if(player.lifecycle == ALIVE && hitresult){
-            if(!enemy.healthTimer.running){
-              enemy.healthTimer.start()
-            }
 
-            if(enemy.healthTimer.time() > 400){
+          if(player.lifecycle == ALIVE && hitresult){
+
+            if(enemy.healthTimer.time() > 100){
+              console.log( 'eneymy hit' )
               enemy.healthTimer.reset()
-              enemy.takeDamage(2)
+              enemy.takeDamage(4)
             }
 
             // start eating animation, which shuts itself off after timer
@@ -610,10 +673,7 @@ class Game {
             let hit = enemy.handleHit( player.killingCircleArea )
 
             if(hit){
-              if(!enemy.healthTimer.running){
-                enemy.healthTimer.start()
-              }
-
+            
               if(enemy.healthTimer.time() > 400){
                 enemy.healthTimer.reset()
 
@@ -626,12 +686,8 @@ class Game {
           let corrupthit = enemy.handleHit(player)
           if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
 
-            if(!enemy.healthTimer.running){
-              enemy.healthTimer.start()
-            }
-
-            if(enemy.healthTimer.time() > 500){
-              enemy.healthTimer.reset()
+            if(enemy.damageTimer.time() > 400){
+              enemy.damageTimer.reset()
   
               player.takeDamage( game.corruptedDamage )
   
@@ -640,6 +696,34 @@ class Game {
                 player.lifecycle = DYING
                 this.endGame()
               }
+            }
+          }
+
+          let friend
+          if(this.friends.length > 0){
+            for(var x=0; x<this.friends.length; x++){
+              friend = this.friends[x]
+
+              if(friend.lifecycle == ALIVE){
+
+                let hit = enemy.handleHit( friend )
+                if( hit ){
+                  if(friend.healthTimer.time() > 100){
+                    friend.healthTimer.reset()
+                    friend.takeDamage(2)
+                    console.log( 'ixx have hurt your friend for 2', friend.health )
+
+                    if(friend.health <= 0){
+                      // might as well do this here since its the moment health went to death
+                      friend.lifecycle = DYING
+                      friend.remove()
+                    }
+
+                  }
+                }
+
+              }
+              
             }
           }
 
@@ -681,6 +765,7 @@ class Game {
           if(enemy.lifecycle == DEAD){
             // WAIT to actually delete enemy until we have faded out the sprite
             delete this.enemies[i]
+            deletedSomeone = true
           }
         }
 
@@ -688,12 +773,14 @@ class Game {
     }
 
     // strip nulls out once were done monkeying around above
-    for(var i=0;i<this.enemies.length;i++){
-      if(!this.enemies[i]){
-        this.enemies.splice(i, 1)
+    if(deletedSomeone){
+      for(var i=0;i<this.enemies.length;i++){
+        if(!this.enemies[i]){
+          this.enemies.splice(i, 1)
+        }
       }
-    }
-
+    }    
+    
     // record this after we've added new corrupts, and cleaned up dead enemies
     this.percentCorrupted = numCorrupted/this.enemies.length
     if(player.numBombsMax < 1 && this.percentCorrupted == 1){

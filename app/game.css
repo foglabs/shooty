@@ -33,6 +33,36 @@ div.bar-ele {
 
 }
 
+div.bar-icon {
+  font-size: 18px;
+  display: inline-block;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  background-color: #f8f;
+}
+
+#friend-info {
+  left: 0;
+}
+
+div.friend-name {
+  position: absolute;
+  top: 2px;
+  left: 40%;
+}
+
+div.friend-meter {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+
+div.friend-meter progress {
+  width: 100%;
+}
+
 div.bar-ele-wide {
   display: inline;
   width: 80vw;

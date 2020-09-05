@@ -28,11 +28,15 @@ class Character {
     this.fading = false
     this.colorTimer = new Timer()
     this.healthTimer = new Timer()
+    this.healthTimer.start()
 
     this.damageSounds = null
     this.damageSoundTimer = new Timer()
     // get this running because ima about to do some dmg
     this.damageSoundTimer.start()
+
+    this.damageTimer = new Timer()
+    this.damageTimer.start()
 
     this.lifecycle = ALIVE
 
@@ -63,6 +67,43 @@ class Character {
       this.accy += 0.04
     } else {
       this.accy -= 0.04
+    }
+  }
+  
+  chooseDirection(){
+    
+    let width = window.innerWidth
+    let height = window.innerHeight
+
+    // if we're in teh final 20% closest to edge
+    let x = this.mesh.position.x
+    let y = this.mesh.position.y
+
+    let edge = 0.6
+    let awidth = Math.abs(width)
+    let aheight = Math.abs(height)
+
+    let locked
+
+    // do a coin flip to decide which direction to check
+    if( Math.random() > 0.5 ){
+      if( Math.abs(x) > awidth*edge ){
+        
+        // if we're within 20% of edge, just start going the other way
+        this.direction = Math.sign(x) == 1 ? LEFT : RIGHT
+        locked = true
+      }
+    } else {
+      if( Math.abs(y) > aheight*edge ){
+        // yes, lock in direction
+        this.direction = Math.sign(x) == 1 ? DOWN : UP
+        locked = true
+      }
+    }
+
+    if(!locked){
+      // if not altered above, just prandom
+      this.direction = Math.round(Math.random() * 4)  
     }
   }
 
@@ -186,7 +227,6 @@ class Character {
     this.accy = this.slowDown(this.accy)
   }
 
-
   // right now this only happens to enemies
   handleHit(other_char){
     // record last hitstate
@@ -198,9 +238,9 @@ class Character {
       // hittin it
       this.isHit = true
 
-      if(!this.corrupted){
-        this.health -= 1
-      }
+      // if(!this.corrupted){
+      //   this.health -= 1
+      // }
 
     } else {
 

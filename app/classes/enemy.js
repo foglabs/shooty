@@ -53,7 +53,6 @@ class Enemy extends Character {
       base_color = [189,52,147]
       enemyType = HEALCUBE
     }
-
     
     super(
       // de ge
@@ -142,43 +141,6 @@ class Enemy extends Character {
     }
   }
 
-  chooseDirection(){
-    
-    let width = window.innerWidth
-    let height = window.innerHeight
-
-    // if we're in teh final 20% closest to edge
-    let x = this.mesh.position.x
-    let y = this.mesh.position.y
-
-    let edge = 0.6
-    let awidth = Math.abs(width)
-    let aheight = Math.abs(height)
-
-    let locked
-
-    // do a coin flip to decide which direction to check
-    if( Math.random() > 0.5 ){
-      if( Math.abs(x) > awidth*edge ){
-        
-        // if we're within 20% of edge, just start going the other way
-        this.direction = Math.sign(x) == 1 ? LEFT : RIGHT
-        locked = true
-      }
-    } else {
-      if( Math.abs(y) > aheight*edge ){
-        // yes, lock in direction
-        this.direction = Math.sign(x) == 1 ? DOWN : UP
-        locked = true
-      }
-    }
-
-    if(!locked){
-      // if not altered above, just prandom
-      this.direction = Math.round(Math.random() * 4)  
-    }
-  }
-
   corrupt(){
     this.health = 24
     this.corrupted = true
@@ -230,11 +192,11 @@ class Enemy extends Character {
       friend = game.friends[i]
       hit = this.handleHit( friend )
       if(hit && friend.damageTimer.time() > 60){
+        friend.damageTimer.reset()
         friend.attack( this )        
       }
     }
   }
-
 
   customAnimation(){
 
@@ -280,9 +242,7 @@ class Enemy extends Character {
           // console.log( 'i hereby pronounce you, fucking dead' )
           this.lifecycle = DEAD
         }
-
       }
-
     }
   }
 
