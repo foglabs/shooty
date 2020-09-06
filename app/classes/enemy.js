@@ -13,32 +13,40 @@ class Enemy extends Character {
     let geometry
     let dna = Math.random()
 
-    // round weight
-    dna = dna * ( 1 - ( dna * Math.pow(game.roundCount, 2) / 5000 ) )
+    // adding these constants puts these shits on the right place for x==1 (level 1)
+    let chanceSlices = game.chanceSlices
+    let stickChance = chanceSlices[0]
+    let sphereChance = chanceSlices[1]
+    let circleChance = chanceSlices[2]
+    let octaChance = chanceSlices[3]
+    // this is just above the highest traunch, so no need
+    // let healcubeChance = chanceSlices[0]
 
-    if(dna <= 0.2){
-      // 
-      health = 10
-      nutritionalValue = 20
-      geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
-      base_color = [114,194,189]
-      enemyType = SPHERE
-    } else if(dna > 0.2 && dna <= 0.4){
+    // console.log( 'dna is ', dna )
+    // console.log( 'slices are', stickChance,sphereChance,circleChance,octaChance )
+    if(dna <= stickChance){
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
       health = 2
       nutritionalValue = 10
       base_color = [72,201,46]
       enemyType = STICK
-    } else if(dna > 0.4 && dna <= 0.6) {
+    } else if(dna <= sphereChance){
+      // sphere
+      health = 10
+      nutritionalValue = 20
+      geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
+      base_color = [114,194,189]
+      enemyType = SPHERE
+    } else if(dna <= circleChance) {
       // circle
       health = 12
       nutritionalValue = 18
       geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [214,189,58]
       enemyType = CIRCLE
-    } else if(dna > 0.6 && dna <= 0.8) {
-      // octa
+    } else if(dna <= octaChance) {
+      // knowledge octa
       health = 12
       nutritionalValue = 24
       geometry = new THREE.OctahedronGeometry( 0.08 )
@@ -46,7 +54,7 @@ class Enemy extends Character {
       knowledgeValue = 25
       enemyType = KNOWLOCTA
     } else {
-      // cube
+      // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
       health = 30
       nutritionalValue = 40
@@ -151,6 +159,9 @@ class Enemy extends Character {
     if(this.duster){
       this.duster.remove()
     }
+
+    // add the evil script
+    this.addBanners(corruptdustMap)
 
     this.hitColor = [255,0,0]
 

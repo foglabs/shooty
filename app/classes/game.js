@@ -80,6 +80,24 @@ class Game {
     this.friends = []
 
     this.roundCount = 1
+
+    this.chanceSlices = this.calcChanceSlices()
+  }
+
+  calcChanceSlices(){
+    let chanceSlices = [0.2,0.4,0.6,0.8]
+    for(var i=0; i<4; i++){
+      // bend the base chances based on round number, kinda weighted by index
+      chanceSlices[i] = chanceSlices[i] * i + Math.pow( this.roundCount, 2 )/2000
+    }
+
+    // adding these constants puts these shits on the right place for x==1 (level 1)
+    chanceSlices[0] = chanceSlices[0] + 0.2
+    chanceSlices[1] = chanceSlices[1]
+    chanceSlices[2] = chanceSlices[2] - 0.6
+    chanceSlices[3] = chanceSlices[3] - 1.6
+
+    return chanceSlices
   }
 
   newGame(){
@@ -113,6 +131,9 @@ class Game {
     let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
 
     this.roundCount += 1
+    // recalc chacnes for each enemy
+    this.chanceSlices = this.calcChanceSlices()
+
     let r,g,b
     r = Math.floor(Math.random() * 100)
     g = Math.floor(Math.random() * 100)
@@ -168,7 +189,7 @@ class Game {
         // fx_song2.setVolume(0.0)
 
         if(!fx_song2.playing()){
-          fx_song2.play()
+          // fx_song2.play()
         }
 
       //   if(!this.musicFadeTimer.running){
@@ -632,7 +653,7 @@ class Game {
         }
         
         if(game.friends.length > 0){
-          // if the swords out, get stabt
+          // if the friends out, get murdered
           enemy.handleFriends()
         }
 
@@ -666,8 +687,8 @@ class Game {
             }
           }  
         } else {
-          // this is els if corrupted
-          // console.log( player.killingCircleArea.geometry )
+          // this is else if corrupted
+
           if(player.killingCircle && player.killingCircle.visible){
 
             let hit = enemy.handleHit( player.killingCircleArea )
@@ -686,16 +707,23 @@ class Game {
           let corrupthit = enemy.handleHit(player)
           if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
 
+
             if(enemy.damageTimer.time() > 400){
               enemy.damageTimer.reset()
-  
-              player.takeDamage( game.corruptedDamage )
-  
-              if(player.lifecycle == ALIVE && player.health <= 0){
-                player.addSprite()
-                player.lifecycle = DYING
-                this.endGame()
+
+              if(player.healthTimer.time() > 100){
+                player.healthTimer.reset()
+                // need to gate this to so 10 corrupteds dont just saw your head off before you can react
+                  
+                player.takeDamage( game.corruptedDamage )
+    
+                if(player.lifecycle == ALIVE && player.health <= 0){
+                  player.addSprite()
+                  player.lifecycle = DYING
+                  this.endGame()
+                }
               }
+  
             }
           }
 

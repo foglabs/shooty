@@ -110,7 +110,12 @@ class Character {
   remove(){
     // add sprite, then start fading it out - has to come before removing mesh to get position!
     if(this.lifecycle == DYING){
-      this.addSprite() 
+      this.addSprite()
+
+      // clean up on aisle akuma
+      if(this.banners){
+        this.banners.remove()
+      }
     }
 
     this.mesh.geometry.dispose()
@@ -219,6 +224,11 @@ class Character {
       this.duster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
 
+    if(this.lifecycle == ALIVE && this.banners){
+      // console.log( 'move my particles baby' )
+      this.banners.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
+    }
+
     // this will be for sprites attached to living moving things
     // this.sprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
 
@@ -257,6 +267,12 @@ class Character {
   addParticles(map){
     // little blod splats
     this.duster = new Duster(map, 0.0422, 28, 0.32, this.mesh.position, 1)
+  }
+
+  addBanners(map){
+    // little blod splats
+    console.log( 'I love banners!' )
+    this.banners = new Duster(map, 0.18, 16, 0.18, this.mesh.position, 1)
   }
 
   killSound(){}
@@ -368,6 +384,11 @@ class Character {
     this.bbox.setFromObject(this.mesh)
 
     this.colorCycle()
+
+    if(this.banners){
+      console.log( 'bannermate!' )
+      this.banners.animation()
+    }
 
     if(this.duster){
       // run dis

@@ -238,6 +238,9 @@
       let healthenemyMap = loader.load( "sprites/healthenemy.png")
       let healthenemyMaterial = new THREE.SpriteMaterial( { map: healthenemyMap } )
 
+      let corruptdustMap = loader.load( "sprites/corruptdust.png")
+      corruptdustMaterial = new THREE.SpriteMaterial( { map: corruptdustMap } )
+
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
       camera.position.z = 5
