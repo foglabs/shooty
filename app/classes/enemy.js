@@ -85,6 +85,7 @@ class Enemy extends Character {
 
       // if we're in here, were doing somethin right
 
+      // size it
       if(this.enemyType == CIRCLE){
         // circle
         this.scaleFactor = 1 + Math.random() * 0.4
@@ -94,7 +95,15 @@ class Enemy extends Character {
         this.mesh.scale.y = 1 + Math.random() * this.scaleFactor
         this.mesh.scale.z = 1 + Math.random() * this.scaleFactor        
       }
+    }
 
+    // health banner
+    if(this.enemyType == HEALCUBE){
+      console.log( 'scalfe', this.scaleFactor )
+      let dist = 0.20 * this.scaleFactor
+      console.log( 'dist', dist )
+      let size = 0.48 * this.scaleFactor
+      this.addBanners(healthspriteMap, size, 2, dist, true)
     }
 
     // base enemy health
@@ -160,8 +169,12 @@ class Enemy extends Character {
       this.duster.remove()
     }
 
+    if(this.banners){
+      this.banners.remove()
+    }
+
     // add the evil script
-    this.addBanners(corruptdustMap)
+    this.addBanners(corruptdustMap, 0.18, 16, 0.18)
 
     this.hitColor = [255,0,0]
 

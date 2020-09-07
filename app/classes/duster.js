@@ -1,5 +1,5 @@
 class Duster {
-  constructor(map, size, particleCount, distance, position=null, opacity=null){
+  constructor(map, size, particleCount, distance, position=null, opacity=null, badge=false){
     // position is a vector3
     this.particleCount = particleCount
     let geometry = new THREE.Geometry()
@@ -22,16 +22,23 @@ class Duster {
 
     let p,x,y,z
     // create particles
-    for(var i=0; i<this.particleCount; i++){
-      x = Math.random() * (this.distance*2) - this.distance
-      y = Math.random() * (this.distance*2) - this.distance
-      z = Math.random() * (this.distance*2) - this.distance
 
-      // assign rando positions to particle
-      p = new THREE.Vector3( x,y,z )
+    if(!badge){
+      for(var i=0; i<this.particleCount; i++){
+        x = Math.random() * (this.distance*2) - this.distance
+        y = Math.random() * (this.distance*2) - this.distance
+        z = Math.random() * (this.distance*2) - this.distance
+
+        // assign rando positions to particle
+        p = new THREE.Vector3( x,y,z )
+        geometry.vertices.push(p)
+      }
+  
+    } else {
+      p = new THREE.Vector3( this.position.x,this.position.y,this.position.z+0.2,)
       geometry.vertices.push(p)
     }
-
+    
     let pointMatCopy = pointMat.clone()
     this.particleSystem = new THREE.Points(
       geometry,

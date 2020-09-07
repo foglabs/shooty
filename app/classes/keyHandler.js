@@ -9,6 +9,10 @@ class KeyHandler {
 
     this.heldKeys = {}
 
+    this.heatingElement = 0.015
+    this.coolingFactor = 2.2
+    this.maxHeat = 0.1
+
     this.tempTimer = new Timer()
     this.tempTimer.start()
   }
@@ -22,7 +26,9 @@ class KeyHandler {
 
   heatKey(keyName){
 
-    this.keyHeats[ keyName ] += 0.015
+    // this.keyHeats[ keyName ] += this.heatingElement
+    this.keyHeats[ keyName ] = incInRange( this.keyHeats[ keyName ], this.heatingElement, 0, this.maxHeat )    
+    // this.keyHeats[ keyName ] += 0.015
 
     // cool the opposing key so we keep our fake sense of momentum
     if (keyName == "ArrowLeft"){
@@ -37,7 +43,10 @@ class KeyHandler {
   }
 
   coolKey(keyName){
-    this.keyHeats[ keyName ] -= 0.34
+    // this.keyHeats[ keyName ] -= 0.34
+    // this.keyHeats[ keyName ] -= this.heatingElement*this.coolingFactor
+    this.keyHeats[ keyName ] = incInRange( this.keyHeats[ keyName ], this.heatingElement*this.coolingFactor, 0, this.maxHeat )    
+
     // this.keyHeats[ keyName ] -= 0.09
     if(this.keyHeats[ keyName ] < 0){
       this.keyHeats[ keyName ] = 0

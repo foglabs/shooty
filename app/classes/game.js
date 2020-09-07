@@ -422,6 +422,15 @@ class Game {
     document.getElementById("friend-info").appendChild(container)
   }
 
+  removeFriendIcon(index){
+    let ele = document.getElementById("friend"+index)
+    ele.parentNode.removeChild( ele )
+  }
+
+  changeFriendIconPowerMax(index, max){
+    document.getElementById("friend"+index).max = max
+  }
+
   drawFriendIcons(){
     for(var i=0; i<this.friends.length; i++){
 
@@ -461,6 +470,12 @@ class Game {
   drawBombs(){
     document.getElementById("bombs").innerHTML = "O".repeat( player.numBombs )
   }
+
+
+  drawFriendsAvailble(){
+    document.getElementById("friends-available").innerHTML = "F".repeat( player.friendsAvailable )
+  }
+
 
   setBackgroundColor(r,g,b){
     // this.mesh.material.color.setRGB(r,g,b)
@@ -593,6 +608,7 @@ class Game {
           }
         } else if(friend.lifecycle == DEAD){
           delete this.friends[i]
+          this.removeFriendIcon(i)
           deletedSomeone = true
         }
       }
@@ -664,7 +680,7 @@ class Game {
           if(player.lifecycle == ALIVE && hitresult){
 
             if(enemy.healthTimer.time() > 100){
-              console.log( 'eneymy hit' )
+              // console.log( 'eneymy hit' )
               enemy.healthTimer.reset()
               enemy.takeDamage(4)
             }

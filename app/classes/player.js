@@ -131,6 +131,14 @@ class Player extends Character {
       game.announcement("FRIENDS UNLOCKED (C)")
     }
 
+    if(game.friends.length > 0){
+      let friend
+      for(var i=0; i<game.friends.length; i++){
+        friend = game.friends[i]
+        friend.powerMax = (this.level + 2) * 25
+      }
+    }
+
     fx_levelupE2.play()
   }
 

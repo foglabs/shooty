@@ -57,9 +57,9 @@ class Friend extends Character {
     }
   }
 
-  powerMax(){
+  changePowerMax(max){
     // min 75, but you probably get friend later anyway
-    return (player.level + 2) * 25
+    this.powerMax = max
   }
 
   customAnimation(){

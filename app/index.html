@@ -24,6 +24,7 @@
       </div>
 
       <div class="bar-ele" id="bombs"></div>
+      <div class="bar-ele" id="friends-available"></div>
     </div>
 
     <div id="info3" class="info-bar">
@@ -177,11 +178,18 @@
         return done
       }
 
+      // let heat= new Timer()
+      // heat.start()
+
       // run every frame
       function animate() {
 
         game.handleGame()
-        // console.log( 'TEMPS', keyHandler.keyHeats )
+
+        // if(heat.time()>60){
+        //   heat.reset()
+        //   console.log( 'TEMPS', keyHandler.keyHeats )
+        // }
         // console.log( 'HELD', keyHandler.heldKeys )
         keyHandler.handleKeyTemp()
 
@@ -240,6 +248,9 @@
 
       let corruptdustMap = loader.load( "sprites/corruptdust.png")
       corruptdustMaterial = new THREE.SpriteMaterial( { map: corruptdustMap } )
+
+      let healthspriteMap = loader.load( "sprites/healthsprite.png")
+      healthspriteMaterial = new THREE.SpriteMaterial( { map: healthspriteMap } )
 
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
@@ -326,7 +337,7 @@
           } else if(event.key == "z"){
             player.dropBomb()
           } else if(event.key == "x"){
-            if(player.swordEnabled){
+            if(player.swordEnabled && player.power > 0){
               player.startSword()
             }
           } else if(event.key == "c"){

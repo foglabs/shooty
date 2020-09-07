@@ -269,10 +269,11 @@ class Character {
     this.duster = new Duster(map, 0.0422, 28, 0.32, this.mesh.position, 1)
   }
 
-  addBanners(map){
+  addBanners(map, size, num, dist, badge=false){
     // little blod splats
     console.log( 'I love banners!' )
-    this.banners = new Duster(map, 0.18, 16, 0.18, this.mesh.position, 1)
+    // this.banners = new Duster(map, 0.18, 16, 0.18, this.mesh.position, 1)
+    this.banners = new Duster(map, size, num, dist, this.mesh.position, 1, badge)
   }
 
   killSound(){}
@@ -386,7 +387,6 @@ class Character {
     this.colorCycle()
 
     if(this.banners){
-      console.log( 'bannermate!' )
       this.banners.animation()
     }
 
