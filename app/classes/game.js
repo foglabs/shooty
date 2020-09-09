@@ -423,8 +423,8 @@ class Game {
   }
 
   removeFriendIcon(index){
-    let ele = document.getElementById("friend"+index)
-    ele.parentNode.removeChild( ele )
+    let friendContainer = document.getElementById("friend"+index).parentNode
+    friendContainer.parentNode.removeChild( friendContainer )
   }
 
   changeFriendIconPowerMax(index, max){
@@ -434,7 +434,8 @@ class Game {
   drawFriendIcons(){
     for(var i=0; i<this.friends.length; i++){
 
-      if(!document.getElementById("friend"+i)){
+      if( this.friends[i] && !document.getElementById("friend"+i) ){
+        console.log( 'adding friend', i )
         // check if icon exists for friend, if not create that ho
         game.addFriendIcon("friend", i)
       }
@@ -608,7 +609,6 @@ class Game {
           }
         } else if(friend.lifecycle == DEAD){
           delete this.friends[i]
-          this.removeFriendIcon(i)
           deletedSomeone = true
         }
       }
@@ -616,9 +616,11 @@ class Game {
 
     if(deletedSomeone){
       // only if we did it :)
-      for(var i=0;i<this.friends.length;i++){
-        if(!this.friends[i]){
-          this.friends.splice(i, 1)
+      for(var x=0;x<this.friends.length;x++){
+        if(!this.friends[x]){
+          console.log( 'REMOVE SLOT frined', x )
+          this.removeFriendIcon(x)
+          this.friends.splice(x, 1)
         }
       }
     }
@@ -755,7 +757,7 @@ class Game {
                   if(friend.healthTimer.time() > 100){
                     friend.healthTimer.reset()
                     friend.takeDamage(2)
-                    console.log( 'ixx have hurt your friend for 2', friend.health )
+                    // console.log( 'ixx have hurt your friend for 2', friend.health )
 
                     if(friend.health <= 0){
                       // might as well do this here since its the moment health went to death

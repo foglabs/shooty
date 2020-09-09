@@ -1,3 +1,4 @@
+
 class Player extends Character {
   constructor(base_color){
     let geometry = new THREE.BoxGeometry(0.2,0.2,0.3)
@@ -47,7 +48,7 @@ class Player extends Character {
     this.defaultSwordSpeed = DEG1
     this.swordSpeed = DEG1
 
-    this.friendsAvailable = 0
+    this.friendsAvailable = 5
 
     // build to level up
     this.knowledge = 0
@@ -111,7 +112,7 @@ class Player extends Character {
 
     // start bombs at level 4
     this.numBombsMax = Math.max(0, Math.floor(-1 + this.level/2))
-    if(this.numBombsMax > 0){
+    if(this.numBombsMax > 0 && this.numBombsMax < 2){
       game.announcement("BOMBS UNLOCKED (Z)")
     }
     this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
@@ -135,7 +136,7 @@ class Player extends Character {
       let friend
       for(var i=0; i<game.friends.length; i++){
         friend = game.friends[i]
-        friend.powerMax = (this.level + 2) * 25
+        friend.changePowerMax( (this.level + 2) * 25 )
       }
     }
 

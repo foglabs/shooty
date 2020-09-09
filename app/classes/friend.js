@@ -14,6 +14,8 @@ class Friend extends Character {
 
     this.dna = Math.random()
 
+    this.powerMax = 75
+
     if(this.dna <= 0.33){
       this.type = WANDER
     } else if(this.dna > 0.33 && this.dna <= 0.66){
@@ -24,7 +26,7 @@ class Friend extends Character {
   }
 
   changePower(pwr){
-    this.power = incInRange(this.power, pwr, 0, this.powerMax())
+    this.power = incInRange(this.power, pwr, 0, this.powerMax)
   }
 
   attack(other_char){
@@ -45,15 +47,12 @@ class Friend extends Character {
 
       // console.log( 'he kill for ', pwr )
       // do % damage to other aguy
-      other_char.takeDamage(pwr)
-      console.log( 'hateful attack for ', pwr )
-      // console.log( 'pwr is ', pwr )
-      // spend that much power
-
-      // do this to avoid -0? what a language
-      if(cost != 0){
+      if(cost != 0 && pwr > 0){
+        other_char.takeDamage(pwr)
         this.changePower(-1 * cost)
       }
+      
+      // console.log( 'hateful attack for ', pwr )
     }
   }
 

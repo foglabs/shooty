@@ -89,6 +89,12 @@ class Enemy extends Character {
       if(this.enemyType == CIRCLE){
         // circle
         this.scaleFactor = 1 + Math.random() * 0.4
+      } else if(this.enemyType == SPHERE){
+        
+        this.scaleFactor = 1 + Math.random() * 2.1
+        this.mesh.scale.x = 1 + Math.random() * this.scaleFactor
+        this.mesh.scale.y = 1 + Math.random() * this.scaleFactor
+        this.mesh.scale.z = 1 + Math.random() * this.scaleFactor        
       } else {
         this.scaleFactor = 1 + Math.random() * 1.3
         this.mesh.scale.x = 1 + Math.random() * this.scaleFactor
@@ -99,11 +105,15 @@ class Enemy extends Character {
 
     // health banner
     if(this.enemyType == HEALCUBE){
-      console.log( 'scalfe', this.scaleFactor )
+      // console.log( 'scalfe', this.scaleFactor )
       let dist = 0.20 * this.scaleFactor
-      console.log( 'dist', dist )
-      let size = 0.48 * this.scaleFactor
+      // console.log( 'dist', dist )
+      let size = 0.28 * this.scaleFactor
       this.addBanners(healthspriteMap, size, 2, dist, true)
+    } else if(this.enemyType == KNOWLOCTA){
+      let dist = 0.20 * this.scaleFactor
+      let size = 0.48 * this.scaleFactor
+      this.addBanners(candyspriteMap, size, 2, dist, true)
     }
 
     // base enemy health
