@@ -113,9 +113,9 @@ class Friend extends Character {
     }
   }
 
-  pursue(enemyIndex){
+  pursue(enemyId){
     // ignore if my enemy disappeared
-    if(game.enemies[enemyIndex]){
+    if(game.enemies[enemyId]){
 
       this.moveTowardsPoint()
     }
@@ -137,7 +137,7 @@ class Friend extends Character {
         if(Math.random() > 0.6){
 
           this.intention = CHASER
-          this.targetLock = game.randomEnemyIndex()
+          this.targetLock = game.randomEnemyId()
         } else {
           this.intention = WANDER
         }

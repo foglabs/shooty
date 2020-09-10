@@ -39,8 +39,9 @@ class Game {
     }
   }
 
-  randomEnemyIndex(){
-    return Math.floor( Math.random() * this.enemies.length )
+  randomEnemyId(){
+    let keys = k(this.enemies)
+    return keys[ Math.floor( Math.random() * keys.length ) ]
   }
 
   gameRunning(){
@@ -58,7 +59,7 @@ class Game {
     this.score = 0
 
     // this gets filled in index
-    this.enemies = []
+    this.enemies = {}
     this.percentCorrupted = 0
     // bump this up to get more difficult
     this.corruptionMax = 0.2
@@ -84,6 +85,7 @@ class Game {
     this.friends = []
 
     this.roundCount = 1
+    this.roundGotEnemies = false
 
     this.chanceSlices = this.calcChanceSlices()
   }
@@ -222,6 +224,7 @@ class Game {
     this.handleMusic()
 
     if(this.stage == TITLE){      
+
       this.drawTitle()
     } else if(this.stage == LOADING){
 
@@ -235,6 +238,7 @@ class Game {
       }
 
     } else if(this.stage == PLAYING){
+
       this.drawPlaying()
     } else if(this.stage == ENDING){
       
@@ -247,6 +251,7 @@ class Game {
         this.stage = GAMEOVER
       }
     } else if(this.stage == GAMEOVER) {
+
       // ended
       this.drawGameover()
       console.log("GAME OVA")
@@ -312,11 +317,6 @@ class Game {
 
     this.handleEnemies()
 
-    //  if everybody's dead... 
-    if( this.everybodyDead() ){
-      this.nextRound()
-    }
-
     if(!this.enemyTimer.running){
       this.enemyTimer.start()
     }
@@ -339,6 +339,11 @@ class Game {
     if(player.lifecycle == ALIVE){
       // stop moving if we DEAD
       player.handleMovement()
+    }
+
+    //  if everybody's dead...
+    if( this.everybodyDead() ){
+      this.nextRound()
     }
 
     player.animation()
@@ -366,13 +371,17 @@ class Game {
   }
 
   cleanEnemies(){
-    for(var i=0; i<this.enemies.length; i++){
-      if(this.enemies[i]){
+    let enemyId
+    let enemiesKeys = k(this.enemies)
+    for(var i=0; i<enemiesKeys.length; i++){
+
+      enemyId = enemiesKeys[i]
+      if(this.enemies[enemyId]){
         // do this so we dont make a sprite
-        this.enemies[i].lifecycle = ALIVE
-        this.enemies[i].remove()
-        this.enemies[i].removeSprite()
-        delete this.enemies[i]
+        this.enemies[enemyId].lifecycle = ALIVE
+        this.enemies[enemyId].remove()
+        this.enemies[enemyId].removeSprite()
+        delete this.enemies[enemyId]
       }
     }
   }
@@ -541,20 +550,24 @@ class Game {
   }
 
   generateEnemies(num){
-    let initial_num_enemies = this.enemies.length;
+    this.roundGotEnemies = true
+
     for(var i=0;i<num; i++){
-
       let enemy = this.addEnemy()
-      this.enemies.push(enemy)
+      this.enemies[enemy.id] = enemy
     }
 
-    for(var i=0; i<this.enemies.length; i++){
+    let enemiesKeys = k(this.enemies)
+    let enemyId
+    for(var i=0; i<enemiesKeys.length; i++){
       // run through and actually add new meshes
-      if(this.enemies[i] && !this.enemies[i].inScene){
-        scene.add(this.enemies[i].mesh)
-        this.enemies[i].inScene = true
+      enemyId = enemiesKeys[i]
+      if(this.enemies[enemyId] && !this.enemies[enemyId].inScene){
+        scene.add(this.enemies[enemyId].mesh)
+        this.enemies[enemyId].inScene = true
       }
-    }
+    }  
+    
   }
 
   handleBombs(){
@@ -638,7 +651,9 @@ class Game {
   }
 
   everybodyDead(){
-    return this.enemies.every((enemy) => enemy.lifecycle == DEAD || enemy.lifecycle == DYING)
+    // need to flag rounds getting enemies so rounds dont just end instantly
+    // return this.roundGotEnemies && k(this.enemies).every((enemyId) => this.enemies[enemyId].lifecycle == DEAD || this.enemies[enemyId].lifecycle == DYING)
+    return k(this.enemies).every((enemyId) => this.enemies[enemyId].lifecycle == DEAD || this.enemies[enemyId].lifecycle == DYING)
   }
 
   handleEnemies(){
@@ -654,9 +669,12 @@ class Game {
 
     // console.log('tehre are enemies ', this.enemies.length)
 
-    for(var i=0, e_len=this.enemies.length; i<e_len; i++){
+    let enemiesKeys = k(this.enemies)
+    let enemyId
 
-      enemy = this.enemies[i]
+    for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
+      enemyId = enemiesKeys[i]
+      enemy = this.enemies[enemyId]
       if(enemy){
 
         // MOVEMENT
@@ -708,9 +726,8 @@ class Game {
 
             // multiply by this teeny tiny so we (mostly) get back something within the realm of 0-1
             let corruption_chance = Math.random() + ( 0.00002 * Math.pow(player.power, 2) )
-
             if( this.percentCorrupted < this.corruptionMax && corruption_chance > 0.80 ){
-              // console.log( 'i really *should* be corrupting ' + chance_mag )
+              // console.log( 'i really *should* be corrupting ' )
               enemy.corrupt()
               numCorrupted += 1
             }
@@ -821,25 +838,16 @@ class Game {
 
           if(enemy.lifecycle == DEAD){
             // WAIT to actually delete enemy until we have faded out the sprite
-            delete this.enemies[i]
+            delete this.enemies[enemyId]
             deletedSomeone = true
           }
         }
 
       }
-    }
-
-    // strip nulls out once were done monkeying around above
-    if(deletedSomeone){
-      for(var i=0;i<this.enemies.length;i++){
-        if(!this.enemies[i]){
-          this.enemies.splice(i, 1)
-        }
-      }
-    }    
+    }  
     
     // record this after we've added new corrupts, and cleaned up dead enemies
-    this.percentCorrupted = numCorrupted/this.enemies.length
+    this.percentCorrupted = numCorrupted/enemiesKeys.length
     if(player.numBombsMax < 1 && this.percentCorrupted == 1){
       this.randomBombs()      
       // add random bombs if we're stuck on all corrupted and dont got bombs yet

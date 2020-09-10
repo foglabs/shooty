@@ -40,6 +40,10 @@
     <div id="stage-info"></div>
 
     <script type="text/javascript">
+      function k(obj){
+        return Object.keys(obj)
+      }
+
       function lerp(a, b, u) {
         // start val, dest val, interval
         return (1 - u) * a + u * b;

@@ -1,5 +1,6 @@
 class Enemy extends Character {
   constructor(base_color){
+    let id = Math.random().toString(36).slice(2)
 
     // enemy's health
     let health
@@ -70,6 +71,7 @@ class Enemy extends Character {
       base_color
     )
 
+    this.id = id
     this.dna = dna
     this.healthValue = 0
     this.enemyType = enemyType
@@ -235,7 +237,6 @@ class Enemy extends Character {
   }
 
   customAnimation(){
-
     // dont do it, if yA DEAD
     if(this.lifecycle == ALIVE){
       this.rotation()
