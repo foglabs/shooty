@@ -23,6 +23,12 @@ class Friend extends Character {
     } else if(this.dna > 0.66){
       this.type = WANDER
     }
+
+    this.targetLock = null
+
+    this.intention = WANDER
+    this.intentionTimer = new Timer()
+    this.intentionTimer.start()
   }
 
   changePower(pwr){
@@ -87,35 +93,69 @@ class Friend extends Character {
     }
   }
 
-  customMovement(){
+  wander(){
     if(this.directionTimer.time() > 800){
       this.directionTimer.reset()
       this.chooseDirection()
-      // console.log( 'I CHOOSE DIREC' )      
+      console.log( 'FRIEND I CHOOSE DIREC', this.accx, this.accy )      
     }
-
     // wander
     let speed =  Math.random()*0.03
+
+    if(this.direction == LEFT){
+      this.accx -= speed
+    } else if(this.direction == UP){
+      this.accy += speed
+    } else if(this.direction == RIGHT){
+      this.accx += speed
+    } else if(this.direction == DOWN) {
+      this.accy -= speed
+    }
+  }
+
+  pursue(enemyIndex){
+    // ignore if my enemy disappeared
+    if(game.enemies[enemyIndex]){
+
+      this.moveTowardsPoint()
+    }
+  }
+
+  customMovement(){
 
     // if(game.percentCorrupted == 1){
     //   this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
     // } else {
-    if(this.type == CHASER){
 
-      // mill around...
-      // then ATTACK
-    } else {
+    // decide what to do every 1s
+    if(this.intentionTimer.time() > 1000){
+      this.intentionTimer.reset()
+  
+      if(this.type == CHASER){
 
-      // console.log( 'direc', this.direction )
-      if(this.direction == LEFT){
-        this.accx -= speed
-      } else if(this.direction == UP){
-        this.accy += speed
-      } else if(this.direction == RIGHT){
-        this.accx += speed
-      } else if(this.direction == DOWN) {
-        this.accy -= speed
-      }         
+        // mill around...
+        if(Math.random() > 0.6){
+
+          this.intention = CHASER
+          this.targetLock = game.randomEnemyIndex()
+        } else {
+          this.intention = WANDER
+        }
+
+        // then ATTACK
+      } else if(this.type == WANDER) {
+        // nothin to do!
+      } else if(this.type == SCREAMER){
+        
+      }
+    }
+
+    if(this.intention == CHASER){
+
+      this.pursue( this.targetLock )
+    } else if(this.intention == WANDER){
+      
+      this.wander()
     }
 
     // console.log( 'accs are ', this.accx, this.accy )

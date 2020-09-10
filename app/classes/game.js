@@ -39,6 +39,10 @@ class Game {
     }
   }
 
+  randomEnemyIndex(){
+    return Math.floor( Math.random() * this.enemies.length )
+  }
+
   gameRunning(){
     this.stage == LOADING || this.stage == PLAYING
   }
@@ -405,9 +409,10 @@ class Game {
     this.drawBombs()
   }
 
-  addFriendIcon(name, index){
+  addFriendIcon(name, index, color){
     let container = document.createElement("div")
     container.classList.add("bar-icon")
+    container.style.backgroundColor = color
 
     let nameEle = document.createElement("div")
     nameEle.classList.add("friend-name")
@@ -423,7 +428,7 @@ class Game {
   }
 
   removeFriendIcon(index){
-    let friendContainer = document.getElementById("friend"+index).parentNode
+    let friendContainer = document.getElementById("friend"+index).parentNode.parentNode
     friendContainer.parentNode.removeChild( friendContainer )
   }
 
@@ -432,12 +437,18 @@ class Game {
   }
 
   drawFriendIcons(){
+    let color
     for(var i=0; i<this.friends.length; i++){
 
       if( this.friends[i] && !document.getElementById("friend"+i) ){
         console.log( 'adding friend', i )
         // check if icon exists for friend, if not create that ho
-        game.addFriendIcon("friend", i)
+        let r,g,b
+        r = this.friends[i].baseColor[0]
+        g = this.friends[i].baseColor[1]
+        b = this.friends[i].baseColor[2]
+        color = rgbToHex(r,g,b)
+        game.addFriendIcon("friend", i, color)
       }
 
       document.getElementById("friend" + i).value = this.friends[i].power

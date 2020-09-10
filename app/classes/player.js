@@ -48,7 +48,7 @@ class Player extends Character {
     this.defaultSwordSpeed = DEG1
     this.swordSpeed = DEG1
 
-    this.friendsAvailable = 5
+    this.friendsAvailable = 1
 
     // build to level up
     this.knowledge = 0
@@ -271,7 +271,11 @@ class Player extends Character {
   addFriend(){
 
     if(this.friendsAvailable > 0){
-      let friend = new Friend(this.level*20, 20, [110,0,200])
+      let r,g,b
+      r = Math.floor(Math.random() * 255)
+      g = Math.floor(Math.random() * 255)
+      b = Math.floor(Math.random() * 255)
+      let friend = new Friend(this.level*20, 20, [r,g,b])
       scene.add( friend.mesh )
 
       game.friends.push( friend )

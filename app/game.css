@@ -39,7 +39,9 @@ div.bar-icon {
   position: relative;
   width: 32px;
   height: 32px;
-  background-color: #f8f;
+  margin-left: 6px;
+  margin-right: 6px;
+  /*background-color: #f8f;*/
 }
 
 #friend-info {

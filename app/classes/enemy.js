@@ -224,10 +224,12 @@ class Enemy extends Character {
     let friend
     for(var i=0; i<game.friends.length; i++){
       friend = game.friends[i]
-      hit = this.handleHit( friend )
-      if(hit && friend.damageTimer.time() > 60){
-        friend.damageTimer.reset()
-        friend.attack( this )        
+      if(friend){
+        hit = this.handleHit( friend )
+        if(hit && friend.damageTimer.time() > 60){
+          friend.damageTimer.reset()
+          friend.attack( this )        
+        }
       }
     }
   }
