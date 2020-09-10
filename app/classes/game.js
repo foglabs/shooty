@@ -85,7 +85,6 @@ class Game {
     this.friends = []
 
     this.roundCount = 1
-    this.roundGotEnemies = false
 
     this.chanceSlices = this.calcChanceSlices()
   }
@@ -550,7 +549,6 @@ class Game {
   }
 
   generateEnemies(num){
-    this.roundGotEnemies = true
 
     for(var i=0;i<num; i++){
       let enemy = this.addEnemy()
@@ -652,7 +650,6 @@ class Game {
 
   everybodyDead(){
     // need to flag rounds getting enemies so rounds dont just end instantly
-    // return this.roundGotEnemies && k(this.enemies).every((enemyId) => this.enemies[enemyId].lifecycle == DEAD || this.enemies[enemyId].lifecycle == DYING)
     return k(this.enemies).every((enemyId) => this.enemies[enemyId].lifecycle == DEAD || this.enemies[enemyId].lifecycle == DYING)
   }
 
