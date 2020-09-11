@@ -17,11 +17,14 @@ class Friend extends Character {
     this.powerMax = 75
 
     if(this.dna <= 0.33){
+      console.log( 'creating WANDER' )
       this.type = WANDER
     } else if(this.dna > 0.33 && this.dna <= 0.66){
+      console.log( 'creating CHASER' )
       this.type = CHASER
     } else if(this.dna > 0.66){
-      this.type = WANDER
+      console.log( 'creating FOLLOWER' )
+      this.type = FOLLOWER
     }
 
     this.targetLock = null
@@ -56,6 +59,7 @@ class Friend extends Character {
       if(cost != 0 && pwr > 0){
         other_char.takeDamage(pwr)
         this.changePower(-1 * cost)
+        this.changeHealth(Math.ceil(cost/4))
       }
       
       // console.log( 'hateful attack for ', pwr )
@@ -93,14 +97,14 @@ class Friend extends Character {
     }
   }
 
-  wander(){
+  wander(accChange){
     if(this.directionTimer.time() > 800){
       this.directionTimer.reset()
       this.chooseDirection()
-      console.log( 'FRIEND I CHOOSE DIREC', this.accx, this.accy )      
+      // console.log( 'FRIEND I CHOOSE DIREC', this.accx, this.accy )      
     }
     // wander
-    let speed =  Math.random()*0.03
+    let speed =  Math.random()*accChange
 
     if(this.direction == LEFT){
       this.accx -= speed
@@ -114,18 +118,30 @@ class Friend extends Character {
   }
 
   pursue(enemyId){
-    // ignore if my enemy disappeared
     if(game.enemies[enemyId]){
+      let x,y
+      x = game.enemies[enemyId].mesh.position.x
+      y = game.enemies[enemyId].mesh.position.y
+      this.moveTowardsPoint(x,y)
+    } else {
 
-      this.moveTowardsPoint()
+      // idle for a bit if my enemy disappeared
+      this.intention = IDLING
     }
   }
 
-  customMovement(){
+  idle(){
+    this.wander(0.01)
+  }
 
-    // if(game.percentCorrupted == 1){
-    //   this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
-    // } else {
+  followPlayer(){
+    let x,y
+    x = player.mesh.position.x
+    y = player.mesh.position.y
+    this.moveTowardsPoint(x,y)
+  }
+
+  customMovement(){
 
     // decide what to do every 1s
     if(this.intentionTimer.time() > 1000){
@@ -139,14 +155,15 @@ class Friend extends Character {
           this.intention = CHASER
           this.targetLock = game.randomEnemyId()
         } else {
+
           this.intention = WANDER
         }
 
         // then ATTACK
       } else if(this.type == WANDER) {
         // nothin to do!
-      } else if(this.type == SCREAMER){
-        
+      } else if(this.type == FOLLOWER){
+        this.intention = FOLLOWING
       }
     }
 
@@ -155,7 +172,11 @@ class Friend extends Character {
       this.pursue( this.targetLock )
     } else if(this.intention == WANDER){
       
-      this.wander()
+      this.wander(0.03)
+    } else if(this.intention == IDLING){
+      this.idle()
+    } else if(this.intention == FOLLOWING){
+      this.followPlayer()
     }
 
     // console.log( 'accs are ', this.accx, this.accy )

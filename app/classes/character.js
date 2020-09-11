@@ -274,6 +274,11 @@ class Character {
     this.banners = new Duster(map, size, num, dist, this.mesh.position, 1, badge)
   }
 
+  changeHealth(healthChange){
+    // this is for healing, dont want to use v similar takeDamage because it makes sounds
+    this.health = incInRange( this.health, healthChange, 0, 100 )
+  }
+
   killSound(){}
 
   // you already know

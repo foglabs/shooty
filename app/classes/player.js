@@ -48,7 +48,7 @@ class Player extends Character {
     this.defaultSwordSpeed = DEG1
     this.swordSpeed = DEG1
 
-    this.friendsAvailable = 1
+    this.friendsAvailable = 0
 
     // build to level up
     this.knowledge = 0
@@ -78,11 +78,6 @@ class Player extends Character {
       }  
     }
     
-  }
-
-  changeHealth(healthChange){
-    // this is for healing, dont want to use v similar takeDamage because it makes sounds
-    this.health = incInRange( this.health, healthChange, 0, 100 )
   }
 
   changePower(powChange){
@@ -127,7 +122,7 @@ class Player extends Character {
     }
 
     // start at level 4, and every even lvl after
-    if(this.level >= 4 && this.level % 2 == 0){
+    if(this.level >= 6 && this.level % 2 == 0){
       this.friendsAvailable += 1
       game.announcement("FRIENDS UNLOCKED (C)")
     }

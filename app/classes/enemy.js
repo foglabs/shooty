@@ -29,27 +29,27 @@ class Enemy extends Character {
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
       health = 2
-      nutritionalValue = 10
+      nutritionalValue = 16
       base_color = [72,201,46]
       enemyType = STICK
     } else if(dna <= sphereChance){
       // sphere
       health = 10
-      nutritionalValue = 20
+      nutritionalValue = 26
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
       base_color = [114,194,189]
       enemyType = SPHERE
     } else if(dna <= circleChance) {
       // circle
       health = 12
-      nutritionalValue = 18
+      nutritionalValue = 22
       geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [214,189,58]
       enemyType = CIRCLE
     } else if(dna <= octaChance) {
       // knowledge octa
       health = 12
-      nutritionalValue = 24
+      nutritionalValue = 26
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
       knowledgeValue = 25
@@ -58,7 +58,7 @@ class Enemy extends Character {
       // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
       health = 30
-      nutritionalValue = 40
+      nutritionalValue = 50
       base_color = [189,52,147]
       enemyType = HEALCUBE
     }
