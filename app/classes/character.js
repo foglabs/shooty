@@ -1,9 +1,5 @@
 class Character {
   constructor(geo, bbox, base_color){
-    
-    this.maxX = 3
-    this.maxY = 3
-
     this.accx = 0
     this.accy = 0
 
@@ -203,16 +199,16 @@ class Character {
     let posx = this.mesh.position.x + this.calcMovement(this.lightness, this.accx)
     let posy = this.mesh.position.y + this.calcMovement(this.lightness, this.accy)
     
-    if(Math.abs(posx) >= this.maxX){
+    if(Math.abs(posx) >= game.maxX){
       // stop it if it hits the edge
       this.accx = 0
-      posx = Math.sign(posx) * this.maxX
+      posx = Math.sign(posx) * game.maxX
     }
 
-    if(Math.abs(posy) >= this.maxY){
+    if(Math.abs(posy) >= game.maxY){
       // stop it if it hits the edge
       this.accy = 0
-      posy = Math.sign(posy) * this.maxY
+      posy = Math.sign(posy) * game.maxY
     }
 
     this.mesh.position.x = posx
@@ -224,8 +220,7 @@ class Character {
       this.duster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
 
-    if(this.lifecycle == ALIVE && this.banners){
-      // console.log( 'move my particles baby' )
+    if((this.lifecycle == ALIVE || this.lifecycle == CORRUPTING) && this.banners){
       this.banners.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
 
@@ -269,10 +264,9 @@ class Character {
     this.duster = new Duster(map, 0.0422, 28, 0.32, this.mesh.position, 1)
   }
 
-  addBanners(map, size, num, dist, badge=false){
-    // little blod splats
-    // this.banners = new Duster(map, 0.18, 16, 0.18, this.mesh.position, 1)
-    this.banners = new Duster(map, size, num, dist, this.mesh.position, 1, badge)
+  addBanners(map, size, num, dist, badge=false, opacity=1){
+    // ignores distance and num if badge == true
+    this.banners = new Duster(map, size, num, dist, this.mesh.position, opacity, badge)
   }
 
   changeHealth(healthChange){

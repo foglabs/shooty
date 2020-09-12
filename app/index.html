@@ -136,6 +136,8 @@
       ALIVE = 0
       DYING = 1
       DEAD = 2
+      // a state beyond death
+      CORRUPTING = 3
 
       // game stage
       TITLE = 0
@@ -264,6 +266,9 @@
 
       let candyspriteMap = loader.load( "sprites/candysprite.png")
       candyspriteMaterial = new THREE.SpriteMaterial( { map: candyspriteMap } )
+
+      let nowcorruptingspriteMap = loader.load( "sprites/nowcorruptingsprite.png")
+      nowcorruptingspriteMaterial = new THREE.SpriteMaterial( { map: nowcorruptingspriteMap } )
 
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )

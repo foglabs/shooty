@@ -57,6 +57,7 @@ class Enemy extends Character {
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
       knowledgeValue = 25
+      enemyType = KNOWLOCTA
       lightness = 0.09
     } else {
       // heal cube
@@ -114,13 +115,13 @@ class Enemy extends Character {
     // health banner
     if(this.enemyType == HEALCUBE){
       // console.log( 'scalfe', this.scaleFactor )
-      let dist = 0.20 * this.scaleFactor
+      let dist = 0.18 * this.scaleFactor
       // console.log( 'dist', dist )
-      let size = 0.28 * this.scaleFactor
+      let size = 0.48 * this.scaleFactor
       this.addBanners(healthspriteMap, size, 2, dist, true)
     } else if(this.enemyType == KNOWLOCTA){
-      let dist = 0.20 * this.scaleFactor
-      let size = 0.48 * this.scaleFactor
+      let dist = 0.1 * this.scaleFactor
+      let size = 0.46 * this.scaleFactor
       this.addBanners(candyspriteMap, size, 2, dist, true)
     }
 
@@ -143,6 +144,12 @@ class Enemy extends Character {
     this.directionTimer = new Timer()
     // start this up because were going to add to scene right now anyway
     this.directionTimer.start()
+
+    // countdown to actually being corrupted
+    this.corruptingTimer = new Timer()
+    this.corrOpacityUp = true
+    this.corrOpacityUpTimer = new Timer()
+    this.corrOpacityUpTimer.start()
 
     this.color = this.baseColor
     this.nutritionalValue = nutritionalValue
@@ -176,11 +183,7 @@ class Enemy extends Character {
     }
   }
 
-  corrupt(){
-    this.health = 24
-    this.corrupted = true
-    this.baseColor = [255,0,0]
-    this.mesh.material.color.setRGB(0xff0000)
+  startCorrupting(){
 
     // remove health guy glows if necessary
     if(this.duster){
@@ -189,15 +192,18 @@ class Enemy extends Character {
 
     if(this.banners){
       this.banners.remove()
+      this.banners = null
     }
 
-    // add the evil script
-    this.addBanners(corruptdustMap, 0.18, 16, 0.18)
+    this.lifecycle = CORRUPTING
+    let dist = 0.21 * this.scaleFactor
+    let size = 0.68 * this.scaleFactor
+    // this.addBanners(candyspriteMap, size, 2, dist, true)
+    // let size = 0.33 * this.scaleFactor
+    this.addBanners(nowcorruptingspriteMap, size, 0, dist, true, 0.3)
+    this.banners.setPosition( this.mesh.position )
+    this.corruptingTimer.start()
 
-    this.hitColor = [255,0,0]
-
-    // same proportions as a before, diff sounds
-    this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
   }
 
   killSound(){
@@ -223,7 +229,6 @@ class Enemy extends Character {
     if(hit && player.sword.damageTimer.time() > 200){
       player.sword.damageTimer.reset()
       this.takeDamage( 5 * player.level )
-      // console.log( 'fuckin took ', 5*player.level, this.health )
     }
   }
 
@@ -247,7 +252,9 @@ class Enemy extends Character {
     if(this.lifecycle == ALIVE){
       this.rotation()
 
-      if(this.enemyType == HEALCUBE){
+      if(this.enemyType == HEALCUBE && this.duster){
+        // need to check for duster because its gone during
+
         // health cube
         this.duster.particleSystem.rotation.x += 0.01
       }
@@ -286,26 +293,77 @@ class Enemy extends Character {
           this.lifecycle = DEAD
         }
       }
+    } else if(this.lifecycle == CORRUPTING){
+
+      // fade corrupting sprite
+      if(this.corrOpacityUpTimer.time() > 10){
+        this.corrOpacityUpTimer.reset()
+  
+        if(this.corrOpacityUp){
+          // console.log( 'went up' )
+          this.banners.particleSystem.material.opacity += 0.02
+        } else {
+          // console.log( 'went down' )
+          this.banners.particleSystem.material.opacity -= 0.02
+        }
+
+        if(this.banners.particleSystem.material.opacity <= 0.3){
+          // console.log( 'going up now' )
+          this.corrOpacityUp = true
+        } else if(this.banners.particleSystem.material.opacity >= 1) {
+          // console.log( 'going down now' )
+          this.corrOpacityUp = false
+        }
+  
+
+      }
+      
+      if(this.corruptingTimer.time() > 1800){
+        this.lifecycle = ALIVE
+
+        console.log( 'I CORRUPT NOW...', this.id )
+
+        this.health = 24
+        this.corrupted = true
+        this.baseColor = [255,0,0]
+        this.mesh.material.color.setRGB(0xff0000)
+
+        // douse the flames
+        this.banners.remove()
+
+        // add the evil script
+        this.addBanners(corruptdustMap, 0.18, 16, 0.18)
+        this.hitColor = [255,0,0]
+        // same proportions as a before, diff sounds
+        this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+      }
     }
   }
 
   customMovement(){
-    let speed =  Math.random()*0.03
 
-    if(game.percentCorrupted == 1){
-      this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
-    } else {
+    //STOP RIGHT THERE - its time to corrupt
+    if(this.lifecycle != CORRUPTING){
+      let speed =  Math.random()*0.03
 
-      if(this.direction == LEFT){
-        this.accx -= speed
-      } else if(this.direction == UP){
-        this.accy += speed
-      } else if(this.direction == RIGHT){
-        this.accx += speed
-      } else if(this.direction == DOWN) {
-        this.accy -= speed
-      }      
+      if(game.percentCorrupted == 1){
+        // chase the player like a demon from hell if theres only corrupteds left
+        this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
+      } else {
+
+        if(this.direction == LEFT){
+          this.accx -= speed
+        } else if(this.direction == UP){
+          this.accy += speed
+        } else if(this.direction == RIGHT){
+          this.accx += speed
+        } else if(this.direction == DOWN) {
+          this.accy -= speed
+        }      
+      }
+
+      
     }
-
+    
   }
 }

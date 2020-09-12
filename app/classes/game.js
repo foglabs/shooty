@@ -1,6 +1,13 @@
 class Game {
   constructor(){
 
+    // the ol square
+    // this.maxX = 3
+    // this.maxY = 3
+    // divide by 2 for +/-, divide by 200 to relate to window dimensions
+    this.maxX = window.innerWidth / 2 / 200
+    this.maxY = window.innerHeight / 2 / 200
+
     this.u = 0
     // current color
     this.backgroundColor = [0,0,0]
@@ -194,7 +201,7 @@ class Game {
         // fx_song2.setVolume(0.0)
 
         if(!fx_song2.playing()){
-          // fx_song2.play()
+          fx_song2.play()
         }
 
       //   if(!this.musicFadeTimer.running){
@@ -549,7 +556,6 @@ class Game {
   }
 
   generateEnemies(num){
-
     for(var i=0;i<num; i++){
       let enemy = this.addEnemy()
       this.enemies[enemy.id] = enemy
@@ -717,19 +723,19 @@ class Game {
             player.eating = true
           }
 
-          if(this.corruptionTimer.time() > 200) {
+          if(enemy.lifecycle != CORRUPTING && this.corruptionTimer.time() > 1000) {
             // only need to handleCorruption if we're not dying
             this.corruptionTimer.reset()
 
             // multiply by this teeny tiny so we (mostly) get back something within the realm of 0-1
             let corruption_chance = Math.random() + ( 0.00002 * Math.pow(player.power, 2) )
-            if( this.percentCorrupted < this.corruptionMax && corruption_chance > 0.80 ){
+            if(this.percentCorrupted < this.corruptionMax && corruption_chance > 0.80 ){
               // console.log( 'i really *should* be corrupting ' )
-              enemy.corrupt()
+              enemy.startCorrupting()
               numCorrupted += 1
             }
           }  
-        } else {
+        } else if(enemy.corrupted) {
           // this is else if corrupted
 
           if(player.killingCircle && player.killingCircle.visible){

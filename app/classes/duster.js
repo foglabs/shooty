@@ -9,6 +9,8 @@ class Duster {
     this.position = position
     this.opacity = opacity || 0.24
 
+    this.badge = badge
+
     this.distance = distance
     
     let pointMat = new THREE.PointsMaterial({color: 0xffffff,
@@ -18,7 +20,6 @@ class Duster {
       transparent: true,
       opacity: this.opacity
     })
-      
 
     let p,x,y,z
     // create particles
@@ -35,7 +36,15 @@ class Duster {
       }
   
     } else {
-      p = new THREE.Vector3( this.position.x,this.position.y,this.position.z+0.2,)
+      // badge gives you one thing, right on top
+      // p = new THREE.Vector3( this.position.x,this.position.y,this.position.z+0.2,)
+
+      // let z = this.position.z * 1.00005
+      // p = new THREE.Vector3( this.position.x,this.position.y,z)
+
+
+      p = new THREE.Vector3( 0,0, this.distance )
+
       geometry.vertices.push(p)
     }
     
@@ -46,17 +55,21 @@ class Duster {
     )
 
     // this.particleSystem.material.rotation.y = Math.random() * 2 * Math.PI
-
     this.particleSystem.sortParticles = true
 
     if(this.position){
       // console.log( 'tryignt o set position', this.position )
-      this.particleSystem.position.set( this.position )
+      this.setPosition(this.position)
     }
 
     this.animTimer = new Timer()
 
     scene.add( this.particleSystem )
+  }
+
+  setPosition(pos){
+    this.position = pos
+    this.particleSystem.position.set( this.position )
   }
 
   remove(){
@@ -72,7 +85,6 @@ class Duster {
   }
 
   animation(){
-
     this.particleSystem.rotation.y += 0.00006
     this.particleSystem.rotation.x += 0.0002
   }
