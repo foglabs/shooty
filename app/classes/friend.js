@@ -14,6 +14,7 @@ class Friend extends Character {
 
     this.dna = Math.random()
 
+    this.lightness = 0.08
     this.powerMax = 75
 
     if(this.dna <= 0.33){

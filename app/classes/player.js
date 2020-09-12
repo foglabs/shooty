@@ -15,6 +15,9 @@ class Player extends Character {
     this.hitColor = [193,29,209]
     this.color = this.baseColor
     this.isPlayer = true
+    
+    // how heavy is da guy
+    this.lightness = 0.06
 
     this.defaultPlayerValues()
   }

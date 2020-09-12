@@ -172,8 +172,9 @@ class Character {
     this.mesh.material.color.set( hex )
   }
 
-  calcMovement(speed, acc) {
-    return speed * acc;
+  calcMovement(lightness, acc) {
+    // higher means faster
+    return lightness * acc;
   }
 
   // use this instead of inc in range, because we dont actually want to constrain between range of values, we jus twant to move towards 0
@@ -199,8 +200,8 @@ class Character {
     // decide accelaration
     this.customMovement()
 
-    let posx = this.mesh.position.x + this.calcMovement(0.08, this.accx)
-    let posy = this.mesh.position.y + this.calcMovement(0.08, this.accy)
+    let posx = this.mesh.position.x + this.calcMovement(this.lightness, this.accx)
+    let posy = this.mesh.position.y + this.calcMovement(this.lightness, this.accy)
     
     if(Math.abs(posx) >= this.maxX){
       // stop it if it hits the edge

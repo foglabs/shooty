@@ -9,6 +9,7 @@ class Enemy extends Character {
     // how much knowl player gets
     let knowledgeValue = 0
     let enemyType
+    let lightness
 
     // de mesh
     let geometry
@@ -32,6 +33,7 @@ class Enemy extends Character {
       nutritionalValue = 16
       base_color = [72,201,46]
       enemyType = STICK
+      lightness = 0.1
     } else if(dna <= sphereChance){
       // sphere
       health = 10
@@ -39,13 +41,15 @@ class Enemy extends Character {
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
       base_color = [114,194,189]
       enemyType = SPHERE
+      lightness = 0.03
     } else if(dna <= circleChance) {
       // circle
-      health = 12
+      health = 0.04
       nutritionalValue = 22
       geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [214,189,58]
       enemyType = CIRCLE
+      lightness = 0.4
     } else if(dna <= octaChance) {
       // knowledge octa
       health = 12
@@ -53,7 +57,7 @@ class Enemy extends Character {
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
       knowledgeValue = 25
-      enemyType = KNOWLOCTA
+      lightness = 0.09
     } else {
       // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
@@ -61,6 +65,7 @@ class Enemy extends Character {
       nutritionalValue = 50
       base_color = [189,52,147]
       enemyType = HEALCUBE
+      lightness = 0.02
     }
     
     super(
@@ -75,6 +80,7 @@ class Enemy extends Character {
     this.dna = dna
     this.healthValue = 0
     this.enemyType = enemyType
+    this.lightness = lightness
 
     // cube
     if(this.enemyType == HEALCUBE){
