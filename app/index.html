@@ -153,6 +153,22 @@
       KNOWLOCTA = 3
       HEALCUBE = 4
 
+      // casino phases
+      BETTING = 0
+      ROLLING = 1
+      RESULT = 2
+      PAYOUT = 3
+      DONE = 4
+      WAIT = 5
+
+      // casino result
+      WIN = 0
+      LOSE = 1
+
+      // casino choice
+      CHO = 0
+      HAN = 1
+
       // DEG0 = radian(0)
       DEG1 = radian(1)
       DEG45 = radian(45)
@@ -270,6 +286,10 @@
       let nowcorruptingspriteMap = loader.load( "sprites/nowcorruptingsprite.png")
       nowcorruptingspriteMaterial = new THREE.SpriteMaterial( { map: nowcorruptingspriteMap } )
 
+
+      let casinohighlightMap = loader.load( "sprites/casinohighlight.png")
+      casinohighlightMaterial = new THREE.SpriteMaterial( { map: casinohighlightMap } )
+
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
       camera.position.z = 5
@@ -339,7 +359,6 @@
         if(game.stage == TITLE || game.stage == GAMEOVER){
           
           if (event.key == " " || event.key == "Spacebar"){
-              player.startKillingCircle()
 
             if( checkSoundsLoaded() ){
               console.log( 'new game' )
@@ -362,6 +381,10 @@
             if(player.friendsAvailable > 0){
               player.addFriend()
             }
+          } else if(event.key == "v"){
+            if(player.hasCasino){
+              game.startCasino()
+            }
           }
         }
 
@@ -383,92 +406,7 @@
       document.addEventListener("keydown", onDocumentKeyDown, false);
       document.addEventListener("keyup", onDocumentKeyUp, false);
 
-
-
-      // put this here to get event context
-      // function onDocumentKeyDownUp(event) {
-        
-      //   keyHandler.heldKeys[event.key] = event.type == 'keydown'
-      //   let heldkeys_keys = Object.keys(keyHandler.heldKeys)
-
-      //   // are any keys held down 
-      //   if(heldkeys_keys){
-      //     for(i=0; i<heldkeys_keys.length; i++){
-
-      //       // is this particular key held down?
-      //       let key = heldkeys_keys[ i ]
-
-      //       if( keyHandler.heldKeys[ key ] ){
-
-      //         keyHandler.keyEvents(event.key)
-      //       }
-      //     }
-      //   }
-
-      //   // clear out stuff from nonheld keys
-      //   if(event.type == "keyup" && event.key == " " || event.key == "Spacebar"){
-      //     player.stopKillingCircle()
-      //   }
-
-      //   console.log( 'type is ', event.type )
-      //   console.log( 'keys is ', keyHandler.heldKeys )
-      // }
-      
-      // set listeners
-      // document.addEventListener("keydown", onDocumentKeyDownUp, false);
-      // document.addEventListener("keyup", onDocumentKeyDownUp, false);
-      
-
       animate();
-      // document.addEventListener("keydown", onDocumentKeyDownUp, false);
-      // document.addEventListener("keyup", onDocumentKeyDownUp, false);
-      // function keyEvents(key){
-      //   if (key == "ArrowLeft"){
-      //       // console.log("left")
-      //       player.accx -= 0.5;
-      //   } else if (key == "ArrowUp"){
-      //       // console.log("up")
-      //       player.accy += 0.5
-      //   } else if (key == "ArrowRight"){
-      //       // console.log("right")
-      //       player.accx += 0.5
-      //   } else if (key == "ArrowDown"){
-      //       // console.log("down")
-      //       player.accy   -= 0.5
-      //   } else if (key == " " || key == "Spacebar"){
-          
-      //     // SPACE BAR
-      //     if(game.stage == TITLE){
-      //       game.newGame()
-
-      //     } else if(game.stage == PLAYING){
-      //       player.startKillingCircle()
-      //     }
-      //   }
-      // }
-
-      // let heldkeys = {}
-      // function onDocumentKeyDownUp(event) {
-      //   heldkeys[event.key] = event.type == 'keydown'
-
-      //   heldkeys_keys = Object.keys(heldkeys)
-
-      //   // are any keys held down 
-      //   if(heldkeys_keys){
-      //     for(i=0; i<heldkeys_keys.length; i++){
-      //       // is the key held down?
-      //       let key = heldkeys_keys[i];
-      //       if(heldkeys[key]){
-      //         keyEvents(event.key)
-      //       }
-      //     }
-      //   }
-
-      //   // clear out stuff from nonheld keys
-      //   if(event.type == "keyup" && event.key == " " || event.key == "Spacebar"){
-      //     player.stopKillingCircle()
-      //   }
-      // }
 
       document.body.appendChild( renderer.domElement )
     </script>

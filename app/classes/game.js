@@ -18,6 +18,8 @@ class Game {
 
     this.setDefaultGameValues()
 
+    this.musicEnabled = false
+
     this.stage = false
     this.stageTimer = new Timer()
     this.loadTime = 2000
@@ -90,6 +92,9 @@ class Game {
     this.randomBombsTimer.start()
 
     this.friends = []
+
+    // yeah bitch
+    this.casino = null
 
     this.roundCount = 1
 
@@ -190,39 +195,44 @@ class Game {
     fx_youredeadE.play()
   }
 
+  startCasino(){
+    this.casino = new Casino()
+  }
+
   handleMusic(){
+    if(this.musicEnabled){
+      if(this.stage == TITLE || this.stage == LOADING || this.stage == PLAYING){
 
-    if(this.stage == TITLE || this.stage == LOADING || this.stage == PLAYING){
+        // oh forget it!      
+        // music start
+        if(this.musicTimer.running && this.musicTimer.time() > 4000){
+          // fx_song2.setVolume(0.0)
 
+          if(!fx_song2.playing()){
+            fx_song2.play()
+          }
 
-      // oh forget it!      
-      // music start
-      if(this.musicTimer.running && this.musicTimer.time() > 4000){
-        // fx_song2.setVolume(0.0)
+        //   if(!this.musicFadeTimer.running){
+        //     this.musicFadeTimer.start()
+        //   }
 
-        if(!fx_song2.playing()){
-          // fx_song2.play()
+        //   // music fade
+        //   if(this.musicFadeTimer.time() > 100){
+        //     this.musicFadeTimer.reset()
+
+        //     this.musicVolume = this.musicVolume + 0.01
+        //     console.log( 'added musicvolume', this.musicVolume )
+        //     fx_song2.setVolume( this.musicVolume )
+
+        //     if(this.musicVolume > 0.6){
+        //       // stop changing once we reach the right volume
+        //       this.musicTimer.stop()
+        //     }
+        //   }
         }
-
-      //   if(!this.musicFadeTimer.running){
-      //     this.musicFadeTimer.start()
-      //   }
-
-      //   // music fade
-      //   if(this.musicFadeTimer.time() > 100){
-      //     this.musicFadeTimer.reset()
-
-      //     this.musicVolume = this.musicVolume + 0.01
-      //     console.log( 'added musicvolume', this.musicVolume )
-      //     fx_song2.setVolume( this.musicVolume )
-
-      //     if(this.musicVolume > 0.6){
-      //       // stop changing once we reach the right volume
-      //       this.musicTimer.stop()
-      //     }
-      //   }
-      }
+      }  
     }
+    
   }
 
   handleGame(){
@@ -249,7 +259,9 @@ class Game {
     } else if(this.stage == ENDING){
       
       // stop!
-      fx_song2.stop()
+      if(this.musicEnabled){
+        fx_song2.stop()
+      }
 
       this.drawEnding()
 
@@ -307,6 +319,11 @@ class Game {
   }
 
   drawPlaying(){
+
+    if(this.casino){
+      // game phases are handled internally
+      this.casino.handlePlay()
+    }
 
     if(this.bombs.length > 0){
       this.handleBombs()
@@ -423,6 +440,10 @@ class Game {
     this.drawKnowledge()
     this.drawBombs()
   }
+
+  // drawCasino(){
+
+  // }
 
   addFriendIcon(name, index, color){
     let container = document.createElement("div")
@@ -630,7 +651,7 @@ class Game {
               if(friend.rechargeTimer.time() > 60){
                 friend.rechargeTimer.reset()
                 friend.changePower(2)
-                console.log( 'chare him to ', friend.power )
+                // console.log( 'chare him to ', friend.power )
 
               }
             }
@@ -767,12 +788,18 @@ class Game {
                 player.takeDamage( game.corruptedDamage )
     
                 if(player.lifecycle == ALIVE && player.health <= 0){
-                  player.addSprite()
+                  player.addSprite(pbloodspriteMaterial.clone(), 0.388)
                   player.lifecycle = DYING
-                  this.endGame()
                 }
               }
   
+            }
+          } else if(player.lifecycle == DYING){
+            if(player.deadSprite.material.opacity <=0){
+              // wait to end until sprite go bye bye
+
+              player.lifecycle = DEAD
+              this.endGame()
             }
           }
 
@@ -835,6 +862,7 @@ class Game {
 
             game.changeScore(score)
             enemy.lifecycle = DYING
+            // console.log( 'eneemy dying ', enemy.id )
             enemy.killSound()
             enemy.remove()
           }

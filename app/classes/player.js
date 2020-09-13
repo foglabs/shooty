@@ -146,12 +146,12 @@ class Player extends Character {
   }
 
   dropBomb(){
-    console.log( 'bmobms', this.numBombs, this.numBombsMax )
+    // console.log( 'bmobms', this.numBombs, this.numBombsMax )
     if(this.numBombs > 0){
       let bomb = new Bomb([50,50,50], this.level)
       bomb.mesh.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
       scene.add( bomb.mesh )
-      game.bombs.push( bomb )  
+      game.bombs.push( bomb )
 
       this.numBombs = incInRange( this.numBombs, -1, 0, this.numBombsMax )
     }
@@ -277,7 +277,7 @@ class Player extends Character {
       r = Math.floor(Math.random() * 255)
       g = Math.floor(Math.random() * 255)
       b = Math.floor(Math.random() * 255)
-      let friend = new Friend(this.level*20, 20, [r,g,b])
+      let friend = new Friend(this.level*20, 20, [r,g,b], this.mesh.position)
       scene.add( friend.mesh )
 
       game.friends.push( friend )

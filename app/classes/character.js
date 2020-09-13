@@ -41,6 +41,9 @@ class Character {
 
     this.duster = null
     this.dusterTimer = new Timer()
+
+    this.bloodDuster = null
+    this.bloodDusterTimer = new Timer()
   }
 
   moveTowardsPoint(destx, desty){
@@ -105,11 +108,22 @@ class Character {
   remove(){
     // add sprite, then start fading it out - has to come before removing mesh to get position!
     if(this.lifecycle == DYING){
-      this.addSprite()
+
+      if(this.corrupted){
+        // corrupted kill
+        this.addSprite(corruptorMaterial.clone(), 0.688)
+      } else {
+        this.addSprite(bloodspriteMaterial.clone(), 0.388)
+      }
 
       // clean up on aisle akuma
       if(this.banners){
         this.banners.remove()
+      }
+  
+      // clean that blood up
+      if(this.bloodDuster){
+        this.bloodDuster.remove()
       }
     }
 
@@ -118,20 +132,7 @@ class Character {
     scene.remove(this.mesh)
   }
 
-  addSprite(){
-    let mat
-    let scale
-    // if yous a enemy
-    if(this.corrupted){
-      mat = corruptorMaterial.clone()
-      scale = 0.688
-    } else if(this.isPlayer){
-      mat = pbloodspriteMaterial.clone()
-      scale = 0.388
-    } else {
-      mat = bloodspriteMaterial.clone()
-      scale = 0.388
-    }
+  addSprite(mat, scale){
     this.deadSprite = new THREE.Sprite( mat )
 
     // center rotation anchor
@@ -220,6 +221,11 @@ class Character {
       this.duster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
 
+    if(this.lifecycle == ALIVE && this.bloodDuster){
+      // console.log( 'move my particles baby' )
+      this.bloodDuster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
+    }
+
     if((this.lifecycle == ALIVE || this.lifecycle == CORRUPTING) && this.banners){
       this.banners.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
@@ -259,9 +265,13 @@ class Character {
     return this.isPlayer ? pbloodspriteMap : bloodspriteMap
   }
 
-  addParticles(map){
+  addParticles(map, blood=false){
     // little blod splats
-    this.duster = new Duster(map, 0.0422, 28, 0.32, this.mesh.position, 1)
+    if(blood){
+      this.bloodDuster = new Duster(map, 0.0422, 28, 0.32, this.mesh.position, 1)
+    } else {
+      this.duster = new Duster(map, 0.0422, 28, 0.32, this.mesh.position, 1)
+    }
   }
 
   addBanners(map, size, num, dist, badge=false, opacity=1){
@@ -286,9 +296,9 @@ class Character {
     // this.health -= dmg
     this.health = incInRange( this.health, -1*dmg, 0, 1000 ) 
 
-    if(!this.duster){
-      this.addParticles( this.dmgSpriteMap() )
-      this.dusterTimer.start()
+    if(!this.bloodDuster){
+      this.addParticles( this.dmgSpriteMap(), true )
+      this.bloodDusterTimer.start()
     }
   }
 
@@ -403,9 +413,24 @@ class Character {
           this.duster = null
         }
       }
-      
     }
 
+    if(this.bloodDuster){
+      // run dis
+      this.bloodDuster.animation()
+      if(this.bloodDusterTimer.time() > 20){
+        this.bloodDusterTimer.reset()
 
+         this.bloodDuster.particleSystem.material.opacity -= 0.1
+         // console.log( 'reduce', this.bloodDuster.particleSystem.material.opacity )
+        if(this.bloodDuster.particleSystem.material.opacity <= 0){
+
+          // console.log( 'bye!' )
+          this.bloodDuster.remove()
+          this.bloodDuster = null
+        }
+      }
+    }
+    
   }
 }

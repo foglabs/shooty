@@ -1,5 +1,5 @@
 class Friend extends Character {
-  constructor(health, power, baseColor){
+  constructor(health, power, baseColor, position){
     let geo = new THREE.TetrahedronGeometry(0.2)
     super(geo, new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()), baseColor)
 
@@ -27,6 +27,11 @@ class Friend extends Character {
       console.log( 'creating FOLLOWER' )
       this.type = FOLLOWER
     }
+
+    this.position = position
+    this.mesh.position.x = this.position.x
+    this.mesh.position.y = this.position.y
+    this.mesh.position.z = this.position.z
 
     this.targetLock = null
 

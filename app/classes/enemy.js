@@ -253,7 +253,7 @@ class Enemy extends Character {
       this.rotation()
 
       if(this.enemyType == HEALCUBE && this.duster){
-        // need to check for duster because its gone during
+        // need to check for duster because its gone during corrupting
 
         // health cube
         this.duster.particleSystem.rotation.x += 0.01
@@ -289,7 +289,7 @@ class Enemy extends Character {
           this.removeSprite()
 
           // this will allow the enemy maintenance loop in game to actually dispose of the CORPSE
-          // console.log( 'i hereby pronounce you, fucking dead' )
+          // console.log( 'i hereby pronounce you, fucking dead ', this.id )
           this.lifecycle = DEAD
         }
       }

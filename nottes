@@ -28,7 +28,24 @@ add other powiz at higher levles
 
 
 
+casino
+  roulette
+  set timer
+  light up enemies at random one by one
+  when timer ends, kill highlighted enemy
 
+  press casino button to start
+  press again to increase bet (power)
+    highlight more enemies with higher bet
+  after 3s, roll dice
+    cycle through 
+  some numbers win, some lose
+  if win, kill number * 
+
+
+
+
+shrapnel
 
 
 
