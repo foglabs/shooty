@@ -21,7 +21,7 @@ class KeyHandler {
     // us eheat to give dee acc
     // return 0.5
     // return 1/6 * Math.pow( heat, 2 )
-    return 1/3 * Math.log( 10 * (heat + 0.1) )
+    return 1/4 * Math.log( 10 * (heat + 0.1) )
   }
 
   heatKey(keyName){

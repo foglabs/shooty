@@ -108,13 +108,6 @@ class Player extends Character {
 
     this.level += 1
 
-    // start bombs at level 4
-    this.numBombsMax = Math.max(0, Math.floor(-1 + this.level/2))
-    if(this.numBombsMax > 0 && this.numBombsMax < 2){
-      game.announcement("BOMBS UNLOCKED (Z)")
-    }
-    this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
-
     if(this.level == 2){
       this.swordEnabled = true
       game.announcement("SWORD UNLOCKED (X)")
@@ -124,7 +117,18 @@ class Player extends Character {
       this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/10) 
     }
 
-    // start at level 4, and every even lvl after
+    // start bombs at level 4
+    this.numBombsMax = Math.max(0, Math.floor(-1 + this.level/2))
+    if(this.numBombsMax == 1){
+      game.announcement("BOMBS UNLOCKED (Z)")
+    } else if(this.numBombsMax > 1) {
+      game.announcement("EXTRA BOMB UNLOCKED (Z)")
+    }
+    // bombs recharge faster with higher level
+    this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
+
+
+    // start at level 6, and every even lvl after
     if(this.level >= 6 && this.level % 2 == 0){
       this.friendsAvailable += 1
       game.announcement("FRIENDS UNLOCKED (C)")

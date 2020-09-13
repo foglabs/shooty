@@ -132,7 +132,7 @@ class Game {
   nextRound(){
     // ramp up difficulty for next round
     // exponential, but dull it down so we get to about x20 base #enemies by round 8
-    let maxBump = 1 + 0.3 * Math.pow(this.roundCount, 2)
+    let maxBump = 1 + 0.2 * Math.pow(this.roundCount, 2)
     // make the max # of enemeis per gen bigger, floor it with 5 so we dont have 3 rounds of 2 enemies
     // let newEnemyMax = this.defaultEnemyMax + Math.round(this.enemyMax * maxBump)
     let newEnemyMax = Math.round(this.defaultEnemyMax * maxBump)
@@ -201,7 +201,7 @@ class Game {
         // fx_song2.setVolume(0.0)
 
         if(!fx_song2.playing()){
-          fx_song2.play()
+          // fx_song2.play()
         }
 
       //   if(!this.musicFadeTimer.running){
