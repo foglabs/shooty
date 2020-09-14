@@ -323,6 +323,10 @@ class Game {
     if(this.casino){
       // game phases are handled internally
       this.casino.handlePlay()
+
+      if(this.casino.phase == DONE){
+        this.casino = null
+      }
     }
 
     if(this.bombs.length > 0){

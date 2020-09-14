@@ -15,14 +15,21 @@ class Casino {
     this.phaseTimer = new Timer()
     this.phaseTimer.start()
 
-    this.waitTimer = new Timer()
+    this.highlightTimer = new Timer()
+    this.highlightTimer.start()
 
     this.rollTimer = new Timer()
-
   }
 
   remove(){
     // remove dice
+  }
+
+  increaseBet(amt){
+    if(player.power >= amt){
+      this.bet += amt
+      player.changePower(-1*amt)
+    }
   }
 
   handlePlay(){
@@ -37,6 +44,16 @@ class Casino {
       }
 
     } else if(this.phase == ROLLING){
+
+
+      console.log( 'now set highligh' )
+      if(this.highlightTimer.time() > 400){
+        this.highlightTimer.reset()
+
+        this.removeHighlights()
+        this.setHighlights( this.bet )
+      }
+
       this.drawRolling()
 
       if(this.dice.length < 2){
@@ -96,7 +113,7 @@ class Casino {
 
   drawResult(){
     let won = this.getResult
-    let resultStr = this.getResult ? "WIN" : "LOSE"
+    let resultStr = won ? "WIN" : "LOSE"
     this.result = won ? WIN : LOSE
     game.announcement("ROLLED " + (this.dice[0] + this.dice[1]) + " - " + resultStr)
   }
@@ -113,14 +130,23 @@ class Casino {
     game.announcement(msg)
   }
 
+  setHighlights(num){
+    let enemyIds = shuffle( Object.keys(game.enemies) )
+    for(var i=0; i<num; i++){
+      console.log( 'about to pop enemids' )
+      this.addHighlight( enemyIds.pop() )
+    }
+  }
+
   addHighlight(enemyId){
     let enemy = game.enemies[enemyId]
     if(enemy){
-
+      console.log( 'found enemy' )
       // highlight sprite - scales a guess
       enemy.addSprite(casinohighlightMaterial.clone(), 0.777)
       this.highlights[enemyId] = true
-      scene.add( this.highlights[enemyId] )
+      // scene.add( this.highlights[enemyId] )
+      console.log( 'added highlights' )
     }
   }
 
@@ -143,6 +169,8 @@ class Casino {
       // regular enemy loop will kill this fool
       enemy.health = 0
     }
+
+    player.changePower(2*this.bet)
   }
 
   lose(){
@@ -150,16 +178,29 @@ class Casino {
     for(var i=0; i<enemyIdsToCorrup.length; i++){
       game.enemies[ enemyIdsToCorrup[i] ].startCorrupting()
     }
+
+    player.changePower(-1*this.bet)
+  }
+
+  removeHighlights(){
+    let highlights = Object.keys(this.highlights)
+    for(var i=0; i<highlights.length; i++){
+      this.removeHighlight( highlights[i] )
+    }
   }
 
   removeHighlight(enemyId){
-    
+    console.log( 'byelight!', enemyId )
     if(this.highlights[enemyId]){
-      game.enemies[ enemyId ].removeSprite
+      game.enemies[ enemyId ].removeSprite()
       delete this.highlights[enemyId]
 
     }
 
+  }
 
+  animation(){
+    let enemyKeys = Object.key(this.highlights)
+    for(var i=0; i<this.h)
   }
 }

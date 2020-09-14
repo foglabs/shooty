@@ -101,6 +101,25 @@
         return Math.PI/180*deg
       }
 
+      function shuffle(arra1) {
+        let ctr = arra1.length
+        let temp
+        let index
+
+          // While there are elements in the array
+        while (ctr > 0) {
+          // Pick a random index
+          index = Math.floor(Math.random() * ctr)
+          // Decrease ctr by 1
+          ctr--
+          // And swap the last element with it
+          temp = arra1[ctr]
+          arra1[ctr] = arra1[index]
+          arra1[index] = temp
+        }
+        return arra1
+      }
+
     </script>
 
     <script src="three.js"></script>
@@ -116,6 +135,7 @@
     <script src="classes/bomb.js"></script>
     <script src="classes/sword.js"></script>
     <script src="classes/friend.js"></script>
+    <script src="classes/casino.js"></script>
     <script>
       WANDER = 0
       CHASER = 1
@@ -382,8 +402,17 @@
               player.addFriend()
             }
           } else if(event.key == "v"){
-            if(player.hasCasino){
-              game.startCasino()
+            if(true || player.hasCasino){
+              if(!game.casino){
+                game.startCasino()
+
+              } else if(game.casino.phase == BETTING){
+                // increase bet
+                console.log( 'I LIKE TO BET' )
+                game.casino.increaseBet(10) 
+
+              }
+
             }
           }
         }
