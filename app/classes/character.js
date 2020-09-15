@@ -132,7 +132,7 @@ class Character {
     scene.remove(this.mesh)
   }
 
-  addSprite(mat, scale){
+  addSprite(mat, scale, moves=false, opacity=false){
     this.deadSprite = new THREE.Sprite( mat )
 
     // center rotation anchor
@@ -141,6 +141,16 @@ class Character {
     // random radian baby
     this.deadSprite.material.rotation = Math.random() * 2 * Math.PI
     this.deadSprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+
+    if(moves){
+      // udpate in animation
+      this.deadSpriteMoves = true
+    }
+
+    if(opacity){
+      this.deadSprite.material.opacity = opacity
+    }
+
     scene.add(this.deadSprite)
   }
 
@@ -393,6 +403,10 @@ class Character {
     this.bbox.setFromObject(this.mesh)
 
     this.colorCycle()
+
+    if(this.deadSprite && this.deadSpriteMoves){
+      this.deadSprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+    }
 
     if(this.banners){
       this.banners.animation()

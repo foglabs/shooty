@@ -203,7 +203,6 @@ class Enemy extends Character {
     this.addBanners(nowcorruptingspriteMap, size, 0, dist, true, 0.3)
     this.banners.setPosition( this.mesh.position )
     this.corruptingTimer.start()
-
   }
 
   killSound(){
@@ -228,7 +227,7 @@ class Enemy extends Character {
     let hit = this.handleHit( player.sword )
     if(hit && player.sword.damageTimer.time() > 200){
       player.sword.damageTimer.reset()
-      this.takeDamage( 5 * player.level )
+      this.takeDamage( 12 * player.level )
     }
   }
 
@@ -314,8 +313,6 @@ class Enemy extends Character {
           // console.log( 'going down now' )
           this.corrOpacityUp = false
         }
-  
-
       }
       
       if(this.corruptingTimer.time() > 1800){

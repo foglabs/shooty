@@ -53,6 +53,8 @@ class Player extends Character {
 
     this.friendsAvailable = 0
 
+    this.hasCasino = false
+
     // build to level up
     this.knowledge = 0
     this.level = 1
@@ -114,12 +116,12 @@ class Player extends Character {
     }
    
     if(this.swordEnabled){
-      this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/10) 
+      this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/6) 
     }
 
     // start bombs at level 4
     this.numBombsMax = Math.max(0, Math.floor(-1 + this.level/2))
-    if(this.numBombsMax == 1){
+    if(this.level == 4){
       game.announcement("BOMBS UNLOCKED (Z)")
     } else if(this.numBombsMax > 1) {
       game.announcement("EXTRA BOMB UNLOCKED (Z)")
@@ -140,6 +142,11 @@ class Player extends Character {
         friend = game.friends[i]
         friend.changePowerMax( (this.level + 2) * 25 )
       }
+    }
+
+    if(this.level == 8){
+      // you now can bet
+      this.hasCasino = true
     }
 
     fx_levelupE2.play()
@@ -304,7 +311,7 @@ class Player extends Character {
 
         if(this.sword.powerTimer.time() > 100){
           this.sword.powerTimer.reset()
-          this.changePower(-1)
+          this.changePower(-3)
         }
       }
 
@@ -353,11 +360,6 @@ class Player extends Character {
       this.mesh.scale.set(x,y,z)
 
       this.mesh.material.opacity -= 0.01
-
-      if(this.mesh.material.opacity <= 0){
-        console.log( 'YOU HAVE DIED' )
-        this.lifecycle = DEAD
-      }
     }
 
   }

@@ -63,6 +63,10 @@ class Game {
   }
 
   setDefaultGameValues(){
+
+    player.health = 100
+    player.power = 0
+    
     this.u = 0
 
     this.score = 0
@@ -174,9 +178,6 @@ class Game {
 
     this.cleanEnemies()
     this.cleanBombs()
-
-    // player.health = 100
-    player.power = 0
 
     this.stage = LOADING
     duster.animTimer.start()
@@ -732,8 +733,9 @@ class Game {
           enemy.handleFriends()
         }
 
-        // LIFE
-        if(!enemy.corrupted){
+        // LIFE/CORRUPTION
+        // only sword/bombs/casino can hurt while corrupting
+        if(enemy.lifecycle == ALIVE && !enemy.corrupted){
           let hitresult = enemy.handleHit(player)
 
           if(player.lifecycle == ALIVE && hitresult){
@@ -748,7 +750,7 @@ class Game {
             player.eating = true
           }
 
-          if(enemy.lifecycle != CORRUPTING && this.corruptionTimer.time() > 1000) {
+          if(enemy.lifecycle == ALIVE && this.corruptionTimer.time() > 1000) {
             // only need to handleCorruption if we're not dying
             this.corruptionTimer.reset()
 
@@ -778,6 +780,7 @@ class Game {
             }
           }
 
+          // is this enemy hitting the player
           let corrupthit = enemy.handleHit(player)
           if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
 
@@ -802,6 +805,7 @@ class Game {
             if(player.deadSprite.material.opacity <=0){
               // wait to end until sprite go bye bye
 
+              console.log( 'YOU HAVE DIED' )
               player.lifecycle = DEAD
               this.endGame()
             }
@@ -842,7 +846,8 @@ class Game {
           // reward your KILLING
 
           // this removes the mesh right now
-          if(enemy.lifecycle == ALIVE){
+          // you can kill while corrupting, make sure they actually die
+          if(enemy.lifecycle == ALIVE || enemy.lifecycle == CORRUPTING){
 
             // only score once
             let score
@@ -866,6 +871,7 @@ class Game {
 
             game.changeScore(score)
             enemy.lifecycle = DYING
+
             // console.log( 'eneemy dying ', enemy.id )
             enemy.killSound()
             enemy.remove()
@@ -873,6 +879,7 @@ class Game {
 
           if(enemy.lifecycle == DEAD){
             // WAIT to actually delete enemy until we have faded out the sprite
+            enemy.removeSprite()
             delete this.enemies[enemyId]
             deletedSomeone = true
           }

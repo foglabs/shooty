@@ -344,14 +344,13 @@
       var plane = new THREE.Mesh( planeGeometry, material );
       sceneHUD.add( plane );
 
-      let game = new Game()
-      game.setBackgroundColor(game.backgroundColor[0],game.backgroundColor[1],game.backgroundColor[2])
-
-      // let player = new Player([22,88,49])
       let player = new Player([0,88,255])
       player.mesh.visible = false
       scene.add( player.mesh )
 
+      let game = new Game()
+      game.setBackgroundColor(game.backgroundColor[0],game.backgroundColor[1],game.backgroundColor[2])
+      
       let duster = new Duster(pointMatMap, 0.2, 2000, 30)
 
       // create bounding box object for intersection
@@ -402,7 +401,7 @@
               player.addFriend()
             }
           } else if(event.key == "v"){
-            if(true || player.hasCasino){
+            if(player.hasCasino){
               if(!game.casino){
                 game.startCasino()
 

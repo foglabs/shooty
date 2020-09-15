@@ -8,6 +8,7 @@ class Casino {
     this.highlights = {}
 
     this.result = null
+    this.resultPending = true
 
     this.dice = []
 
@@ -51,7 +52,14 @@ class Casino {
         this.highlightTimer.reset()
 
         this.removeHighlights()
-        this.setHighlights( this.bet )
+
+        let totalNumEnemies = Object.keys(game.enemies).length
+        // use size of bet as percentage of enemies to affect
+        let numEnemies = Math.ceil( totalNumEnemies * ( this.bet/100 ) )
+        console.log( 'percetnt', this.bet/100 )
+        console.log( 'taotal enemyes', totalNumEnemies )
+        console.log( 'num casino enemies ', numEnemies )
+        this.setHighlights( numEnemies )
       }
 
       this.drawRolling()
@@ -84,10 +92,19 @@ class Casino {
     } else if(this.phase == PAYOUT){
       this.drawPayout()
 
-      if(this.result == WIN){
-        this.win()
-      } else if(this.result == LOSE) {
-        this.lose()
+      if(this.resultPending){
+
+        if(this.result == WIN){
+          this.win()
+        } else if(this.result == LOSE) {
+          this.lose()
+        }
+
+        // clean up spriites now that we dont need markers to track targets
+        this.removeHighlights()
+
+        // flag this out so we dont try to killi stuff whats already dead
+        this.resultPending = false
       }
 
       if(this.phaseTimer.time() > 3000){
@@ -112,10 +129,13 @@ class Casino {
   }
 
   drawResult(){
-    let won = this.getResult
+    let won = this.getResult()
+    let roll = this.rollResult()
+    let rollStr = roll % 2 == 0 ? "CHO" : "HAN"
+
     let resultStr = won ? "WIN" : "LOSE"
     this.result = won ? WIN : LOSE
-    game.announcement("ROLLED " + (this.dice[0] + this.dice[1]) + " - " + resultStr)
+    game.announcement("ROLLED " + rollStr + " " + (this.dice[0] + this.dice[1]) + " - " + resultStr)
   }
 
   drawPayout(){
@@ -143,7 +163,7 @@ class Casino {
     if(enemy){
       console.log( 'found enemy' )
       // highlight sprite - scales a guess
-      enemy.addSprite(casinohighlightMaterial.clone(), 0.777)
+      enemy.addSprite(casinohighlightMaterial.clone(), 0.777, true, 0.8)
       this.highlights[enemyId] = true
       // scene.add( this.highlights[enemyId] )
       console.log( 'added highlights' )
@@ -154,10 +174,18 @@ class Casino {
     this.dice.push( Math.ceil(Math.random() * 6) )
   }
 
+  rollResult(){
+    return this.dice[0] + this.dice[1]
+  }
+
   getResult(){
-    let roll = this.dice[0] + this.dice[1]
+    let roll = this.rollResult()
     // this is just for fun, choices are CHO AND HAN
     // 0 and 1 (odd or even)
+    console.log( 'roll 1 ', this.dice[0] )
+    console.log( 'roll 2 ', this.dice[1] )
+    console.log( 'roll ', roll )
+    console.log( 'res ', roll % 2 == this.choice )
     return roll % 2 == this.choice
   }
 
@@ -167,16 +195,26 @@ class Casino {
     for(var i=0; i<enemyIdsToKill.length; i++){
       enemy = game.enemies[ enemyIdsToKill[i] ]
       // regular enemy loop will kill this fool
-      enemy.health = 0
+
+      if(enemy){
+        // kil that sprite now cause it wont get cleaned up
+        this.removeHighlight(enemy.id)
+
+        // might be gone already oh well!
+        enemy.health = 0
+      }
     }
 
     player.changePower(2*this.bet)
   }
 
   lose(){
-    let enemyIdsToCorrup = Object.keys(this.highlights)
-    for(var i=0; i<enemyIdsToCorrup.length; i++){
-      game.enemies[ enemyIdsToCorrup[i] ].startCorrupting()
+    let enemyIdsToCorrupt = Object.keys(this.highlights)
+    for(var i=0; i<enemyIdsToCorrupt.length; i++){
+
+      if(!game.enemies[ enemyIdsToCorrupt[i] ].corrupted){
+        game.enemies[ enemyIdsToCorrupt[i] ].startCorrupting()
+      }
     }
 
     player.changePower(-1*this.bet)
@@ -191,16 +229,18 @@ class Casino {
 
   removeHighlight(enemyId){
     console.log( 'byelight!', enemyId )
-    if(this.highlights[enemyId]){
+    // have to be extra paranoid about enemy being gone because klilling continues as we wait for result
+    if(this.highlights[enemyId] && game.enemies[ enemyId ]){
       game.enemies[ enemyId ].removeSprite()
       delete this.highlights[enemyId]
-
     }
 
   }
 
-  animation(){
-    let enemyKeys = Object.key(this.highlights)
-    for(var i=0; i<this.h)
-  }
+  // animation(){
+  //   let enemyKeys = Object.key(this.highlights)
+  //   for(var i=0; i<enemyKeys.length; i++){
+  //     this.
+  //   }
+  // }
 }
