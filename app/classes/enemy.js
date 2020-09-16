@@ -62,7 +62,7 @@ class Enemy extends Character {
     } else {
       // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
-      health = 30
+      health = 28
       nutritionalValue = 50
       base_color = [189,52,147]
       enemyType = HEALCUBE
@@ -87,6 +87,8 @@ class Enemy extends Character {
     if(this.enemyType == HEALCUBE){
       this.addParticles(healthenemyMap)
       this.healthValue = 20
+    } else if(this.enemyType == SPHERE){
+      this.healthValue = 10
     }
 
     if(Math.random() > 0.6){

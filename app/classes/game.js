@@ -795,14 +795,13 @@ class Game {
                 player.takeDamage( game.corruptedDamage )
     
                 if(player.lifecycle == ALIVE && player.health <= 0){
-                  player.addSprite(pbloodspriteMaterial.clone(), 0.388)
                   player.lifecycle = DYING
                 }
               }
   
             }
           } else if(player.lifecycle == DYING){
-            if(player.deadSprite.material.opacity <=0){
+            if(player.mesh.material.opacity <=0){
               // wait to end until sprite go bye bye
 
               console.log( 'YOU HAVE DIED' )

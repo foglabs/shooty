@@ -47,7 +47,7 @@ class Casino {
     } else if(this.phase == ROLLING){
 
 
-      console.log( 'now set highligh' )
+      // console.log( 'now set highligh' )
       if(this.highlightTimer.time() > 400){
         this.highlightTimer.reset()
 
@@ -56,9 +56,9 @@ class Casino {
         let totalNumEnemies = Object.keys(game.enemies).length
         // use size of bet as percentage of enemies to affect
         let numEnemies = Math.ceil( totalNumEnemies * ( this.bet/100 ) )
-        console.log( 'percetnt', this.bet/100 )
-        console.log( 'taotal enemyes', totalNumEnemies )
-        console.log( 'num casino enemies ', numEnemies )
+        // console.log( 'percetnt', this.bet/100 )
+        // console.log( 'taotal enemyes', totalNumEnemies )
+        // console.log( 'num casino enemies ', numEnemies )
         this.setHighlights( numEnemies )
       }
 
@@ -70,7 +70,7 @@ class Casino {
           this.rollTimer.start()
         }
 
-        if(this.rollTimer.time() > 800){
+        if(this.rollTimer.time() > 1200){
           this.addRoll()
         }
       } else {
@@ -153,7 +153,7 @@ class Casino {
   setHighlights(num){
     let enemyIds = shuffle( Object.keys(game.enemies) )
     for(var i=0; i<num; i++){
-      console.log( 'about to pop enemids' )
+      // console.log( 'about to pop enemids' )
       this.addHighlight( enemyIds.pop() )
     }
   }
@@ -161,12 +161,12 @@ class Casino {
   addHighlight(enemyId){
     let enemy = game.enemies[enemyId]
     if(enemy){
-      console.log( 'found enemy' )
+      // console.log( 'found enemy' )
       // highlight sprite - scales a guess
       enemy.addSprite(casinohighlightMaterial.clone(), 0.777, true, 0.8)
       this.highlights[enemyId] = true
       // scene.add( this.highlights[enemyId] )
-      console.log( 'added highlights' )
+      // console.log( 'added highlights' )
     }
   }
 
@@ -182,10 +182,10 @@ class Casino {
     let roll = this.rollResult()
     // this is just for fun, choices are CHO AND HAN
     // 0 and 1 (odd or even)
-    console.log( 'roll 1 ', this.dice[0] )
-    console.log( 'roll 2 ', this.dice[1] )
-    console.log( 'roll ', roll )
-    console.log( 'res ', roll % 2 == this.choice )
+    // console.log( 'roll 1 ', this.dice[0] )
+    // console.log( 'roll 2 ', this.dice[1] )
+    // console.log( 'roll ', roll )
+    // console.log( 'res ', roll % 2 == this.choice )
     return roll % 2 == this.choice
   }
 
@@ -210,9 +210,10 @@ class Casino {
 
   lose(){
     let enemyIdsToCorrupt = Object.keys(this.highlights)
+
     for(var i=0; i<enemyIdsToCorrupt.length; i++){
 
-      if(!game.enemies[ enemyIdsToCorrupt[i] ].corrupted){
+      if(game.enemies[ enemyIdsToCorrupt[i] ] && !game.enemies[ enemyIdsToCorrupt[i] ].corrupted){
         game.enemies[ enemyIdsToCorrupt[i] ].startCorrupting()
       }
     }
@@ -228,7 +229,7 @@ class Casino {
   }
 
   removeHighlight(enemyId){
-    console.log( 'byelight!', enemyId )
+    // console.log( 'byelight!', enemyId )
     // have to be extra paranoid about enemy being gone because klilling continues as we wait for result
     if(this.highlights[enemyId] && game.enemies[ enemyId ]){
       game.enemies[ enemyId ].removeSprite()

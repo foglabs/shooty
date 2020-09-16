@@ -340,6 +340,11 @@ class Player extends Character {
       }
     } else if(this.lifecycle == DYING){
       this.deathAnimation()
+
+      if(!this.deadSprite){
+        // only do it once
+        this.addSprite(pbloodspriteMaterial.clone(), 0.888)
+      }
     }
   }
 
