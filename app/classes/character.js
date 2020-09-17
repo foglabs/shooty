@@ -198,6 +198,28 @@ class Character {
     return acc;
   }
 
+  handleBombs(){
+    let damageVal = 20
+
+    if(this.isPlayer){
+      // less damage for player
+      damageVal = 5
+    }
+
+    let bomb
+    for(var i=0; i<game.bombs.length; i++){
+      bomb = game.bombs[i]
+
+      // handle round-end player bomb situation
+      if( bomb && bomb.exploded && bomb.damageTimer.time() > 400 && this.handleHit(bomb) && (!this.isPlayer || bomb.hurtsPlayer) ){
+        bomb.damageTimer.reset()
+        // console.log( 'yall got bommmed' )
+        this.takeDamage( damageVal )
+      }
+    }
+  }
+
+
   // this gets redefined in subclasses to contain other every-loop movement logic specific to the class
   customMovement(){}
   customAnimation(){}

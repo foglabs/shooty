@@ -1,5 +1,5 @@
 class Bomb extends Character {
-  constructor(base_color, playerLevel){
+  constructor(base_color, playerLevel, hurtsPlayer=false){
     let geometry = new THREE.SphereGeometry( 0.06, 32, 32 )
     super(
       // de geo

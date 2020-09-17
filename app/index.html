@@ -29,7 +29,7 @@
 
     <div id="info3" class="info-bar">
       <div class="bar-ele-wide">
-        <progress id="knowledge" value="0" max="100"></progress>
+        <progress id="knowledge" value="0" max="50"></progress>
       </div>
     </div>
 
@@ -388,7 +388,9 @@
         } else if(game.stage == PLAYING){
 
           if (event.key == " " || event.key == "Spacebar"){
+            if(player.killingCircleEnabled){
               player.startKillingCircle()
+            }
 
           } else if(event.key == "z"){
             player.dropBomb()
@@ -401,7 +403,7 @@
               player.addFriend()
             }
           } else if(event.key == "v"){
-            if(player.hasCasino){
+            if(player.casinoEnabled){
               if(!game.casino){
                 game.startCasino()
 
@@ -422,7 +424,9 @@
 
         // clear out stuff from nonheld keys
         if(event.key == " " || event.key == "Spacebar"){
-          player.stopKillingCircle()
+          if(player.killingCircleEnabled){
+            player.stopKillingCircle()
+          }
         } else if(event.key == "x"){
           if(player.swordEnabled){
             player.stopSword()

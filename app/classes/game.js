@@ -63,7 +63,6 @@ class Game {
   }
 
   setDefaultGameValues(){
-
     player.health = 100
     player.power = 0
     
@@ -75,7 +74,8 @@ class Game {
     this.enemies = {}
     this.percentCorrupted = 0
     // bump this up to get more difficult
-    this.corruptionMax = 0.2
+    this.corruptionMaxDefault = 0.2
+    this.corruptionMax = this.corruptionMaxDefault
     this.corruptionTimer = new Timer()
 
     this.corruptedDamageDefault = 4
@@ -83,7 +83,10 @@ class Game {
 
     // max playe rpower
     this.powerMax = 100
-    this.knowledgeMax = 100
+
+    // max knowl to level up
+    this.defaultKnowledgeMax = 50
+    this.knowledgeMax = this.defaultKnowledgeMax
 
     // countdown to generate enemies every so often
     this.defaultEnemyInterval = 36000
@@ -103,6 +106,8 @@ class Game {
     this.roundCount = 1
 
     this.chanceSlices = this.calcChanceSlices()
+
+    this.nowRandomBombing = false
   }
 
   calcChanceSlices(){
@@ -149,7 +154,8 @@ class Game {
     // let newEnemyInterval = Math.round(this.enemyInterval * 0.90)
     let newEnemyInterval = Math.round(this.defaultEnemyInterval * 100 / ( Math.pow(this.roundCount, 2) + 100 ) )
     // increase maximum % of corurpted by 8%
-    let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
+    // let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
+    let newCorruptionMax = (this.corruptionMaxDefault + (3*this.corruptionMaxDefault * Math.log(this.roundCount) )).toFixed(2)
 
     this.roundCount += 1
     // recalc chacnes for each enemy
@@ -188,6 +194,8 @@ class Game {
 
     let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
     this.generateEnemies( numEnemies )
+
+    this.nowRandomBombing = false
   }
 
   endGame(){
@@ -300,10 +308,12 @@ class Game {
 
   randomBombs(){
     if(this.randomBombsTimer.time() > 3000){
-      this.announcement("NOW BOMBING")
+      this.announcement("AVOID THE BOMBS")
       this.randomBombsTimer.reset()
 
       let numBombs = Math.floor(Math.random() * 4 * this.roundCount)
+      // minimum num of bombs is roundcount
+      numBombs = Math.max(numBombs, this.roundCount)
       let x,y
       let bomb
       for(var i=0; i<numBombs; i++){
@@ -885,11 +895,20 @@ class Game {
         }
 
       }
-    }  
+    }
+
+    // check for player bombs if there are bombs
+    if(this.nowRandomBombing && this.bombs.length > 0){
+      // round end bombs hurt player *a little*
+      console.log( 'now player bombs' )
+      player.handleBombs()
+    }    
+
     
     // record this after we've added new corrupts, and cleaned up dead enemies
     this.percentCorrupted = numCorrupted/enemiesKeys.length
     if(player.numBombsMax < 1 && this.percentCorrupted == 1){
+      this.nowRandomBombing = true
       this.randomBombs()      
       // add random bombs if we're stuck on all corrupted and dont got bombs yet
     }

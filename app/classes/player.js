@@ -40,6 +40,7 @@ class Player extends Character {
     this.killingCircleArea.bbox = null
     this.killingCircleActive = false
     this.killingCircleTimer = new Timer()
+    this.killingCircleEnabled = false
 
     this.numBombs = 0
     this.numBombsMax = 0
@@ -53,7 +54,7 @@ class Player extends Character {
 
     this.friendsAvailable = 0
 
-    this.hasCasino = false
+    this.casinoEnabled = false
 
     // build to level up
     this.knowledge = 0
@@ -105,23 +106,31 @@ class Player extends Character {
 
   levelUp(){
     this.knowledge = 0
-    game.knowledgeMax = Math.round(game.knowledgeMax * 1.25)
-    document.getElementById("knowledge").max = game.knowledgeMax
 
     this.level += 1
 
+    // game.knowledgeMax = Math.round(game.knowledgeMax * 1.25)
+    game.knowledgeMax = Math.round( game.defaultKnowledgeMax + ( 4*game.defaultKnowledgeMax * Math.log(this.level - 1) ) )
+    console.log( 'KNOW AMX', game.knowledgeMax )
+    document.getElementById("knowledge").max = game.knowledgeMax
+    
     if(this.level == 2){
       this.swordEnabled = true
       game.announcement("SWORD UNLOCKED (X)")
     }
-   
+
     if(this.swordEnabled){
       this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/6) 
     }
 
+   if(this.level == 4){
+      game.announcement("KILLING CIRCLE UNLOCKED (SPACEBAR)")
+      this.killingCircleEnabled = true
+    }
+
     // start bombs at level 4
     this.numBombsMax = Math.max(0, Math.floor(-1 + this.level/2))
-    if(this.level == 4){
+    if(this.level == 6){
       game.announcement("BOMBS UNLOCKED (Z)")
     } else if(this.numBombsMax > 1) {
       game.announcement("EXTRA BOMB UNLOCKED (Z)")
@@ -131,7 +140,7 @@ class Player extends Character {
 
 
     // start at level 6, and every even lvl after
-    if(this.level >= 6 && this.level % 2 == 0){
+    if(this.level >= 8 && this.level % 2 == 0){
       this.friendsAvailable += 1
       game.announcement("FRIENDS UNLOCKED (C)")
     }
@@ -144,9 +153,9 @@ class Player extends Character {
       }
     }
 
-    if(this.level == 8){
+    if(this.level == 10){
       // you now can bet
-      this.hasCasino = true
+      this.casinoEnabled = true
     }
 
     fx_levelupE2.play()
@@ -162,7 +171,6 @@ class Player extends Character {
 
       this.numBombs = incInRange( this.numBombs, -1, 0, this.numBombsMax )
     }
-    
   }
 
   addKillingCircle(){

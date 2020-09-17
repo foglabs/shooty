@@ -212,17 +212,17 @@ class Enemy extends Character {
     this.killSounds[ roll ].play()
   }
 
-  handleBombs(){
-    let bomb
-    for(var i=0; i<game.bombs.length; i++){
-      bomb = game.bombs[i]
-      if( bomb && bomb.exploded && bomb.damageTimer.time() > 400 && this.handleHit(bomb) ){
-        bomb.damageTimer.reset()
-        // console.log( 'yall got bommmed' )
-        this.takeDamage( 20 )
-      }
-    }
-  }
+  // handleBombs(){
+  //   let bomb
+  //   for(var i=0; i<game.bombs.length; i++){
+  //     bomb = game.bombs[i]
+  //     if( bomb && bomb.exploded && bomb.damageTimer.time() > 400 && this.handleHit(bomb) ){
+  //       bomb.damageTimer.reset()
+  //       // console.log( 'yall got bommmed' )
+  //       this.takeDamage( 20 )
+  //     }
+  //   }
+  // }
 
   handleSword(){
     // sword follows the same pattern as character
