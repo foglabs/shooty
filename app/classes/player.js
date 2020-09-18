@@ -110,8 +110,8 @@ class Player extends Character {
     this.level += 1
 
     // game.knowledgeMax = Math.round(game.knowledgeMax * 1.25)
-    game.knowledgeMax = Math.round( game.defaultKnowledgeMax + ( 4*game.defaultKnowledgeMax * Math.log(this.level - 1) ) )
-    console.log( 'KNOW AMX', game.knowledgeMax )
+    game.knowledgeMax = Math.round( game.knowledgeMaxDefault + ( 2*game.knowledgeMaxDefault * Math.log(this.level - 1) ) )
+    // console.log( 'KNOW AMX', game.knowledgeMax )
     document.getElementById("knowledge").max = game.knowledgeMax
     
     if(this.level == 2){
@@ -123,13 +123,13 @@ class Player extends Character {
       this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/6) 
     }
 
-   if(this.level == 4){
+    if(this.level == 4){
       game.announcement("KILLING CIRCLE UNLOCKED (SPACEBAR)")
       this.killingCircleEnabled = true
     }
 
     // start bombs at level 4
-    this.numBombsMax = Math.max(0, Math.floor(-1 + this.level/2))
+    this.numBombsMax = Math.max(0, Math.floor(-2 + this.level/2))
     if(this.level == 6){
       game.announcement("BOMBS UNLOCKED (Z)")
     } else if(this.numBombsMax > 1) {
@@ -137,7 +137,6 @@ class Player extends Character {
     }
     // bombs recharge faster with higher level
     this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
-
 
     // start at level 6, and every even lvl after
     if(this.level >= 8 && this.level % 2 == 0){
@@ -297,7 +296,7 @@ class Player extends Character {
 
       game.friends.push( friend )
       this.friendsAvailable -= 1
-      console.log( 'firend created', this.friendsAvailable, ' left' )
+      // console.log( 'firend created', this.friendsAvailable, ' left' )
     }
   }
 
@@ -349,19 +348,23 @@ class Player extends Character {
     } else if(this.lifecycle == DYING){
       this.deathAnimation()
 
+      // console.log( 'help i am dying!' )
+
       if(!this.deadSprite){
         // only do it once
-        this.addSprite(pbloodspriteMaterial.clone(), 0.888)
+        this.addSprite(pbloodspriteMaterial.clone(), 0.3)
       }
     }
   }
 
   deathAnimation(){
+    // console.log( 'I try!' )
     if(!this.animTimer.running){
       this.animTimer.start()
     }
 
     if(this.animTimer.time() > 20){
+      // console.log( 'anim loop running' )
       this.animTimer.reset()
 
       this.mesh.rotation.y += 0.08
@@ -372,7 +375,7 @@ class Player extends Character {
       z = this.mesh.scale.z * 1.009
       this.mesh.scale.set(x,y,z)
 
-      this.mesh.material.opacity -= 0.01
+      // this.mesh.material.opacity -= 0.01
     }
 
   }

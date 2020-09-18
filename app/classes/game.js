@@ -81,12 +81,15 @@ class Game {
     this.corruptedDamageDefault = 4
     this.corruptedDamage = 4
 
+    this.corruptingTimeDefault = 1800
+    this.corruptingTime = this.corruptingTimeDefault
+
     // max playe rpower
     this.powerMax = 100
 
     // max knowl to level up
-    this.defaultKnowledgeMax = 50
-    this.knowledgeMax = this.defaultKnowledgeMax
+    this.knowledgeMaxDefault = 50
+    this.knowledgeMax = this.knowledgeMaxDefault
 
     // countdown to generate enemies every so often
     this.defaultEnemyInterval = 36000
@@ -139,14 +142,14 @@ class Game {
       fx_startgameE.play()
       this.musicTimer.start()
 
-      this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax, [0,0,0])
+      this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax, this.corruptingTime, [0,0,0])
     }
   }
 
   nextRound(){
     // ramp up difficulty for next round
-    // exponential, but dull it down so we get to about x20 base #enemies by round 8
-    let maxBump = 1 + 0.2 * Math.pow(this.roundCount, 2)
+    // exponential, but dull it down so we get to about x20 base #enemies by round 28
+    let maxBump = 1 + Math.pow(this.roundCount, 2)/15
     // make the max # of enemeis per gen bigger, floor it with 5 so we dont have 3 rounds of 2 enemies
     // let newEnemyMax = this.defaultEnemyMax + Math.round(this.enemyMax * maxBump)
     let newEnemyMax = Math.round(this.defaultEnemyMax * maxBump)
@@ -155,7 +158,11 @@ class Game {
     let newEnemyInterval = Math.round(this.defaultEnemyInterval * 100 / ( Math.pow(this.roundCount, 2) + 100 ) )
     // increase maximum % of corurpted by 8%
     // let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
-    let newCorruptionMax = (this.corruptionMaxDefault + (3*this.corruptionMaxDefault * Math.log(this.roundCount) )).toFixed(2)
+    let newCorruptionMax = (this.corruptionMaxDefault + (this.corruptionMaxDefault * Math.pow(this.roundCount, 2)) / 64 ).toFixed(2)
+
+    // how long does it take to finsih corrupting
+    let newCorruptingTime = Math.round(this.corruptingTimeDefault * ( 9/(this.roundCount+8) ) )
+    console.log( 'corrupign time', newCorruptingTime )
 
     this.roundCount += 1
     // recalc chacnes for each enemy
@@ -169,13 +176,14 @@ class Game {
     this.corruptionTimer.reset()
     this.corruptedDamage = Math.round( this.corruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
 
-    this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, [r,g,b])
+    this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b])
   }
 
-  newRound(enemyMax, enemyInterval, corruptionMax, roundColor){
+  newRound(enemyMax, enemyInterval, corruptionMax, corruptingTime, roundColor){
     this.enemyMax = enemyMax
     this.enemyInterval = enemyInterval
     this.corruptionMax = corruptionMax
+    this.corruptingTime = corruptingTime
 
     // record for loading lerping
     this.lastRoundColor = this.roundColor
@@ -317,7 +325,8 @@ class Game {
       let x,y
       let bomb
       for(var i=0; i<numBombs; i++){
-        bomb = new Bomb([100,150,50], 3)
+        // hurts player too
+        bomb = new Bomb([100,150,50], 3, true)
         x = Math.random() * 6 - 3
         y = Math.random() * 6 - 3
 
@@ -811,7 +820,7 @@ class Game {
   
             }
           } else if(player.lifecycle == DYING){
-            if(player.mesh.material.opacity <=0){
+            if(player.mesh.scale.x >= 1.4){
               // wait to end until sprite go bye bye
 
               console.log( 'YOU HAVE DIED' )
@@ -899,8 +908,9 @@ class Game {
 
     // check for player bombs if there are bombs
     if(this.nowRandomBombing && this.bombs.length > 0){
+      // console.log( 'now player bombs' )
+
       // round end bombs hurt player *a little*
-      console.log( 'now player bombs' )
       player.handleBombs()
     }    
 

@@ -317,10 +317,10 @@ class Enemy extends Character {
         }
       }
       
-      if(this.corruptingTimer.time() > 1800){
+      if(this.corruptingTimer.time() > game.corruptingTime){
         this.lifecycle = ALIVE
 
-        console.log( 'I CORRUPT NOW...', this.id )
+        // console.log( 'I CORRUPT NOW...', this.id )
 
         this.health = 24
         this.corrupted = true
