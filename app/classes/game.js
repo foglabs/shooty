@@ -117,7 +117,7 @@ class Game {
     let chanceSlices = [0.2,0.4,0.6,0.8]
     for(var i=0; i<4; i++){
       // bend the base chances based on round number, kinda weighted by index
-      chanceSlices[i] = chanceSlices[i] * i + Math.pow( this.roundCount, 2 )/2000
+      chanceSlices[i] = chanceSlices[i] * i + Math.pow( this.roundCount, 2 )/3000
     }
 
     // adding these constants puts these shits on the right place for x==1 (level 1)

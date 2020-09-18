@@ -128,7 +128,7 @@ class Player extends Character {
       this.killingCircleEnabled = true
     }
 
-    // start bombs at level 4
+    // start bombs at level 6
     this.numBombsMax = Math.max(0, Math.floor(-2 + this.level/2))
     if(this.level == 6){
       game.announcement("BOMBS UNLOCKED (Z)")
