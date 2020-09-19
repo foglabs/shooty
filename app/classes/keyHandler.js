@@ -2,10 +2,7 @@ class KeyHandler {
   constructor(){
 
     this.keyHeats = {}
-    this.keyHeats["ArrowLeft"] = 0
-    this.keyHeats["ArrowUp"] = 0
-    this.keyHeats["ArrowRight"] = 0
-    this.keyHeats["ArrowDown"] = 0
+    this.resetHeats()
 
     this.heldKeys = {}
 
@@ -17,11 +14,31 @@ class KeyHandler {
     this.tempTimer.start()
   }
 
+  resetHeats(){
+    this.keyHeats["ArrowLeft"] = 0
+    this.keyHeats["ArrowUp"] = 0
+    this.keyHeats["ArrowRight"] = 0
+    this.keyHeats["ArrowDown"] = 0
+  }
+
   calcAccChange(heat){
     // us eheat to give dee acc
     // return 0.5
     // return 1/6 * Math.pow( heat, 2 )
     return 1/4 * Math.log( 10 * (heat + 0.1) )
+  }
+
+  bumpKey(keyName){
+    if (keyName == "ArrowLeft"){
+      player.accx -= 0.22
+    } else if (keyName == "ArrowUp"){
+      player.accy += 0.22
+    } else if (keyName == "ArrowRight"){
+      player.accx += 0.22
+    } else if (keyName == "ArrowDown"){
+      player.accy -= 0.22
+    }
+
   }
 
   heatKey(keyName){

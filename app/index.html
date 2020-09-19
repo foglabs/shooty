@@ -239,7 +239,11 @@
         //   console.log( 'TEMPS', keyHandler.keyHeats )
         // }
         // console.log( 'HELD', keyHandler.heldKeys )
-        keyHandler.handleKeyTemp()
+
+        // DONT get hot when playing, you are not
+        if(game.stage == PLAYING){
+          keyHandler.handleKeyTemp()
+        }
 
         requestAnimationFrame( animate )
         // draw de cool scene
@@ -310,6 +314,9 @@
       let casinohighlightMap = loader.load( "sprites/casinohighlight.png")
       casinohighlightMaterial = new THREE.SpriteMaterial( { map: casinohighlightMap } )
 
+      let godkillerMap = loader.load( "sprites/godkiller.png")
+      godkillerMaterial = new THREE.SpriteMaterial( { map: godkillerMap } )
+
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
       camera.position.z = 5
@@ -371,8 +378,15 @@
       // contain all those key bits
       let keyHandler = new KeyHandler()
       
-      function onDocumentKeyDown(event) {
+      function onDocumentKeyDown(event) { 
+        // grab to see if we should bump
+        let oldState = keyHandler.heldKeys[event.key]
         keyHandler.heldKeys[event.key] = true
+
+        if( !oldState && (event.key == "ArrowLeft" || event.key == "ArrowUp" || event.key == "ArrowRight" || event.key == "ArrowDown") ){
+          // give em a push on first keydown
+          keyHandler.bumpKey( event.key )
+        }
 
         // SPACE BAR
         if(game.stage == TITLE || game.stage == GAMEOVER){
@@ -387,22 +401,22 @@
 
         } else if(game.stage == PLAYING){
 
-          if (event.key == "x" || event.key == " " || event.key == "Spacebar"){
+          if (event.key == " " || event.key == "Spacebar"){
             if(player.killingCircleEnabled){
               player.startKillingCircle()
             }
 
-          } else if(event.key == "c"){
+          } else if(event.key == "x"){
             player.dropBomb()
           } else if(event.key == "z"){
             if(player.swordEnabled && player.power > 0){
               player.startSword()
             }
-          } else if(event.key == "v"){
+          } else if(event.key == "c"){
             if(player.friendsAvailable > 0){
               player.addFriend()
             }
-          } else if(event.key == "b"){
+          } else if(event.key == "v"){
             if(player.casinoEnabled){
               if(!game.casino){
                 game.startCasino()
@@ -410,7 +424,7 @@
               } else if(game.casino.phase == BETTING){
                 // increase bet
                 console.log( 'I LIKE TO BET' )
-                game.casino.increaseBet(10) 
+                game.casino.increaseBet(10)
 
               }
 

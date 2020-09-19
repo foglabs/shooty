@@ -36,7 +36,7 @@ class Enemy extends Character {
       lightness = 0.1
     } else if(dna <= sphereChance){
       // sphere
-      health = 10
+      health = 8
       nutritionalValue = 26
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
       base_color = [114,194,189]
@@ -62,7 +62,7 @@ class Enemy extends Character {
     } else {
       // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
-      health = 28
+      health = 18
       nutritionalValue = 50
       base_color = [189,52,147]
       enemyType = HEALCUBE
@@ -135,6 +135,8 @@ class Enemy extends Character {
 
     this.direction = 0
     this.corrupted = false
+    // super
+    this.godCorrupted = false
 
     let hitr = this.calcHitColor(this.baseColor[0])
     let hitg = this.calcHitColor(this.baseColor[1])
@@ -207,22 +209,27 @@ class Enemy extends Character {
     this.corruptingTimer.start()
   }
 
+  startGodCorrupting(){
+
+    if(this.banners){
+      this.banners.remove()
+      this.banners = null
+    }
+
+    this.lifecycle = CORRUPTING
+    let dist = 0.21 * this.scaleFactor
+    let size = 0.68 * this.scaleFactor
+    // this.addBanners(candyspriteMap, size, 2, dist, true)
+    // let size = 0.33 * this.scaleFactor
+    this.addBanners(nowcorruptingspriteMap, size, 0, dist, true, 0.3)
+    this.banners.setPosition( this.mesh.position )
+    this.corruptingTimer.start()
+  }
+
   killSound(){
     let roll = Math.floor(Math.random() * this.killSounds.length)
     this.killSounds[ roll ].play()
   }
-
-  // handleBombs(){
-  //   let bomb
-  //   for(var i=0; i<game.bombs.length; i++){
-  //     bomb = game.bombs[i]
-  //     if( bomb && bomb.exploded && bomb.damageTimer.time() > 400 && this.handleHit(bomb) ){
-  //       bomb.damageTimer.reset()
-  //       // console.log( 'yall got bommmed' )
-  //       this.takeDamage( 20 )
-  //     }
-  //   }
-  // }
 
   handleSword(){
     // sword follows the same pattern as character
@@ -322,19 +329,49 @@ class Enemy extends Character {
 
         // console.log( 'I CORRUPT NOW...', this.id )
 
-        this.health = 24
-        this.corrupted = true
-        this.baseColor = [255,0,0]
-        this.mesh.material.color.setRGB(0xff0000)
 
-        // douse the flames
-        this.banners.remove()
+        if(this.corrupted){
+          // god corruption
+          this.godCorrupted = true
 
-        // add the evil script
-        this.addBanners(corruptdustMap, 0.18, 16, 0.18)
-        this.hitColor = [255,0,0]
-        // same proportions as a before, diff sounds
-        this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+          // move slowly
+          this.lightness = 0.03
+          // big helf
+          this.health = 100
+          this.baseColor = [139,60,240]
+          this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
+
+          // douse the flames
+          this.banners.remove()
+
+          this.addBanners(corruptdustMap, 0.18, 16, 0.18)
+
+          // add the unthinkable script
+          let dist = 0.1 * this.scaleFactor
+          let size = 0.666 * this.scaleFactor
+          this.addGodBanners(godkillerMap, size, dist, 0.8)
+          this.hitColor = [255,255,255]
+          
+          // same proportions as a before, diff sounds
+          this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+
+        } else {
+          // regular corruption
+
+          this.health = 24
+          this.corrupted = true
+          this.baseColor = [255,0,0]
+          this.mesh.material.color.setRGB(0xff0000)
+
+          // douse the flames
+          this.banners.remove()
+          // add the evil script
+          this.addBanners(corruptdustMap, 0.18, 16, 0.18)
+          this.hitColor = [255,0,0]
+          // same proportions as a before, diff sounds
+          this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+        }
+        
       }
     }
   }
@@ -348,6 +385,11 @@ class Enemy extends Character {
       if(game.percentCorrupted == 1){
         // chase the player like a demon from hell if theres only corrupteds left
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
+
+      } else if(this.godCorrupted){
+
+        this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y, 0.4)
+
       } else {
 
         if(this.direction == LEFT){

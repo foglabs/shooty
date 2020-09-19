@@ -116,7 +116,7 @@ class Player extends Character {
     
     if(this.level == 2){
       this.swordEnabled = true
-      game.announcement("SWORD UNLOCKED (X)")
+      game.announcement("SWORD UNLOCKED (Z)")
     }
 
     if(this.swordEnabled){
@@ -131,9 +131,9 @@ class Player extends Character {
     // start bombs at level 6
     this.numBombsMax = Math.max(0, Math.floor(-2 + this.level/2))
     if(this.level == 6){
-      game.announcement("BOMBS UNLOCKED (Z)")
+      game.announcement("BOMBS UNLOCKED (X)")
     } else if(this.numBombsMax > 1) {
-      game.announcement("EXTRA BOMB UNLOCKED (Z)")
+      game.announcement("EXTRA BOMB UNLOCKED (X)")
     }
     // bombs recharge faster with higher level
     this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
@@ -154,6 +154,7 @@ class Player extends Character {
 
     if(this.level == 10){
       // you now can bet
+      game.announcement("CASINO UNLOCKED")
       this.casinoEnabled = true
     }
 

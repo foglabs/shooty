@@ -28,7 +28,7 @@ add other powiz at higher levles
 
 
 
-casino
+*casino
   roulette
   set timer
   light up enemies at random one by one
@@ -52,15 +52,17 @@ shrapnel
 
 
 
-tighten player control
-need visual for corruption about to happen
+*tighten player control
+*need visual for corruption about to happen
 change friend hitcolor 
 
 
--invisible corrupted enemies? wtf
--chohan percent prob
+*-invisible corrupted enemies? wtf
+?-chohan percent prob
 
 
 
--reduce corruptingTime with higher rounds
--push down #enemies curve with higher rounds, gets too hard to killi them all
+*-reduce corruptingTime with higher rounds
+*-push down #enemies curve with higher rounds, gets too hard to killi them all
+
+-purple super evil corrupteds, chase you, maybe get big?

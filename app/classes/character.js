@@ -46,7 +46,7 @@ class Character {
     this.bloodDusterTimer = new Timer()
   }
 
-  moveTowardsPoint(destx, desty){
+  moveTowardsPoint(destx, desty, speedFactor=1){
     let startx = this.mesh.position.x
     let starty = this.mesh.position.y
 
@@ -55,16 +55,18 @@ class Character {
     // shoutout to pythagoras
     // let dist = Math.sqrt(ydiff * ydiff + xdiff * xdiff)
 
+    let speed = 0.04 * speedFactor
+
     if(startx < destx){
-      this.accx += 0.04
+      this.accx += speed
     } else {
-      this.accx -= 0.04
+      this.accx -= speed
     }
 
     if(starty < desty){
-      this.accy += 0.04
+      this.accy += speed
     } else {
-      this.accy -= 0.04
+      this.accy -= speed
     }
   }
   
@@ -119,6 +121,11 @@ class Character {
       // clean up on aisle akuma
       if(this.banners){
         this.banners.remove()
+      }
+   
+      // clean up on aisle godkiller
+      if(this.godBanners){
+        this.godBanners.remove()
       }
   
       // clean that blood up
@@ -258,8 +265,13 @@ class Character {
       this.bloodDuster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
 
-    if((this.lifecycle == ALIVE || this.lifecycle == CORRUPTING) && this.banners){
-      this.banners.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
+    if(this.lifecycle == ALIVE || this.lifecycle == CORRUPTING){
+      if(this.banners){
+        this.banners.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
+      }
+      if(this.godBanners){
+        this.godBanners.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
+      }
     }
 
     // this will be for sprites attached to living moving things
@@ -309,6 +321,11 @@ class Character {
   addBanners(map, size, num, dist, badge=false, opacity=1){
     // ignores distance and num if badge == true
     this.banners = new Duster(map, size, num, dist, this.mesh.position, opacity, badge)
+  }
+
+  addGodBanners(map, size, dist, opacity=1){
+    // ignores distance and num if badge == true
+    this.godBanners = new Duster(map, size, 1, dist, this.mesh.position, opacity, true)
   }
 
   changeHealth(healthChange){
@@ -432,6 +449,10 @@ class Character {
 
     if(this.banners){
       this.banners.animation()
+    }
+
+    if(this.godBanners){
+      this.godBanners.animation()
     }
 
     if(this.duster){

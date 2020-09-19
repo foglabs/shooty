@@ -78,6 +78,9 @@ class Game {
     this.corruptionMax = this.corruptionMaxDefault
     this.corruptionTimer = new Timer()
 
+    this.godCorruptionTimer = new Timer()
+    this.godCorruptionTimer.start()
+
     this.corruptedDamageDefault = 4
     this.corruptedDamage = 4
 
@@ -180,6 +183,8 @@ class Game {
   }
 
   newRound(enemyMax, enemyInterval, corruptionMax, corruptingTime, roundColor){
+    keyHandler.resetHeats()    
+
     this.enemyMax = enemyMax
     this.enemyInterval = enemyInterval
     this.corruptionMax = corruptionMax
@@ -383,8 +388,9 @@ class Game {
       this.enemyTimer.reset()
     }
 
-    if(player.lifecycle == ALIVE){
+    if(game.stage == PLAYING && player.lifecycle == ALIVE){
       // stop moving if we DEAD
+
       player.handleMovement()
     }
 
@@ -803,7 +809,6 @@ class Game {
           let corrupthit = enemy.handleHit(player)
           if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
 
-
             if(enemy.damageTimer.time() > 400){
               enemy.damageTimer.reset()
 
@@ -818,14 +823,6 @@ class Game {
                 }
               }
   
-            }
-          } else if(player.lifecycle == DYING){
-            if(player.mesh.scale.x >= 1.4){
-              // wait to end until sprite go bye bye
-
-              console.log( 'YOU HAVE DIED' )
-              player.lifecycle = DEAD
-              this.endGame()
             }
           }
 
@@ -857,8 +854,18 @@ class Game {
             }
           }
 
+          // god killer corruption! more likely with higher power level
+          if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 && Math.random() > ( 1/ 2*(player.level+7) + 0.86 ) ){
+            this.godCorruptionTimer.reset()
+
+            // godkill corruption wil just happen because were already corrupted
+            console.log( 'starting god killer' )
+            enemy.startCorrupting()    
+          }
+
           numCorrupted += 1
         }
+
 
        if(enemy.health <= 0){
           // reward your KILLING
@@ -914,6 +921,15 @@ class Game {
       player.handleBombs()
     }    
 
+    if(player.lifecycle == DYING){
+      if(player.mesh.scale.x >= 1.4){
+        // wait to end until sprite go bye bye
+
+        console.log( 'YOU HAVE DIED' )
+        player.lifecycle = DEAD
+        this.endGame()
+      }
+    }
     
     // record this after we've added new corrupts, and cleaned up dead enemies
     this.percentCorrupted = numCorrupted/enemiesKeys.length
