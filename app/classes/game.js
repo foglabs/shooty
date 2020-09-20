@@ -866,13 +866,22 @@ class Game {
             }
           }
 
-          // god killer corruption! more likely with higher power level
-          if(this.godCorruptionTimer.time() > 100 && !enemy.godCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 && Math.random() > ( 36/ 2*(player.level+7) - 0.7 ) ){
-            this.godCorruptionTimer.reset()
+          if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 ){
+              // god killer corruption! more likely with higher power level
+              let god = ( 10/ (2*(player.level+7)) + 0.5 )
+              let ch = Math.random()
+              this.godCorruptionTimer.reset()
 
-            // godkill corruption wil just happen because were already corrupted
-            console.log( 'starting god killer' )
-            enemy.startCorrupting()
+            if(ch > god){
+
+              console.log( 'I GODCORRUPTED IT' )
+              console.log( 'goddcorrupt chance...', god, ch )
+
+              // godkill corruption wil just happen because were already corrupted
+              console.log( 'starting god killer' )
+              enemy.startCorrupting()  
+            }
+            
           }
 
           numCorrupted += 1

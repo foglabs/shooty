@@ -1,6 +1,6 @@
 class Sword {
   constructor(length, rotation){
-    this.length = 0.5
+    this.length = length
     this.active = false
 
     this.rotation = 0
@@ -17,6 +17,12 @@ class Sword {
     this.mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial( { color: "#ffffff", transparent: true, blending: THREE.AdditiveBlending }))
 
     this.mesh.rotation.z = 0
+  }
+
+  remove(){
+    this.mesh.geometry.dispose()
+    this.mesh.material.dispose()
+    scene.remove(this.mesh)
   }
 
   // just revolve like a dummy

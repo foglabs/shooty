@@ -120,6 +120,11 @@ class Player extends Character {
     }
 
     if(this.swordEnabled){
+      if(this.sword){
+        // remove and add so that we get new length
+        this.sword.remove()
+        this.addSword()
+      }
       this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/6) 
     }
 
@@ -253,7 +258,7 @@ class Player extends Character {
 
   // sword
   addSword(){
-    this.sword = new Sword()
+    this.sword = new Sword(0.5 * (1 + (this.level-1) / 10 ))
     this.sword.mesh.visible = false
     scene.add( this.sword.mesh )
   }
