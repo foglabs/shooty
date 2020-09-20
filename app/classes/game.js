@@ -84,6 +84,9 @@ class Game {
     this.corruptedDamageDefault = 4
     this.corruptedDamage = 4
 
+    this.godCorruptedDamageDefault = 16
+    this.godCorruptedDamage = 16
+
     this.corruptingTimeDefault = 1800
     this.corruptingTime = this.corruptingTimeDefault
 
@@ -151,14 +154,15 @@ class Game {
 
   nextRound(){
     // ramp up difficulty for next round
-    // exponential, but dull it down so we get to about x20 base #enemies by round 28
-    let maxBump = 1 + Math.pow(this.roundCount, 2)/15
+    // exponential, but dull it down so we get to about x20 base #enemies by round 12
+    let maxBump = 1 + Math.pow(this.roundCount, 2)/25
     // make the max # of enemeis per gen bigger, floor it with 5 so we dont have 3 rounds of 2 enemies
     // let newEnemyMax = this.defaultEnemyMax + Math.round(this.enemyMax * maxBump)
     let newEnemyMax = Math.round(this.defaultEnemyMax * maxBump)
     // make the enemy timer shorter
     // let newEnemyInterval = Math.round(this.enemyInterval * 0.90)
-    let newEnemyInterval = Math.round(this.defaultEnemyInterval * 100 / ( Math.pow(this.roundCount, 2) + 100 ) )
+    let newEnemyInterval = Math.round(this.defaultEnemyInterval * 90 / ( Math.pow((this.roundCount + 12), 2) ) + 13000 )
+    console.log( 'new inter', newEnemyInterval )
     // increase maximum % of corurpted by 8%
     // let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
     let newCorruptionMax = (this.corruptionMaxDefault + (this.corruptionMaxDefault * Math.pow(this.roundCount, 2)) / 64 ).toFixed(2)
@@ -178,6 +182,7 @@ class Game {
 
     this.corruptionTimer.reset()
     this.corruptedDamage = Math.round( this.corruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
+    this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
 
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b])
   }
@@ -381,8 +386,8 @@ class Game {
 
       // add a random # of enemies, ensure at least 50% of max
       let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
-      console.log( 'ene max is', this.enemyMax )
-      console.log( 'generating ene ', numEnemies )
+      // console.log( 'ene max is', this.enemyMax )
+      // console.log( 'generating ene ', numEnemies )
       this.generateEnemies( numEnemies )
 
       this.enemyTimer.reset()
@@ -810,13 +815,20 @@ class Game {
           if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
 
             if(enemy.damageTimer.time() > 400){
+              // how often can this enemy damage you
               enemy.damageTimer.reset()
 
               if(player.healthTimer.time() > 100){
+                // how often can the player *take* damage
                 player.healthTimer.reset()
-                // need to gate this to so 10 corrupteds dont just saw your head off before you can react
+                // need to gate this so 10 corrupteds dont just saw your head off before you can react
                   
-                player.takeDamage( game.corruptedDamage )
+                if(enemy.godCorrupted){
+                  player.takeDamage( game.godCorruptedDamage )
+                } else {
+                  // this is regular corrupted damage
+                  player.takeDamage( game.corruptedDamage )
+                }
     
                 if(player.lifecycle == ALIVE && player.health <= 0){
                   player.lifecycle = DYING
@@ -855,12 +867,12 @@ class Game {
           }
 
           // god killer corruption! more likely with higher power level
-          if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 && Math.random() > ( 1/ 2*(player.level+7) + 0.86 ) ){
+          if(this.godCorruptionTimer.time() > 100 && !enemy.godCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 && Math.random() > ( 36/ 2*(player.level+7) - 0.7 ) ){
             this.godCorruptionTimer.reset()
 
             // godkill corruption wil just happen because were already corrupted
             console.log( 'starting god killer' )
-            enemy.startCorrupting()    
+            enemy.startCorrupting()
           }
 
           numCorrupted += 1
