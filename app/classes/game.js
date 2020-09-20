@@ -181,7 +181,7 @@ class Game {
     b = Math.floor(Math.random() * 100)
 
     this.corruptionTimer.reset()
-    this.corruptedDamage = Math.round( this.corruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
+    this.corruptedDamage = Math.round( this.corruptedDamageDefault + Math.pow( (this.roundCount/5), 2 ) )
     this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
 
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b])
