@@ -28,6 +28,8 @@ class Game {
     // wait a bit to start music
     this.musicTimer = new Timer()
     this.announcementTimer = new Timer()
+
+    this.numCorrupted = 0
   }
 
   announcement(message){
@@ -750,11 +752,210 @@ class Game {
     return k(this.enemies).every((enemyId) => this.enemies[enemyId].lifecycle == DEAD || this.enemies[enemyId].lifecycle == DYING)
   }
 
+  handleEnemy(enemy){
+    // MOVEMENT
+    chance = Math.random()
+    if(chance > 0.3 && enemy.directionTimer.time() > 200){
+      enemy.directionTimer.reset()
+      enemy.chooseDirection()
+    }
+
+    // handle movement
+    enemy.handleMovement()
+    // draw other crap thats changing
+    enemy.animation()
+
+    if(this.bombs.length > 0){
+      // if theres bombs, hannel em
+      enemy.handleBombs()
+    }
+
+    if(player.sword && player.sword.active){
+      // if the swords out, get stabt
+      enemy.handleSword()
+    }
+
+    if(this.smokes.length > 0){
+      enemy.handleSmokes()
+    }
+    
+    if(game.friends.length > 0){
+      // if the friends out, get murdered
+      enemy.handleFriends()
+    }
+
+    // LIFE/CORRUPTION
+    // only sword/bombs/casino can hurt while corrupting
+    if(enemy.lifecycle == ALIVE && !enemy.corrupted){
+      let hitresult = enemy.handleHit(player)
+
+      if(player.lifecycle == ALIVE && hitresult){
+
+        if(enemy.healthTimer.time() > 100){
+          // console.log( 'eneymy hit' )
+          enemy.healthTimer.reset()
+          enemy.takeDamage(4)
+        }
+
+        // start eating animation, which shuts itself off after timer
+        player.eating = true
+      }
+
+      if(enemy.lifecycle == ALIVE && this.corruptionTimer.time() > 1000) {
+        // only need to handleCorruption if we're not dying
+        this.corruptionTimer.reset()
+
+        // multiply by this teeny tiny so we (mostly) get back something within the realm of 0-1
+        let corruption_chance = Math.random() + ( 0.00002 * Math.pow(player.power, 2) )
+        if(this.percentCorrupted < this.corruptionMax && corruption_chance > 0.80 ){
+          // console.log( 'i really *should* be corrupting ' )
+          enemy.startCorrupting()
+          this.numCorrupted += 1
+        }
+      }  
+    } else if(enemy.corrupted) {
+      // this is else if corrupted
+
+      if(player.killingCircle && player.killingCircle.visible){
+
+        let hit = enemy.handleHit( player.killingCircleArea )
+
+        if(hit){
+        
+          if(enemy.healthTimer.time() > 400){
+            enemy.healthTimer.reset()
+
+            enemy.takeDamage( player.killingCircleDamage() )
+            enemy.setColor(0,0,255)
+          }  
+        }
+      }
+
+      // is this enemy hitting the player
+      let corrupthit = enemy.handleHit(player)
+      if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
+
+        if(enemy.damageTimer.time() > 400){
+          // how often can this enemy damage you
+          enemy.damageTimer.reset()
+
+          if(player.healthTimer.time() > 100){
+            // how often can the player *take* damage
+            player.healthTimer.reset()
+            // need to gate this so 10 corrupteds dont just saw your head off before you can react
+              
+            if(enemy.godCorrupted){
+              player.takeDamage( game.godCorruptedDamage )
+            } else {
+              // this is regular corrupted damage
+              player.takeDamage( game.corruptedDamage )
+            }
+
+            if(player.lifecycle == ALIVE && player.health <= 0){
+              player.lifecycle = DYING
+            }
+          }
+
+        }
+      }
+
+      let friend
+      if(this.friends.length > 0){
+        for(var x=0; x<this.friends.length; x++){
+          friend = this.friends[x]
+
+          if(friend.lifecycle == ALIVE){
+
+            let hit = enemy.handleHit( friend )
+            if( hit ){
+              if(friend.healthTimer.time() > 100){
+                friend.healthTimer.reset()
+                friend.takeDamage(2)
+                // console.log( 'ixx have hurt your friend for 2', friend.health )
+
+                if(friend.health <= 0){
+                  // might as well do this here since its the moment health went to death
+                  friend.lifecycle = DYING
+                  friend.remove()
+                }
+
+              }
+            }
+
+          }
+          
+        }
+      }
+
+      if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 ){
+          // god killer corruption! more likely with higher power level
+          let god = ( 10/ (2*(player.level+7)) + 0.5 )
+          let ch = Math.random()
+          this.godCorruptionTimer.reset()
+
+        if(ch > god){
+
+          console.log( 'I GODCORRUPTED IT' )
+          console.log( 'goddcorrupt chance...', god, ch )
+
+          // godkill corruption wil just happen because were already corrupted
+          console.log( 'starting god killer' )
+          enemy.startCorrupting()  
+        }
+        
+      }
+
+      this.numCorrupted += 1
+    }
+
+
+   if(enemy.health <= 0){
+      // reward your KILLING
+
+      // this removes the mesh right now
+      // you can kill while corrupting, make sure they actually die
+      if(enemy.lifecycle == ALIVE || enemy.lifecycle == CORRUPTING){
+
+        // only score once
+        let score
+        if(enemy.corrupted){
+
+          score = 12
+        } else {
+
+          // reg enemy
+          score = 1
+          player.changePower( enemy.nutritionalValue )
+
+          if(enemy.knowledgeValue > 0){
+            player.changeKnowledge( enemy.knowledgeValue )
+          }
+
+          if(enemy.healthValue > 0){
+            player.changeHealth( enemy.healthValue )
+          }
+        }
+
+        game.changeScore(score)
+        enemy.lifecycle = DYING
+
+        // console.log( 'eneemy dying ', enemy.id )
+        enemy.killSound()
+        enemy.remove()
+      }
+
+      if(enemy.lifecycle == DEAD){
+        // WAIT to actually delete enemy until we have faded out the sprite
+        enemy.removeSprite()
+        delete this.enemies[enemyId]
+      }
+    }
+  }
+
   handleEnemies(){
     let enemy
     let chance
-    let numCorrupted = 0
-    let deletedSomeone = false
+    this.numCorrupted = 0
 
     // dont be corrupting so much
     if(!this.corruptionTimer.running){
@@ -771,204 +972,7 @@ class Game {
       enemy = this.enemies[enemyId]
       if(enemy){
 
-        // MOVEMENT
-        chance = Math.random()
-        if(chance > 0.3 && enemy.directionTimer.time() > 200){
-          enemy.directionTimer.reset()
-          enemy.chooseDirection()
-        }
-
-        // handle movement
-        enemy.handleMovement()
-        // draw other crap thats changing
-        enemy.animation()
-
-        if(this.bombs.length > 0){
-          // if theres bombs, hannel em
-          enemy.handleBombs()
-        }
-
-        if(player.sword && player.sword.active){
-          // if the swords out, get stabt
-          enemy.handleSword()
-        }
-
-        if(this.smokes.length > 0){
-          enemy.handleSmokes()
-        }
-        
-        if(game.friends.length > 0){
-          // if the friends out, get murdered
-          enemy.handleFriends()
-        }
-
-        // LIFE/CORRUPTION
-        // only sword/bombs/casino can hurt while corrupting
-        if(enemy.lifecycle == ALIVE && !enemy.corrupted){
-          let hitresult = enemy.handleHit(player)
-
-          if(player.lifecycle == ALIVE && hitresult){
-
-            if(enemy.healthTimer.time() > 100){
-              // console.log( 'eneymy hit' )
-              enemy.healthTimer.reset()
-              enemy.takeDamage(4)
-            }
-
-            // start eating animation, which shuts itself off after timer
-            player.eating = true
-          }
-
-          if(enemy.lifecycle == ALIVE && this.corruptionTimer.time() > 1000) {
-            // only need to handleCorruption if we're not dying
-            this.corruptionTimer.reset()
-
-            // multiply by this teeny tiny so we (mostly) get back something within the realm of 0-1
-            let corruption_chance = Math.random() + ( 0.00002 * Math.pow(player.power, 2) )
-            if(this.percentCorrupted < this.corruptionMax && corruption_chance > 0.80 ){
-              // console.log( 'i really *should* be corrupting ' )
-              enemy.startCorrupting()
-              numCorrupted += 1
-            }
-          }  
-        } else if(enemy.corrupted) {
-          // this is else if corrupted
-
-          if(player.killingCircle && player.killingCircle.visible){
-
-            let hit = enemy.handleHit( player.killingCircleArea )
-
-            if(hit){
-            
-              if(enemy.healthTimer.time() > 400){
-                enemy.healthTimer.reset()
-
-                enemy.takeDamage( player.killingCircleDamage() )
-                enemy.setColor(0,0,255)
-              }  
-            }
-          }
-
-          // is this enemy hitting the player
-          let corrupthit = enemy.handleHit(player)
-          if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
-
-            if(enemy.damageTimer.time() > 400){
-              // how often can this enemy damage you
-              enemy.damageTimer.reset()
-
-              if(player.healthTimer.time() > 100){
-                // how often can the player *take* damage
-                player.healthTimer.reset()
-                // need to gate this so 10 corrupteds dont just saw your head off before you can react
-                  
-                if(enemy.godCorrupted){
-                  player.takeDamage( game.godCorruptedDamage )
-                } else {
-                  // this is regular corrupted damage
-                  player.takeDamage( game.corruptedDamage )
-                }
-    
-                if(player.lifecycle == ALIVE && player.health <= 0){
-                  player.lifecycle = DYING
-                }
-              }
-  
-            }
-          }
-
-          let friend
-          if(this.friends.length > 0){
-            for(var x=0; x<this.friends.length; x++){
-              friend = this.friends[x]
-
-              if(friend.lifecycle == ALIVE){
-
-                let hit = enemy.handleHit( friend )
-                if( hit ){
-                  if(friend.healthTimer.time() > 100){
-                    friend.healthTimer.reset()
-                    friend.takeDamage(2)
-                    // console.log( 'ixx have hurt your friend for 2', friend.health )
-
-                    if(friend.health <= 0){
-                      // might as well do this here since its the moment health went to death
-                      friend.lifecycle = DYING
-                      friend.remove()
-                    }
-
-                  }
-                }
-
-              }
-              
-            }
-          }
-
-          if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 ){
-              // god killer corruption! more likely with higher power level
-              let god = ( 10/ (2*(player.level+7)) + 0.5 )
-              let ch = Math.random()
-              this.godCorruptionTimer.reset()
-
-            if(ch > god){
-
-              console.log( 'I GODCORRUPTED IT' )
-              console.log( 'goddcorrupt chance...', god, ch )
-
-              // godkill corruption wil just happen because were already corrupted
-              console.log( 'starting god killer' )
-              enemy.startCorrupting()  
-            }
-            
-          }
-
-          numCorrupted += 1
-        }
-
-
-       if(enemy.health <= 0){
-          // reward your KILLING
-
-          // this removes the mesh right now
-          // you can kill while corrupting, make sure they actually die
-          if(enemy.lifecycle == ALIVE || enemy.lifecycle == CORRUPTING){
-
-            // only score once
-            let score
-            if(enemy.corrupted){
-
-              score = 12
-            } else {
-
-              // reg enemy
-              score = 1
-              player.changePower( enemy.nutritionalValue )
-
-              if(enemy.knowledgeValue > 0){
-                player.changeKnowledge( enemy.knowledgeValue )
-              }
-
-              if(enemy.healthValue > 0){
-                player.changeHealth( enemy.healthValue )
-              }
-            }
-
-            game.changeScore(score)
-            enemy.lifecycle = DYING
-
-            // console.log( 'eneemy dying ', enemy.id )
-            enemy.killSound()
-            enemy.remove()
-          }
-
-          if(enemy.lifecycle == DEAD){
-            // WAIT to actually delete enemy until we have faded out the sprite
-            enemy.removeSprite()
-            delete this.enemies[enemyId]
-            deletedSomeone = true
-          }
-        }
+        this.handleEnemy(enemy)
 
       }
     }
@@ -992,7 +996,7 @@ class Game {
     }
     
     // record this after we've added new corrupts, and cleaned up dead enemies
-    this.percentCorrupted = numCorrupted/enemiesKeys.length
+    this.percentCorrupted = this.numCorrupted/enemiesKeys.length
     if(player.numBombsMax < 1 && this.percentCorrupted == 1){
       this.nowRandomBombing = true
       this.randomBombs()      
