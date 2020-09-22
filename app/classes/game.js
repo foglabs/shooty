@@ -754,7 +754,8 @@ class Game {
 
   handleEnemy(enemy){
     // MOVEMENT
-    chance = Math.random()
+    let enemyId = enemy.id
+    let chance = Math.random()
     if(chance > 0.3 && enemy.directionTimer.time() > 200){
       enemy.directionTimer.reset()
       enemy.chooseDirection()
@@ -966,7 +967,6 @@ class Game {
 
     let enemiesKeys = k(this.enemies)
     let enemyId
-
     for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
       enemyId = enemiesKeys[i]
       enemy = this.enemies[enemyId]
