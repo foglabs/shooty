@@ -48,6 +48,11 @@ class Player extends Character {
     this.bombsTimer.start()
     this.bombsInterval = 1000
 
+    this.smokeEnabled = true
+    this.numSmokes = 10
+    this.numSmokesMax = 10
+    this.smokesInterval = 1000
+
     this.swordEnabled = false
     this.defaultSwordSpeed = DEG1
     this.swordSpeed = DEG1
@@ -133,20 +138,30 @@ class Player extends Character {
       this.killingCircleEnabled = true
     }
 
-    // start bombs at level 6
-    this.numBombsMax = Math.max(0, Math.floor(-2 + this.level/2))
+    // start smokes at level 6
+    this.numSmokesMax = Math.max(0, Math.floor(-2 + this.level/2))
     if(this.level == 6){
-      game.announcement("BOMBS UNLOCKED (X)")
+      game.announcement("SMOKE UNLOCKED (X)")
+    } else if(this.numSmokesMax > 1) {
+      game.announcement("EXTRA SMOKE UNLOCKED (X)")
+    }
+    // smokes recharge faster with higher level
+    this.smokesInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
+
+    // start bombs at level 8
+    this.numBombsMax = Math.max(0, Math.floor(-4 + this.level/2))
+    if(this.level == 8){
+      game.announcement("BOMBS UNLOCKED (C)")
     } else if(this.numBombsMax > 1) {
-      game.announcement("EXTRA BOMB UNLOCKED (X)")
+      game.announcement("EXTRA BOMB UNLOCKED (C)")
     }
     // bombs recharge faster with higher level
     this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
 
     // start at level 6, and every even lvl after
-    if(this.level >= 8 && this.level % 2 == 0){
+    if(this.level >= 10 && this.level % 2 == 0){
       this.friendsAvailable += 1
-      game.announcement("FRIENDS UNLOCKED (C)")
+      game.announcement("FRIEND UNLOCKED (V)")
     }
 
     if(game.friends.length > 0){
@@ -159,7 +174,7 @@ class Player extends Character {
 
     if(this.level == 10){
       // you now can bet
-      game.announcement("CASINO UNLOCKED")
+      game.announcement("CASINO UNLOCKED (B)")
       this.casinoEnabled = true
     }
 
@@ -175,6 +190,19 @@ class Player extends Character {
       game.bombs.push( bomb )
 
       this.numBombs = incInRange( this.numBombs, -1, 0, this.numBombsMax )
+    }
+  }
+
+  dropSmoke(){
+    // console.log( 'bmobms', this.numBombs, this.numBombsMax )
+    if(this.numSmokes > 0){
+
+      let x = this.mesh.position.x
+      let y = this.mesh.position.y
+      let smoke = new Smoke(x,y)
+      // bomb.mesh.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
+      game.smokes.push( smoke )
+      this.numSmokes = incInRange( this.numSmokes, -1, 0, this.numSmokesMax )
     }
   }
 

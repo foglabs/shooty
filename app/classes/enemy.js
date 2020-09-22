@@ -254,6 +254,32 @@ class Enemy extends Character {
     }
   }
 
+  handleSmokes(){
+    let smoke
+    for(var i=0; i<game.smokes.length; i++){
+      smoke = game.smokes[i]
+      if(smoke){
+        let bub
+        let hit
+        if(smoke.bubbles.length > 0){
+          for(var x=0; x<smoke.bubbles.length; x++){
+            bub = smoke.bubbles[x]
+            if(bub && bub.damageTimer.time() > 100){
+              bub.damageTimer.reset()
+              // are you in the smoke?!
+              hit = this.handleHit( bub )
+              if(hit){
+                // yes
+                console.log( 'smoking that loud', hit, this.health )
+                bub.attack( this )
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
   customAnimation(){
     // dont do it, if yA DEAD
     if(this.lifecycle == ALIVE){

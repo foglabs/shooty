@@ -107,6 +107,8 @@ class Game {
     this.randomBombsTimer = new Timer()
     this.randomBombsTimer.start()
 
+    this.smokes = []
+
     this.friends = []
 
     // yeah bitch
@@ -365,6 +367,10 @@ class Game {
 
     if(this.friends.length > 0){
       this.handleFriends()
+    }
+    
+    if(this.smokes.length > 0){
+      this.handleSmokes()
     }
 
     if(player.bombsTimer.time() > player.bombsInterval){
@@ -710,6 +716,35 @@ class Game {
     }
   }
 
+  handleSmokes(){
+    let smoke, deletedSmoke
+    for(var i=0; i<this.smokes.length; i++){
+      smoke = this.smokes[i]
+      if(smoke){
+
+        if(smoke.bubbles.every( (bubble) => !bubble ) ){
+          // if all bubs are done, kill it
+          this.smokes[i] = null
+          deletedSmoke = true
+        } else {
+
+          smoke.animation()
+        }
+
+      }
+    }
+
+    if(deletedSmoke){
+      for(var i=0; i<this.smokes.length; i++){
+        if(!this.smokes[i]){
+          this.smokes.splice(i, 1)
+        }
+      }
+    }
+
+
+  }
+
   everybodyDead(){
     // need to flag rounds getting enemies so rounds dont just end instantly
     return k(this.enemies).every((enemyId) => this.enemies[enemyId].lifecycle == DEAD || this.enemies[enemyId].lifecycle == DYING)
@@ -756,6 +791,10 @@ class Game {
         if(player.sword && player.sword.active){
           // if the swords out, get stabt
           enemy.handleSword()
+        }
+
+        if(this.smokes.length > 0){
+          enemy.handleSmokes()
         }
         
         if(game.friends.length > 0){
