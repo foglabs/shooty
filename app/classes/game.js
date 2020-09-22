@@ -836,28 +836,24 @@ class Game {
       let corrupthit = enemy.handleHit(player)
       if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
 
-        if(enemy.damageTimer.time() > 400){
-          // how often can this enemy damage you
-          enemy.damageTimer.reset()
 
-          if(player.healthTimer.time() > 100){
-            // how often can the player *take* damage
-            player.healthTimer.reset()
-            // need to gate this so 10 corrupteds dont just saw your head off before you can react
-              
-            if(enemy.godCorrupted){
-              player.takeDamage( game.godCorruptedDamage )
-            } else {
-              // this is regular corrupted damage
-              player.takeDamage( game.corruptedDamage )
-            }
-
-            if(player.lifecycle == ALIVE && player.health <= 0){
-              player.lifecycle = DYING
-            }
+        if(player.healthTimer.time() > 100){
+          // how often can the player *take* damage
+          player.healthTimer.reset()
+          // need to gate this so 10 corrupteds dont just saw your head off before you can react
+            
+          if(enemy.godCorrupted){
+            player.takeDamage( game.godCorruptedDamage )
+          } else {
+            // this is regular corrupted damage
+            player.takeDamage( game.corruptedDamage )
           }
 
+          if(player.lifecycle == ALIVE && player.health <= 0){
+            player.lifecycle = DYING
+          }
         }
+
       }
 
       let friend

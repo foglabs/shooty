@@ -15,7 +15,6 @@ class SmokeBubble extends Character {
     this.animTimer = new Timer()
     this.animTimer.start()
 
-    this.damageTimer.start()
     this.damage = 1
   }
 

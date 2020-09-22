@@ -27,10 +27,6 @@ class Bomb extends Character {
     this.hotstepper = 0
 
     this.animTimer = new Timer()
-
-    // gate damage so we dont OBLITERATE
-    this.damageTimer = new Timer()
-    this.damageTimer.start()
   }
 
   handleExplode(){

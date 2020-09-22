@@ -8,8 +8,6 @@ class Sword {
     this.rotateTimer.start()
     this.powerTimer = new Timer()
     this.powerTimer.start()
-    this.damageTimer = new Timer()
-    this.damageTimer.start()
 
     let geo = new THREE.ConeGeometry( 0.01, this.length, 32 )
     let bbox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3())

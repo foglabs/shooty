@@ -31,9 +31,6 @@ class Character {
     // get this running because ima about to do some dmg
     this.damageSoundTimer.start()
 
-    this.damageTimer = new Timer()
-    this.damageTimer.start()
-
     this.lifecycle = ALIVE
 
     this.spriteOpacity = 1
@@ -218,8 +215,8 @@ class Character {
       bomb = game.bombs[i]
 
       // handle round-end player bomb situation
-      if( bomb && bomb.exploded && bomb.damageTimer.time() > 400 && this.handleHit(bomb) && (!this.isPlayer || bomb.hurtsPlayer) ){
-        bomb.damageTimer.reset()
+      if( bomb && bomb.exploded && this.healthTimer.time() > 100 && this.handleHit(bomb) && (!this.isPlayer || bomb.hurtsPlayer) ){
+        this.healthTimer.reset()
         // console.log( 'yall got bommmed' )
         this.takeDamage( damageVal )
       }

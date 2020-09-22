@@ -233,8 +233,8 @@ class Enemy extends Character {
   handleSword(){
     // sword follows the same pattern as character
     let hit = this.handleHit( player.sword )
-    if(hit && player.sword.damageTimer.time() > 200){
-      player.sword.damageTimer.reset()
+    if(hit && this.healthTimer.time() > 200){
+      this.healthTimer.reset()
       this.takeDamage( 12 * player.level )
     }
   }
@@ -246,8 +246,8 @@ class Enemy extends Character {
       friend = game.friends[i]
       if(friend){
         hit = this.handleHit( friend )
-        if(hit && friend.damageTimer.time() > 60){
-          friend.damageTimer.reset()
+        if(hit && this.healthTimer.time() > 60){
+          this.healthTimer.reset()
           friend.attack( this )        
         }
       }
@@ -264,8 +264,8 @@ class Enemy extends Character {
         if(smoke.bubbles.length > 0){
           for(var x=0; x<smoke.bubbles.length; x++){
             bub = smoke.bubbles[x]
-            if(bub && bub.damageTimer.time() > 100){
-              bub.damageTimer.reset()
+            if(bub && this.healthTimer.time() > 100){
+              this.healthTimer.reset()
               // are you in the smoke?!
               hit = this.handleHit( bub )
               if(hit){
