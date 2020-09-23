@@ -13,11 +13,11 @@ class Smoke {
   }
 
   grow(newBubX, newBubY){
-    if(this.bubbles.length < 10){
+    if(this.bubbles.length < 160){
       // console.log( 'i grow' )
 
       let bubIndex = Math.floor( Math.random() * this.bubbles.length )
-      let newBubRadius = Math.random() * 1
+      let newBubRadius = Math.max(0.2, Math.random() * 1)
 
       let newBub = new SmokeBubble(newBubX, newBubY, newBubRadius)
       scene.add( newBub.mesh )
@@ -26,17 +26,26 @@ class Smoke {
   }
 
   animation(){
-    if(this.growTimer.time() > 800){
+    let thisGrowTime = 400
+    if(this.growTimer.time() > thisGrowTime){
+      this.growTimer.reset()
       // console.log( 'grow timer up' )
-      let bub = this.bubbles[ Math.floor( Math.random() * this.bubbles.length ) ]
+      // random bubble
+      // let bub = this.bubbles[ Math.floor( Math.random() * this.bubbles.length ) ]
 
-      if(bub){
-        // random inside bub circle
-        let newBubPos = bub.randomPosition()
-        // console.log( 'new bub ops', newBubPos )
+      // first living bubble
+      if(this.bubbles[0]){
+  
+        let bub = this.bubbles.find(b => b.lifecycle == ALIVE)
+        if(bub){
+          // random inside bub circle
+          let newBubPos = bub.randomPosition()
+          // console.log( 'new bub ops', newBubPos )
 
-        this.grow(newBubPos[0],newBubPos[1])
+          this.grow(newBubPos[0], newBubPos[1])
+        }        
       }
+
     }
 
     let bubble

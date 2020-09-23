@@ -21,6 +21,7 @@ class Enemy extends Character {
     let sphereChance = chanceSlices[1]
     let circleChance = chanceSlices[2]
     let octaChance = chanceSlices[3]
+    console.log( 'high chance', octaChance )
     // this is just above the highest traunch, so no need
     // let healcubeChance = chanceSlices[0]
 
@@ -270,7 +271,7 @@ class Enemy extends Character {
               hit = this.handleHit( bub )
               if(hit){
                 // yes
-                console.log( 'smoking that loud', hit, this.health )
+                // console.log( 'smoking that loud', hit, this.health )
                 bub.attack( this )
               }
             }

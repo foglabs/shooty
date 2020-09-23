@@ -10,12 +10,17 @@ class SmokeBubble extends Character {
     this.y = y
     this.radius = radius
 
+    this.scaleFactor = 1
+
     this.mesh.position.set(x, y, player.mesh.position.z)
+    this.mesh.material.opacity = 0.5
 
     this.animTimer = new Timer()
     this.animTimer.start()
 
-    this.damage = 1
+    this.growSpeed = 0.003 * Math.max(0.5, Math.random())
+
+    this.damage = 5
   }
 
   attack(enemy){
@@ -26,27 +31,30 @@ class SmokeBubble extends Character {
     // generate random point inside ME
     let r = Math.sqrt( Math.random() )
     let theta = 2*Math.PI*Math.random()
-    let rx = this.x + r*this.radius*Math.cos(theta)
-    let ry = this.y + r*this.radius*Math.sin(theta)
+
+    // actually use a slightly bigger circle so we probably spread smoke further
+    let rad = this.radius*1.6
+    let rx = this.x + r*rad*Math.cos(theta)
+    let ry = this.y + r*rad*Math.sin(theta)
     return [rx,ry]
   }
 
   customAnimation(){
     // grow
-    if(this.animTimer.time() > 60){
+    if(this.animTimer.time() > 30){
       this.animTimer.reset()
 
       if(this.lifecycle == ALIVE){
 
         // growing
-        this.scaleFactor += 0.1
+        this.scaleFactor += this.growSpeed
         let x,y,z
-        x = this.mesh.scale.x
-        y = this.mesh.scale.y
-        z = this.mesh.scale.z
+        x = this.mesh.scale.x * this.scaleFactor
+        y = this.mesh.scale.y * this.scaleFactor
+        z = this.mesh.scale.z * this.scaleFactor
         this.mesh.scale.set( x,y,z )
 
-        if(this.mesh.scale.x > 0.4){
+        if(this.mesh.scale.x > 1.6){
           // console.log( 'bublb die' )
           this.lifecycle = DYING
         }

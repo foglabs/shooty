@@ -49,8 +49,10 @@ class Player extends Character {
     this.bombsInterval = 1000
 
     this.smokeEnabled = true
-    this.numSmokes = 10
-    this.numSmokesMax = 10
+    this.numSmokes = 0
+    this.numSmokesMax = 0
+    this.smokesTimer = new Timer()
+    this.smokesTimer.start()
     this.smokesInterval = 1000
 
     this.swordEnabled = false
@@ -149,7 +151,7 @@ class Player extends Character {
     this.smokesInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
 
     // start bombs at level 8
-    this.numBombsMax = Math.max(0, Math.floor(-4 + this.level/2))
+    this.numBombsMax = Math.max(0, Math.floor(-3 + this.level/2))
     if(this.level == 8){
       game.announcement("BOMBS UNLOCKED (C)")
     } else if(this.numBombsMax > 1) {

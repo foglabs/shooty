@@ -124,7 +124,8 @@ class Game {
   }
 
   calcChanceSlices(){
-    let chanceSlices = [0.2,0.4,0.6,0.8]
+    // let chanceSlices = [0.2,0.4,0.6,0.8]
+    let chanceSlices = [0.2,0.4,0.6,0.75]
     for(var i=0; i<4; i++){
       // bend the base chances based on round number, kinda weighted by index
       chanceSlices[i] = chanceSlices[i] * i + Math.pow( this.roundCount, 2 )/3000
@@ -134,7 +135,8 @@ class Game {
     chanceSlices[0] = chanceSlices[0] + 0.2
     chanceSlices[1] = chanceSlices[1]
     chanceSlices[2] = chanceSlices[2] - 0.6
-    chanceSlices[3] = chanceSlices[3] - 1.6
+    // chanceSlices[3] = chanceSlices[3] - 1.6
+    chanceSlices[3] = chanceSlices[3] - 1.5
 
     return chanceSlices
   }
@@ -378,6 +380,11 @@ class Game {
     if(player.bombsTimer.time() > player.bombsInterval){
       player.bombsTimer.reset()
       player.numBombs = incInRange(player.numBombs, 1, 0, player.numBombsMax)
+    }
+
+    if(player.smokesTimer.time() > player.smokesInterval){
+      player.smokesTimer.reset()
+      player.numSmokes = incInRange(player.numSmokes, 1, 0, player.numSmokesMax)
     }
 
     this.handleEnemies()
