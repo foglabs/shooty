@@ -236,12 +236,6 @@
 
         game.handleGame()
 
-        // if(heat.time()>60){
-        //   heat.reset()
-        //   console.log( 'TEMPS', keyHandler.keyHeats )
-        // }
-        // console.log( 'HELD', keyHandler.heldKeys )
-
         // DONT get hot when playing, you are not
         if(game.stage == PLAYING){
           keyHandler.handleKeyTemp()
@@ -250,9 +244,6 @@
         requestAnimationFrame( animate )
         // draw de cool scene
         renderer.render( scene, camera )
-        // clear de buff
-        // for the HUD
-        renderer.render(sceneHUD, cameraHUD)
       }
 
       let listener = new THREE.AudioListener()
@@ -330,37 +321,15 @@
       let width = window.innerWidth
       let height = window.innerHeight
 
-      let hudCanvas = document.createElement('canvas')
-      hudCanvas.width = width
-      hudCanvas.height = height
-      let hudBitmap = hudCanvas.getContext('2d');
-      // hudBitmap.font = "Normal 40px Arial";
-      // hudBitmap.bottom = 0
-      // hudBitmap.textAlign = 'center';
-      // hudBitmap.fillStyle = "rgba(245,245,245,0.75)";
-      // hudBitmap.fillText('0 0 0 0 0', width / 2, height-20);
-      // let gr = hudBitmap.createRadialGradient(110,90,30, 100,100,70);
-      // gr.addColorStop(0, 'pink');
-      // gr.addColorStop(.9, 'white');
-      // gr.addColorStop(1, 'green');
-      // hudBitmap.fillStyle = gr
-      
-      var cameraHUD = new THREE.OrthographicCamera(-width/2, width/2, height/2, -height/2, 0, 30 );
-      sceneHUD = new THREE.Scene();
-      var hudTexture = new THREE.Texture(hudCanvas) 
-      hudTexture.needsUpdate = true;
-      var material = new THREE.MeshBasicMaterial( {map: hudTexture} );
-      material.transparent = true;
-      
-      var planeGeometry = new THREE.PlaneGeometry( width, height );
-      var plane = new THREE.Mesh( planeGeometry, material );
-      sceneHUD.add( plane );
-
-      let player = new Player([0,88,255])
+     
+     
+      let player
+      player = new Player([0,88,255])
       player.mesh.visible = false
       scene.add( player.mesh )
-
+      
       let game = new Game()
+
       game.setBackgroundColor(game.backgroundColor[0],game.backgroundColor[1],game.backgroundColor[2])
       
       let duster = new Duster(pointMatMap, 0.2, 2000, 30)

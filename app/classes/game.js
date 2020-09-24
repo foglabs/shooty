@@ -141,9 +141,22 @@ class Game {
     return chanceSlices
   }
 
+  newPlayer(){
+    player = new Player([0,88,255])
+    player.mesh.visible = false
+    scene.add( player.mesh )
+  }
+
   newGame(){
     if(!this.gameRunning()){
       document.getElementById("stage-info").classList.remove("static")
+
+      if(player){
+        // clean out old player
+        player.remove()
+      }
+
+      game.newPlayer()
 
       this.setDefaultGameValues()
       this.lastRoundColor = this.roundColor
@@ -210,6 +223,7 @@ class Game {
     this.cleanBombs()
 
     this.stage = LOADING
+
     duster.animTimer.start()
     this.stageTimer.start()
 
@@ -224,7 +238,7 @@ class Game {
 
   endGame(){
     this.stageTimer.start()
-    this.stage = ENDING    
+    this.stage = ENDING
     fx_youredeadE.play()
   }
 
@@ -300,12 +314,16 @@ class Game {
 
       if(this.stageTimer.time() > this.loadTime){
         this.stage = GAMEOVER
+        this.stageTimer.reset()
       }
     } else if(this.stage == GAMEOVER) {
 
       // ended
       this.drawGameover()
       console.log("GAME OVA")
+      if(this.stageTimer.time() > this.loadTime ){
+        this.cleanGame()
+      }
     }
 
     duster.animation()
@@ -410,7 +428,6 @@ class Game {
 
     if(game.stage == PLAYING && player.lifecycle == ALIVE){
       // stop moving if we DEAD
-
       player.handleMovement()
     }
 
@@ -443,6 +460,17 @@ class Game {
     this.announcement("GAME OVER")
   }
 
+  cleanGame(){
+    
+    this.cleanEnemies()
+    this.cleanBombs()
+    this.setDefaultGameValues()
+
+    player.deadSprite.remove()
+    player.lifecyle = ALIVE
+    player.defaultPlayerValues()
+  }
+
   cleanEnemies(){
     let enemyId
     let enemiesKeys = k(this.enemies)
@@ -452,8 +480,8 @@ class Game {
       if(this.enemies[enemyId]){
         // do this so we dont make a sprite
         this.enemies[enemyId].lifecycle = ALIVE
-        this.enemies[enemyId].remove()
         this.enemies[enemyId].removeSprite()
+        this.enemies[enemyId].remove()
         delete this.enemies[enemyId]
       }
     }
