@@ -117,7 +117,7 @@ class Player extends Character {
     this.level += 1
 
     // game.knowledgeMax = Math.round(game.knowledgeMax * 1.25)
-    game.knowledgeMax = Math.round( game.knowledgeMaxDefault + ( 2*game.knowledgeMaxDefault * Math.log(this.level - 1) ) )
+    game.knowledgeMax = Math.round( game.knowledgeMaxDefault + ( 3/2*game.knowledgeMaxDefault * Math.log(this.level - 1) ) )
     // console.log( 'KNOW AMX', game.knowledgeMax )
     document.getElementById("knowledge").max = game.knowledgeMax
     

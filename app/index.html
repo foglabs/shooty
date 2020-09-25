@@ -359,6 +359,14 @@
 
         if( !oldState && (event.key == "ArrowLeft" || event.key == "ArrowUp" || event.key == "ArrowRight" || event.key == "ArrowDown") ){
           // give em a push on first keydown
+        
+          if(this.bumpTimer.time() > 210){
+            // if its been a moment, bigger bump
+            keyHandler.bumpValue = 0.22
+          } else {
+            keyHandler.bumpValue = 0.16
+          }
+
           keyHandler.bumpKey( event.key )
         }
 

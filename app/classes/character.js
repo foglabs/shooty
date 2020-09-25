@@ -114,21 +114,21 @@ class Character {
       } else {
         this.addSprite(bloodspriteMaterial.clone(), 0.388)
       }
+    }
 
-      // clean up on aisle akuma
-      if(this.banners){
-        this.banners.remove()
-      }
-   
-      // clean up on aisle godkiller
-      if(this.godBanners){
-        this.godBanners.remove()
-      }
-  
-      // clean that blood up
-      if(this.bloodDuster){
-        this.bloodDuster.remove()
-      }
+    // clean up on aisle akuma
+    if(this.banners){
+      this.banners.remove()
+    }
+ 
+    // clean up on aisle godkiller
+    if(this.godBanners){
+      this.godBanners.remove()
+    }
+
+    // clean that blood up
+    if(this.bloodDuster){
+      this.bloodDuster.remove()
     }
 
     this.mesh.geometry.dispose()

@@ -153,6 +153,7 @@ class Game {
 
       if(player){
         // clean out old player
+        player.removeSprite()
         player.remove()
       }
 
@@ -180,7 +181,8 @@ class Game {
     let newEnemyMax = Math.round(this.defaultEnemyMax * maxBump)
     // make the enemy timer shorter
     // let newEnemyInterval = Math.round(this.enemyInterval * 0.90)
-    let newEnemyInterval = Math.round(this.defaultEnemyInterval * 90 / ( Math.pow((this.roundCount + 12), 2) ) + 13000 )
+    // let newEnemyInterval = Math.round(this.defaultEnemyInterval * 90 / ( Math.pow((this.roundCount + 12), 2) ) + 13000 )
+    let newEnemyInterval = Math.round(this.defaultEnemyInterval * -1 * Math.pow( this.roundCount, 2 )/700 + 36000 )
     console.log( 'new inter', newEnemyInterval )
     // increase maximum % of corurpted by 8%
     // let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
@@ -322,6 +324,7 @@ class Game {
       this.drawGameover()
       console.log("GAME OVA")
       if(this.stageTimer.time() > this.loadTime ){
+        console.log( 'cleaning game' )
         this.cleanGame()
       }
     }
@@ -478,6 +481,7 @@ class Game {
 
       enemyId = enemiesKeys[i]
       if(this.enemies[enemyId]){
+        console.log( 'deltin', enemyId )
         // do this so we dont make a sprite
         this.enemies[enemyId].lifecycle = ALIVE
         this.enemies[enemyId].removeSprite()

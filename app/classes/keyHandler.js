@@ -1,6 +1,5 @@
 class KeyHandler {
   constructor(){
-
     this.keyHeats = {}
     this.resetHeats()
 
@@ -12,6 +11,10 @@ class KeyHandler {
 
     this.tempTimer = new Timer()
     this.tempTimer.start()
+
+    this.bumpTimer = new Timer()
+    this.bumpTimer.start()
+    this.bumpValue = 0.22
   }
 
   resetHeats(){
@@ -29,14 +32,16 @@ class KeyHandler {
   }
 
   bumpKey(keyName){
+    this.bumpTimer.reset()
+
     if (keyName == "ArrowLeft"){
-      player.accx -= 0.22
+      player.accx -= this.bumpValue
     } else if (keyName == "ArrowUp"){
-      player.accy += 0.22
+      player.accy += this.bumpValue
     } else if (keyName == "ArrowRight"){
-      player.accx += 0.22
+      player.accx += this.bumpValue
     } else if (keyName == "ArrowDown"){
-      player.accy -= 0.22
+      player.accy -= this.bumpValue
     }
 
   }
