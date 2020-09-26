@@ -41,6 +41,8 @@ class Character {
 
     this.bloodDuster = null
     this.bloodDusterTimer = new Timer()
+
+    this.damagedBy = null
   }
 
   moveTowardsPoint(destx, desty, speedFactor=1){
@@ -218,7 +220,7 @@ class Character {
       if( bomb && bomb.exploded && this.healthTimer.time() > 100 && this.handleHit(bomb) && (!this.isPlayer || bomb.hurtsPlayer) ){
         this.healthTimer.reset()
         // console.log( 'yall got bommmed' )
-        this.takeDamage( damageVal )
+        this.takeDamage( damageVal, BOMB )
       }
     }
   }
@@ -335,8 +337,11 @@ class Character {
   // you already know
   takeDamageSound(){}
 
-  takeDamage(dmg){
+  takeDamage(dmg, damageSource){
     this.takeDamageSound()
+
+    // record the last thing we were damaged byd
+    this.damagedBy = damageSource
 
     // console.log( 'take damage ', dmg )
     // this.health -= dmg

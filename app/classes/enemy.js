@@ -1,5 +1,5 @@
 class Enemy extends Character {
-  constructor(base_color){
+  constructor(base_color, enemyType=null){
     let id = Math.random().toString(36).slice(2)
 
     // enemy's health
@@ -8,67 +8,81 @@ class Enemy extends Character {
     let nutritionalValue
     // how much knowl player gets
     let knowledgeValue = 0
-    let enemyType
     let lightness
 
     // de mesh
     let geometry
-    let dna = Math.random()
+    let dna
 
     // adding these constants puts these shits on the right place for x==1 (level 1)
     let chanceSlices = game.chanceSlices
     let stickChance = chanceSlices[0]
     let sphereChance = chanceSlices[1]
     let circleChance = chanceSlices[2]
-    let octaChance = chanceSlices[3]
-    console.log( 'high chance', octaChance )
+    let healcubeChance = chanceSlices[3]
     // this is just above the highest traunch, so no need
-    // let healcubeChance = chanceSlices[0]
+    // let octaChance = chanceSlices[]
+    // console.log( 'high chance', octaChance )
 
     // console.log( 'dna is ', dna )
     // console.log( 'slices are', stickChance,sphereChance,circleChance,octaChance )
-    if(dna <= stickChance){
+    if(enemyType){
+      // this is kind of stupid, but if we want dna to be used elsewhere, per enemy, necessary
+      dna = this.dnaByEnemyType(enemyType)
+    } else {
+
+      dna = Math.random()
+      if(dna <= stickChance){
+        enemyType = STICK
+      } else if(dna <= sphereChance){
+        enemyType = SPHERE
+      } else if(dna <= circleChance) {
+        enemyType = CIRCLE
+      } else if(dna <= healcubeChance) {
+        enemyType = HEALCUBE
+      } else {
+        enemyType = KNOWLOCTA
+      }
+    }
+    
+    if(enemyType == STICK){
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
       health = 2
       nutritionalValue = 16
       base_color = [72,201,46]
-      enemyType = STICK
       lightness = 0.1
-    } else if(dna <= sphereChance){
+    } else if(enemyType == SPHERE){
       // sphere
       health = 8
       nutritionalValue = 26
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
       base_color = [114,194,189]
-      enemyType = SPHERE
       lightness = 0.03
-    } else if(dna <= circleChance) {
+    } else if(enemyType == CIRCLE) {
       // circle
       health = 0.04
       nutritionalValue = 22
       geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [214,189,58]
-      enemyType = CIRCLE
       lightness = 0.4
-    } else if(dna <= octaChance) {
+    } else if(enemyType == HEALCUBE){
+      // heal cube
+      geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
+      health = 18
+      nutritionalValue = 50
+      base_color = [189,52,147]
+      lightness = 0.02
+    } else if(enemyType == KNOWLOCTA) {
       // knowledge octa
       health = 12
       nutritionalValue = 26
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
       knowledgeValue = 25
-      enemyType = KNOWLOCTA
       lightness = 0.09
-    } else {
-      // heal cube
-      geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
-      health = 18
-      nutritionalValue = 50
-      base_color = [189,52,147]
-      enemyType = HEALCUBE
-      lightness = 0.02
     }
+
     
     super(
       // de ge
@@ -144,7 +158,6 @@ class Enemy extends Character {
     this.hitColor = [hitr, hitg, hitb]
 
     // console.log( 'hitcolor is ', this.hitColor )
-
     this.directionTimer = new Timer()
     // start this up because were going to add to scene right now anyway
     this.directionTimer.start()
@@ -162,6 +175,28 @@ class Enemy extends Character {
     this.inScene = false
   }
 
+  dnaByEnemyType(enemyType){
+    let min, max
+    if(enemyType == STICK){
+      min = 0
+      max = game.chanceSlices[0]
+    } else if(enemyType == SPHERE){
+      min = game.chanceSlices[0]
+      max = game.chanceSlices[1]
+    } else if(enemyType == CIRCLE) {
+      min = game.chanceSlices[1]
+      max = game.chanceSlices[2]
+    } else if(enemyType == HEALCUBE){
+      min = game.chanceSlices[2]
+      max = game.chanceSlices[3]
+    } else if(enemyType == KNOWLOCTA) {
+      min = game.chanceSlices[3]
+      max = 1
+    }
+
+    return Math.random() * (max-min) + min
+  }
+
   calcHitColor(val){
     // the higher val is, the smaller the increase
     // subtract 8 to push line down to keep unde 255
@@ -175,6 +210,34 @@ class Enemy extends Character {
     fac = Math.random() * 0.010
     // sign = Math.random() > 0.5 ? 1 : -1
     this.mesh.rotation.y += 0.18 * fac
+  }
+
+  killScore(){
+    let score
+    if(this.damagedBy == EAT) {
+      score = 1
+    } else if(this.damagedBy == SWORD) {
+      score = 12
+    } else if(this.damagedBy == KILLINGCIRCLE) {
+      score = 4
+    } else if(this.damagedBy == SMOKE) {
+      score = 10
+    } else if(this.damagedBy == BOMB) {
+      score = 8
+    } else if(this.damagedBy == FRIEND) {
+      score = 2
+    } else if(this.damagedBy == CASINO) {
+      score = 32
+    }
+
+    // beef that up if they real bad with it
+    if(this.corrupted){
+      score = score * 4
+    } else if(this.godCorrupted){
+      score = score * 16
+    }
+
+    return score
   }
 
   takeDamageSound(){
@@ -236,7 +299,7 @@ class Enemy extends Character {
     let hit = this.handleHit( player.sword )
     if(hit && this.healthTimer.time() > 200){
       this.healthTimer.reset()
-      this.takeDamage( 12 * player.level )
+      this.takeDamage( 12 * player.level, SWORD )
     }
   }
 

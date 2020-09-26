@@ -1,9 +1,16 @@
-body { margin: 0; }
+@font-face {
+  font-family: vcr;
+  src: url(/fonts/vcr.ttf);
+}
+
+body { 
+  margin: 0;
+  font-family: 'vcr';
+}
 canvas { display: block; }
 
 div.info-bar {
-  font-size: 28px; 
-  font-family: courier;
+  font-size: 36px; 
   height: 1.2vh;
   color: #fff;
   position: absolute;
@@ -25,7 +32,12 @@ div#info3 {
   top: 3.6vh;
 }
 
+div#player-info {
+  bottom: 3.6vh;
+}
+
 div.bar-ele {
+  min-height: 1px;
   display: inline;
   margin: 0;
   padding: 0;
@@ -123,7 +135,7 @@ progress#knowledge::-webkit-progress-value { background: #5A1196; }
 #stage-info {
   opacity: 0;
   transition: opacity 0.6s ease-out;
-  font-family: courier;
+  /*font-family: courier;*/
   font-size: 72px;
   color: #fff;
   position: absolute;

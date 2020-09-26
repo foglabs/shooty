@@ -113,8 +113,8 @@ class Player extends Character {
 
   levelUp(){
     this.knowledge = 0
-
     this.level += 1
+    game.announcement("LEVEL UP (" + this.level + ")" )
 
     // game.knowledgeMax = Math.round(game.knowledgeMax * 1.25)
     game.knowledgeMax = Math.round( game.knowledgeMaxDefault + ( 3/2*game.knowledgeMaxDefault * Math.log(this.level - 1) ) )
@@ -163,7 +163,7 @@ class Player extends Character {
     // start at level 6, and every even lvl after
     if(this.level >= 10 && this.level % 2 == 0){
       this.friendsAvailable += 1
-      game.announcement("FRIEND UNLOCKED (V)")
+      game.announcement("NEW FRIEND UNLOCKED (V)")
     }
 
     if(game.friends.length > 0){
@@ -174,7 +174,7 @@ class Player extends Character {
       }
     }
 
-    if(this.level == 10){
+    if(this.level == 12){
       // you now can bet
       game.announcement("CASINO UNLOCKED (B)")
       this.casinoEnabled = true

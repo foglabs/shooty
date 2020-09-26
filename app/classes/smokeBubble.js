@@ -24,7 +24,7 @@ class SmokeBubble extends Character {
   }
 
   attack(enemy){
-    enemy.takeDamage( this.damage )
+    enemy.takeDamage( this.damage, SMOKE )
   }
 
   randomPosition(){

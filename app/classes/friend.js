@@ -63,7 +63,7 @@ class Friend extends Character {
       // console.log( 'he kill for ', pwr )
       // do % damage to other aguy
       if(cost != 0 && pwr > 0){
-        other_char.takeDamage(pwr)
+        other_char.takeDamage(pwr, FRIEND)
         this.changePower(-1 * cost)
         this.changeHealth(Math.ceil(cost/4))
       }

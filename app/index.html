@@ -7,30 +7,37 @@
   </head>
 
   <body>
+    <div id="player-info" class="info-bar">
+      <div class="bar-ele" id="bombs"></div>
+
+      Score <div class="bar-ele" id="score">0</div>
+      ::
+      <div class="bar-ele" id="level">1</div> Level
+      <div class="bar-ele" id="friends-available"></div>
+      <div class="bar-ele" id="smokes"></div>
+    </div>
+
     <div id="info" class="info-bar">
-      <div class="bar-ele" id="score"></div>
+
       <div class="bar-ele-wide">
         <progress id="power" value="00" max="100"></progress>
       </div>
 
-      <div class="bar-ele" id="timer"></div>
+      <div class="bar-ele" id="timer">..</div>
     </div>
 
     <div id="info2" class="info-bar">
-      <div class="bar-ele" id="level">1</div>
-
       <div class="bar-ele-wide">
         <progress id="health" value="100" max="100"></progress>
       </div>
-
-      <div class="bar-ele" id="bombs"></div>
-      <div class="bar-ele" id="friends-available"></div>
+      <div class="bar-ele">..</div>
     </div>
 
     <div id="info3" class="info-bar">
       <div class="bar-ele-wide">
         <progress id="knowledge" value="0" max="50"></progress>
       </div>
+      <div class="bar-ele">..</div>
     </div>
 
     <div id="info4" class="info-bar">
@@ -190,6 +197,16 @@
       // casino choice
       CHO = 0
       HAN = 1
+
+      // damage types
+      ENEMY = 0
+      EAT = 1
+      SWORD = 2
+      KILLINGCIRCLE = 3
+      SMOKE = 4
+      BOMB = 5
+      FRIEND = 6
+      CASINO = 7
 
       // DEG0 = radian(0)
       DEG1 = radian(1)
@@ -360,11 +377,11 @@
         if( !oldState && (event.key == "ArrowLeft" || event.key == "ArrowUp" || event.key == "ArrowRight" || event.key == "ArrowDown") ){
           // give em a push on first keydown
         
-          if(this.bumpTimer.time() > 210){
+          if(keyHandler.bumpTimer.time() > 180){
             // if its been a moment, bigger bump
-            keyHandler.bumpValue = 0.22
+            keyHandler.bumpValue = 0.20
           } else {
-            keyHandler.bumpValue = 0.16
+            keyHandler.bumpValue = 0.14
           }
 
           keyHandler.bumpKey( event.key )

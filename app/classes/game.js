@@ -27,24 +27,63 @@ class Game {
 
     // wait a bit to start music
     this.musicTimer = new Timer()
+
+    this.announcements = []
     this.announcementTimer = new Timer()
+    this.announcementFadeTimer = new Timer()
 
     this.numCorrupted = 0
   }
 
-  announcement(message){
-    document.getElementById('stage-info').innerHTML = message
-    document.getElementById('stage-info').classList.add("announcement")
-    this.announcementTimer.start()
+  handleAnnouncements(){
+    if(this.announcements.length > 0){
+      // draw current announcement
+      console.log( 'trying to ' )
+      this.drawAnnouncement()
+    }
   }
 
-  handleAnnouncement(){
+  announcement(message){
+    this.announcements.push(message)
+
+    console.log( 'anoncemt', this.announcements )
+    // if theres no queued announcements, start the cycle up
+    if(!this.announcementTimer.running){
+
+      this.announcementTimer.start()
+    }
+  }
+
+  drawAnnouncement(){
+    if(this.announcementFadeTimer.running){
+      if(this.announcementFadeTimer.time() < 1000){
+      // pause between announcments to wait for css animation, plus a little bit
+        return
+      } else {
+        // switch to actual show timer
+        this.announcementFadeTimer.stop()
+        this.announcementTimer.start()
+
+      }
+    }
+
     if(this.announcementTimer.running){
 
-      if(this.announcementTimer.time() > 600){
+      document.getElementById('stage-info').innerHTML = this.announcements[0]
+      document.getElementById('stage-info').classList.add("announcement")
+
+      if(this.announcementTimer.time() > 1600){
         // an announcment was added elsewhere, this is just to shut it off
         document.getElementById('stage-info').classList.remove("announcement")
-        this.announcementTimer.stop()
+        // we're done with this one, allow the next one to start
+        this.announcements.shift()
+        this.announcementFadeTimer.start()
+        if(this.announcements.length > 0){
+          this.announcementTimer.reset()
+        } else {
+
+          this.announcementTimer.stop()
+        }
       }
 
     }
@@ -122,7 +161,7 @@ class Game {
 
     this.nowRandomBombing = false
   }
-
+  
   calcChanceSlices(){
     // let chanceSlices = [0.2,0.4,0.6,0.8]
     let chanceSlices = [0.2,0.4,0.6,0.75]
@@ -225,6 +264,7 @@ class Game {
     this.cleanBombs()
 
     this.stage = LOADING
+    this.announcement("ROUND " + this.roundCount +  " LOADING...")
 
     duster.animTimer.start()
     this.stageTimer.start()
@@ -285,7 +325,7 @@ class Game {
   }
 
   handleGame(){
-    this.handleAnnouncement()
+    this.handleAnnouncements()
     this.handleMusic()
 
     if(this.stage == TITLE){      
@@ -316,12 +356,14 @@ class Game {
 
       if(this.stageTimer.time() > this.loadTime){
         this.stage = GAMEOVER
+        this.announcement("GAME OVER")
         this.stageTimer.reset()
       }
     } else if(this.stage == GAMEOVER) {
 
       // ended
-      this.drawGameover()
+      // this actually doesnt do anything
+      // this.drawGameover()
       console.log("GAME OVA")
       if(this.stageTimer.time() > this.loadTime ){
         console.log( 'cleaning game' )
@@ -342,8 +384,7 @@ class Game {
   }
 
   drawLoading(){
-    // document.getElementById("stage-info").innerHTML = "ROUND " + this.roundCount +  " LOADING..."
-    this.announcement("ROUND " + this.roundCount +  " LOADING...")
+    // this.announcement("ROUND " + this.roundCount +  " LOADING...")
     duster.loadingAnimation()
 
     // fade toward blac
@@ -459,9 +500,9 @@ class Game {
     }
   }
 
-  drawGameover(){
-    this.announcement("GAME OVER")
-  }
+  // drawGameover(){
+  //   this.announcement("GAME OVER")
+  // }
 
   cleanGame(){
     
@@ -521,6 +562,7 @@ class Game {
     this.drawHealth()
     this.drawKnowledge()
     this.drawBombs()
+    this.drawSmokes()
   }
 
   // drawCasino(){
@@ -599,6 +641,10 @@ class Game {
 
   drawBombs(){
     document.getElementById("bombs").innerHTML = "O".repeat( player.numBombs )
+  }
+
+  drawSmokes(){
+    document.getElementById("smokes").innerHTML = "~".repeat( player.numSmokes )
   }
 
 
@@ -834,7 +880,7 @@ class Game {
         if(enemy.healthTimer.time() > 100){
           // console.log( 'eneymy hit' )
           enemy.healthTimer.reset()
-          enemy.takeDamage(4)
+          enemy.takeDamage(4, EAT)
         }
 
         // start eating animation, which shuts itself off after timer
@@ -865,7 +911,7 @@ class Game {
           if(enemy.healthTimer.time() > 400){
             enemy.healthTimer.reset()
 
-            enemy.takeDamage( player.killingCircleDamage() )
+            enemy.takeDamage( player.killingCircleDamage(), KILLINGCIRCLE )
             enemy.setColor(0,0,255)
           }  
         }
@@ -882,10 +928,10 @@ class Game {
           // need to gate this so 10 corrupteds dont just saw your head off before you can react
             
           if(enemy.godCorrupted){
-            player.takeDamage( game.godCorruptedDamage )
+            player.takeDamage( game.godCorruptedDamage, ENEMY )
           } else {
             // this is regular corrupted damage
-            player.takeDamage( game.corruptedDamage )
+            player.takeDamage( game.corruptedDamage, ENEMY )
           }
 
           if(player.lifecycle == ALIVE && player.health <= 0){
@@ -906,7 +952,7 @@ class Game {
             if( hit ){
               if(friend.healthTimer.time() > 100){
                 friend.healthTimer.reset()
-                friend.takeDamage(2)
+                friend.takeDamage(2, ENEMY)
                 // console.log( 'ixx have hurt your friend for 2', friend.health )
 
                 if(friend.health <= 0){
@@ -960,7 +1006,7 @@ class Game {
         } else {
 
           // reg enemy
-          score = 1
+          score = enemy.killScore()
           player.changePower( enemy.nutritionalValue )
 
           if(enemy.knowledgeValue > 0){
