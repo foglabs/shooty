@@ -16,6 +16,8 @@ class Game {
     // destination color for the round, fades during loading
     this.roundColor = [140,180,255]
 
+    this.nameEntry = NONAME
+
     this.setDefaultGameValues()
 
     this.musicEnabled = false
@@ -33,12 +35,12 @@ class Game {
     this.announcementFadeTimer = new Timer()
 
     this.numCorrupted = 0
+    this.score = null
   }
 
   handleAnnouncements(){
     if(this.announcements.length > 0){
       // draw current announcement
-      console.log( 'trying to ' )
       this.drawAnnouncement()
     }
   }
@@ -357,16 +359,24 @@ class Game {
       if(this.stageTimer.time() > this.loadTime){
         this.stage = GAMEOVER
         this.announcement("GAME OVER")
+        
         this.stageTimer.reset()
+
+        // grabs name, level, score and posts em
+        postScore()
       }
     } else if(this.stage == GAMEOVER) {
 
       // ended
       // this actually doesnt do anything
-      // this.drawGameover()
-      console.log("GAME OVA")
+      // this.drawGameover()      
+  
+      if(!this.scores){
+        // async so gotta do it  inside this func
+        setScores()
+      }
+
       if(this.stageTimer.time() > this.loadTime ){
-        console.log( 'cleaning game' )
         this.cleanGame()
       }
     }
@@ -377,7 +387,8 @@ class Game {
   drawTitle(){
     this.setBackgroundColor(140,180,255)
 
-    if( checkSoundsLoaded() ){
+    if( ( game.nameEntry == NONAME) && checkSoundsLoaded() ){
+
       document.getElementById("stage-info").innerHTML = "PRESS SPACEBAR"
       document.getElementById("stage-info").classList.add("static")
     }
@@ -501,7 +512,7 @@ class Game {
   }
 
   // drawGameover(){
-  //   this.announcement("GAME OVER")
+
   // }
 
   cleanGame(){

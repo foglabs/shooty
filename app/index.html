@@ -46,6 +46,15 @@
 
     <div id="stage-info"></div>
 
+
+    <div id="player-name">
+      <input id="name-entry" type="text" name="nameEntry">
+      <div id="name"></div>
+    </div>
+
+    <div id="scores"></div>
+
+
     <script type="text/javascript">
       function k(obj){
         return Object.keys(obj)
@@ -127,7 +136,96 @@
         return arra1
       }
 
-      function postScore(score, name)
+      function beginNameEntry(){
+        console.log( 'focusing' )
+        game.nameEntry = ENTERING
+        game.announcement("ENTER YOUR NAME")
+
+        document.getElementById("name-entry").value = ""
+        document.getElementById("name-entry").focus({preventScroll: true})
+      }
+
+      function handleNameEntry(){
+        let name = document.getElementById("name-entry").value || ""
+        document.getElementById("name").innerHTML = name.replace(/\W/g, "")
+      }
+
+      function nameIsSet(){
+        let n = document.getElementById("name-entry").value
+        return n && n.length > 0
+      }
+
+      function setName(){
+        // let name = document.getElementById("name-entry").value
+        // document.getElementById("name").innerHTML = name
+        document.getElementById("player-name").classList.add("hidden")
+        game.nameEntry = NAMEENTERED
+        document.getElementById("name-entry").blur()
+      }
+
+      function setScores(){
+        var xhr = new XMLHttpRequest()
+        xhr.open("GET", "/score", true)
+
+        xhr.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) { 
+            let scores = JSON.parse(xhr.responseText)
+            game.scores = scores
+            showScores(scores)
+          }
+        }
+        xhr.send()
+      }
+
+      function showScores(scoreData){
+
+        document.getElementById("scores").classList.add("score-scroll")
+        let scoreText = ""
+        let thisScoreElement
+        scoreData.map((thisScore) => {
+          thisScoreElement = document.createElement("div")
+          thisScoreElement.classList.add("score")
+
+
+          thename = document.createElement("span")
+          thename.classList.add("score-thename")
+          thename.innerHTML = thisScore.name
+
+          level = document.createElement("span")
+          level.innerHTML = "(LVL" + thisScore.level + ")"
+
+          let nl = document.createElement("div")
+          nl.classList.add("score-nl")
+          nl.appendChild(thename)
+          nl.appendChild(level)
+
+          score = document.createElement("div")
+          score.classList.add("score-score")
+          score.innerHTML = thisScore.score
+
+
+          thisScoreElement.appendChild(score)
+          thisScoreElement.appendChild(nl)
+          document.getElementById("scores").appendChild( thisScoreElement )
+        })
+
+        console.log( 'SCORES BABBYYYYYY' )
+      }
+
+      function postScore(){
+        let score = document.getElementById("score").textContent
+        let level = document.getElementById("level").textContent
+        let name = document.getElementById("name").textContent
+        console.log( 'params', score, level, name )
+
+        console.log( 'MY SHITS IS ', score, level, name )
+        var xhr = new XMLHttpRequest()
+        xhr.open("POST", "/score", true)
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+        // let body = "name=" + name + "&level=" + level + "&score=" + score
+        // console.log( 'body', body )
+        xhr.send(JSON.stringify( { score: score, level: level, name: name } ))
+      }
 
     </script>
 
@@ -209,6 +307,11 @@
       BOMB = 5
       FRIEND = 6
       CASINO = 7
+
+      // name entry
+      NONAME = 0
+      ENTERING = 1
+      NAMEENTERED = 2
 
       // DEG0 = radian(0)
       DEG1 = radian(1)
@@ -293,6 +396,9 @@
 
       // scene contains objects
       var scene = new THREE.Scene();
+
+      // clear name input
+      document.getElementById("name-entry").value = ""
 
 
       // load this crap here so we only do it once
@@ -392,12 +498,16 @@
         // SPACE BAR
         if(game.stage == TITLE || game.stage == GAMEOVER){
           
-          if (event.key == " " || event.key == "Spacebar"){
+         if (event.key == " " || event.key == "Spacebar"){
 
-            if( checkSoundsLoaded() ){
-              console.log( 'new game' )
-              game.newGame()
+            if( game.nameEntry == NONAME ){
+              beginNameEntry()
             }
+            //  else if( game.nameEntry == NAMEENTERED && checkSoundsLoaded() ){
+              
+            //   console.log( 'new game' )
+            //   game.newGame()
+            // }
           }
 
         } else if(game.stage == PLAYING){
@@ -444,16 +554,30 @@
       function onDocumentKeyUp(event) {
         keyHandler.heldKeys[event.key] = false
 
-        // clear out stuff from nonheld keys
-        if(event.key == " " || event.key == "Spacebar"){
-          if(player.killingCircleEnabled){
-            player.stopKillingCircle()
+        if(game.stage == TITLE && game.nameEntry == ENTERING){
+
+          if(event.key == "Enter"){
+            setName()
+            game.newGame()
+          } else {
+            // record each keystroke
+            handleNameEntry()
           }
-        } else if(event.key == "z"){
-          if(player.swordEnabled){
-            player.stopSword()
+
+        } else {
+
+          // clear out stuff from nonheld keys
+          if(event.key == " " || event.key == "Spacebar"){
+            if(player.killingCircleEnabled){
+              player.stopKillingCircle()
+            }
+          } else if(event.key == "z"){
+            if(player.swordEnabled){
+              player.stopSword()
+            }
           }
         }
+
       }
             
       // set listeners

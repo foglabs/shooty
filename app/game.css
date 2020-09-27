@@ -4,10 +4,30 @@
 }
 
 body { 
+  overflow: hidden;
   margin: 0;
   font-family: 'vcr';
 }
 canvas { display: block; }
+
+div#player-name {
+  position: absolute;
+  top: 40vh;
+  left: 50vw;
+  text-align: center;
+  font-size: 36px;
+  color: #fff;
+}
+
+input#name-entry {
+  /*display: none;*/
+  position: absolute;
+  z-index: -1000;
+}
+
+.hidden {
+  display: none;
+}
 
 div.info-bar {
   font-size: 36px; 
@@ -18,6 +38,27 @@ div.info-bar {
   text-align: center;
   z-index: 100;
   display:block;
+}
+
+div#scores {
+  font-size: 36px;
+  color: #fff;
+  position: absolute;
+  top: -100vh;
+  left: 40vw;
+}
+
+div#scores.score-scroll {
+  transition: top 20s;
+  top: 100vh;
+}
+
+div.score {
+  margin-bottom: 1.6vh;
+}
+
+div.score-nl {
+  font-size: 18px;
 }
 
 div#info {
