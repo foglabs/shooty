@@ -50,7 +50,7 @@ div#scores {
 
 div#scores.score-scroll {
   transition: top 20s;
-  top: 100vh;
+  top: 30vh;
 }
 
 div.score {
@@ -59,6 +59,36 @@ div.score {
 
 div.score-nl {
   font-size: 18px;
+}
+
+div#score {
+  /*something*/
+  color: #fff;
+  /*transition: text-shadow 0.1s;*/
+  transition: color 0.6s;
+}
+
+div#score::after {
+  box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/*div#score::after  {
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+*/
+div#score.light {
+ /* text-shadow: 2px 2px 5px #ff0000;
+  transition: text-shadow 0.1s;*/
+  transition: color 0.6s;
+  color: #f00;
+}
+
+div#score.light::after {
+  box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+  opacity: 1;
 }
 
 div#info {

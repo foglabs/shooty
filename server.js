@@ -31,7 +31,7 @@ app.get('/score', function(req, res, next){
       }
     })
 
-    scores = scores.sort((a,b) => { return a.score > b.score })
+    scores = scores.sort((a,b) => { return b.score-a.score })
     console.log(scores)
     res.send(scores)
   });

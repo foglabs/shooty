@@ -29,6 +29,9 @@ class Casino {
   increaseBet(amt){
     if(player.power >= amt){
       this.bet += amt
+
+      game.clearAnnouncements()
+      game.announcement("BET: $" + this.bet * 10)
       player.changePower(-1*amt)
     }
   }
@@ -36,7 +39,7 @@ class Casino {
   handlePlay(){
 
     if(this.phase == BETTING){
-      this.drawBetting()
+      // this.drawBetting()
 
       if(this.phaseTimer.time() > 3000){
         // 3s of betting
@@ -62,7 +65,7 @@ class Casino {
         this.setHighlights( numEnemies )
       }
 
-      this.drawRolling()
+      // this.drawRolling()
 
       if(this.dice.length < 2){
         // roll 1 die every 800ms uuntiol we have 2
@@ -77,6 +80,16 @@ class Casino {
 
         if(this.phaseTimer.time() > 3000){
           this.phase = RESULT
+
+          let won = this.getResult()
+          let roll = this.rollResult()
+          let rollStr = roll % 2 == 0 ? "CHO" : "HAN"
+
+          let resultStr = won ? "WIN" : "LOSE"
+          this.result = won ? WIN : LOSE
+          game.clearAnnouncements()
+          game.announcement("ROLLED " + rollStr + " " + (this.dice[0] + this.dice[1]) + " - " + resultStr)
+
           this.phaseTimer.reset()
         }
       }
@@ -87,6 +100,17 @@ class Casino {
       if(this.phaseTimer.time() > 3000){
         this.phase = PAYOUT
         this.phaseTimer.reset()
+
+        let msg 
+        let num = Object.keys(this.highlights).length
+        if(this.result == WIN){
+          msg = "YOU WIN - KILL " + num
+        } else {
+          msg = "YOU LOSE - CORRUPT " + num
+        }
+
+        game.clearAnnouncements()
+        game.announcement(msg)
       }
 
     } else if(this.phase == PAYOUT){
@@ -116,38 +140,30 @@ class Casino {
   }
 
   drawBetting(){
-    game.announcement("BET: $" + this.bet * 10)
+    // nothin
   }
 
   drawRolling(){
-    let rollStr
-    for(var i=0; i<this.dice.length; i++){
-      // add dice as they become available
-      rollStr += " " + this.dice[i]
-    }
-    game.announcement("ROLLING: ")
+    // let rollStr
+    // for(var i=0; i<this.dice.length; i++){
+    //   // add dice as they become available
+    //   rollStr += " " + this.dice[i]
+    // }
+    // game.announcement("ROLLED: " + rollStr)
   }
 
   drawResult(){
-    let won = this.getResult()
-    let roll = this.rollResult()
-    let rollStr = roll % 2 == 0 ? "CHO" : "HAN"
+    // let won = this.getResult()
+    // let roll = this.rollResult()
+    // let rollStr = roll % 2 == 0 ? "CHO" : "HAN"
 
-    let resultStr = won ? "WIN" : "LOSE"
-    this.result = won ? WIN : LOSE
-    game.announcement("ROLLED " + rollStr + " " + (this.dice[0] + this.dice[1]) + " - " + resultStr)
+    // let resultStr = won ? "WIN" : "LOSE"
+    // this.result = won ? WIN : LOSE
+    // game.announcement("ROLLED " + rollStr + " " + (this.dice[0] + this.dice[1]) + " - " + resultStr)
   }
 
   drawPayout(){
-    let msg
-    let num = Object.keys(this.highlights).length
-    if(this.result == WIN){
-      msg = "YOU WIN - KILL " + num
-    } else {
-      msg = "YOU LOSE - CORRUPT " + num
-    }
 
-    game.announcement(msg)
   }
 
   setHighlights(num){

@@ -36,6 +36,8 @@ class Game {
 
     this.numCorrupted = 0
     this.score = null
+    this.scoreLightTimer = new Timer()
+    this.scoreLightTimer.start()
   }
 
   handleAnnouncements(){
@@ -43,6 +45,10 @@ class Game {
       // draw current announcement
       this.drawAnnouncement()
     }
+  }
+
+  clearAnnouncements(){
+    this.announcements = []
   }
 
   announcement(message){
@@ -191,6 +197,7 @@ class Game {
   newGame(){
     if(!this.gameRunning()){
       document.getElementById("stage-info").classList.remove("static")
+      document.getElementById("scores").innerHTML = ""
 
       if(player){
         // clean out old player
@@ -245,6 +252,9 @@ class Game {
     this.corruptionTimer.reset()
     this.corruptedDamage = Math.round( this.corruptedDamageDefault + Math.pow( (this.roundCount/5), 2 ) )
     this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
+
+
+    this.changeScore(this.roundCount * 10)
 
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b])
   }
@@ -372,6 +382,8 @@ class Game {
       // this.drawGameover()      
   
       if(!this.scores){
+        // flag this so we dont ask twice
+        this.scores = true
         // async so gotta do it  inside this func
         setScores()
       }
@@ -555,6 +567,11 @@ class Game {
   }
 
   changeScore(change){
+
+    this.scoreLight = true
+    this.scoreLightTimer.reset()
+    document.getElementById("score").classList.add("light")
+
     this.score += change
   }
 
@@ -574,6 +591,8 @@ class Game {
     this.drawKnowledge()
     this.drawBombs()
     this.drawSmokes()
+
+    this.handleScoreLight()
   }
 
   // drawCasino(){
@@ -658,11 +677,16 @@ class Game {
     document.getElementById("smokes").innerHTML = "~".repeat( player.numSmokes )
   }
 
-
   drawFriendsAvailble(){
     document.getElementById("friends-available").innerHTML = "F".repeat( player.friendsAvailable )
   }
 
+  handleScoreLight(){
+    if(this.scoreLight && this.scoreLightTimer.time() > 300){
+      this.scoreLight = false
+      document.getElementById("score").classList.remove("light")
+    }
+  }
 
   setBackgroundColor(r,g,b){
     // this.mesh.material.color.setRGB(r,g,b)
@@ -1089,7 +1113,9 @@ class Game {
     
     // record this after we've added new corrupts, and cleaned up dead enemies
     this.percentCorrupted = this.numCorrupted/enemiesKeys.length
-    if(player.numBombsMax < 1 && this.percentCorrupted == 1){
+
+    // only do this if we got no weapons
+    if(player.level < 2 && this.percentCorrupted == 1){
       this.nowRandomBombing = true
       this.randomBombs()      
       // add random bombs if we're stuck on all corrupted and dont got bombs yet
