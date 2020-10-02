@@ -28,7 +28,27 @@ class Enemy extends Character {
     // console.log( 'slices are', stickChance,sphereChance,circleChance,octaChance )
     if(enemyType){
       // this is kind of stupid, but if we want dna to be used elsewhere, per enemy, necessary
-      dna = this.dnaByEnemyType(enemyType)
+      
+      // make a suitable random dna in the range for an enemytype
+      let min, max
+      if(enemyType == STICK){
+        min = 0
+        max = game.chanceSlices[0]
+      } else if(enemyType == SPHERE){
+        min = game.chanceSlices[0]
+        max = game.chanceSlices[1]
+      } else if(enemyType == CIRCLE) {
+        min = game.chanceSlices[1]
+        max = game.chanceSlices[2]
+      } else if(enemyType == HEALCUBE){
+        min = game.chanceSlices[2]
+        max = game.chanceSlices[3]
+      } else if(enemyType == KNOWLOCTA) {
+        min = game.chanceSlices[3]
+        max = 1
+      }
+
+      dna = Math.random() * (max-min) + min
     } else {
 
       dna = Math.random()
@@ -44,7 +64,9 @@ class Enemy extends Character {
         enemyType = KNOWLOCTA
       }
     }
-    
+  
+    let intention    
+    let allowedToPattern
     if(enemyType == STICK){
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
@@ -52,6 +74,8 @@ class Enemy extends Character {
       nutritionalValue = 16
       base_color = [72,201,46]
       lightness = 0.1
+      allowedToPattern = true
+      intention = PATTERNMOVE
     } else if(enemyType == SPHERE){
       // sphere
       health = 8
@@ -59,13 +83,17 @@ class Enemy extends Character {
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
       base_color = [114,194,189]
       lightness = 0.03
+      allowedToPattern = true
+      intention = PATTERNMOVE
     } else if(enemyType == CIRCLE) {
       // circle
       health = 0.04
       nutritionalValue = 22
       geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [214,189,58]
-      lightness = 0.4
+      lightness = 0.1
+      allowedToPattern = true
+      intention = PATTERNMOVE
     } else if(enemyType == HEALCUBE){
       // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
@@ -73,6 +101,8 @@ class Enemy extends Character {
       nutritionalValue = 50
       base_color = [189,52,147]
       lightness = 0.02
+      intention = WANDER
+      allowedToPattern = false
     } else if(enemyType == KNOWLOCTA) {
       // knowledge octa
       health = 12
@@ -80,9 +110,10 @@ class Enemy extends Character {
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
       knowledgeValue = 25
-      lightness = 0.09
+      lightness = 0.01
+      allowedToPattern = true
+      intention = PATTERNMOVE
     }
-
     
     super(
       // de ge
@@ -97,6 +128,8 @@ class Enemy extends Character {
     this.healthValue = 0
     this.enemyType = enemyType
     this.lightness = lightness
+    this.intention = intention
+    this.allowedToPattern = allowedToPattern
 
     // cube
     if(this.enemyType == HEALCUBE){
@@ -173,29 +206,18 @@ class Enemy extends Character {
     this.knowledgeValue = knowledgeValue
 
     this.inScene = false
+
+    this.intentionTimer = new Timer()
+    this.intentionTimer.start()
+
+    this.patternMoveStage = PLOTTING
+    this.routePoints = []
+    this.currentRouteIndex = 0
+    this.laps = 0
+    this.patternWaitTimer = new Timer()
+    this.patternWaitTimer.start()
   }
 
-  dnaByEnemyType(enemyType){
-    let min, max
-    if(enemyType == STICK){
-      min = 0
-      max = game.chanceSlices[0]
-    } else if(enemyType == SPHERE){
-      min = game.chanceSlices[0]
-      max = game.chanceSlices[1]
-    } else if(enemyType == CIRCLE) {
-      min = game.chanceSlices[1]
-      max = game.chanceSlices[2]
-    } else if(enemyType == HEALCUBE){
-      min = game.chanceSlices[2]
-      max = game.chanceSlices[3]
-    } else if(enemyType == KNOWLOCTA) {
-      min = game.chanceSlices[3]
-      max = 1
-    }
-
-    return Math.random() * (max-min) + min
-  }
 
   calcHitColor(val){
     // the higher val is, the smaller the increase
@@ -344,6 +366,114 @@ class Enemy extends Character {
     }
   }
 
+  addPoint(x,y){
+    // can use this to snap coordinates to game area edges
+    // console.log( 'input ', x,y )
+    x = incInRange(x, 0, game.maxX*-1, game.maxX)
+    y = incInRange(y, 0, game.maxY*-1, game.maxY)
+    // console.log( 'output ', x,y )
+
+    // add this pair to end of coordinate queue
+    this.routePoints.push([x,y])
+  }
+
+  arrivedAtPoint(){
+    return isWithin(this.mesh.position.x, this.routePoints[0][0], 0.05) && isWithin(this.mesh.position.y, this.routePoints[0][1], 0.05)
+  }
+
+  plotCourse(){
+    this.routePoints = []
+
+    if(this.enemyType == KNOWLOCTA || this.enemyType == SPHERE){
+
+      // let triangleSide = Math.random() * somethign
+      // probaly too big
+      let triangleSide = 0.2
+
+      // move in a triangle
+      let startPoint = game.randomPoint()
+      this.addPoint(startPoint[0], startPoint[1])
+
+      // top point
+      // x+half of side length, y+rt3*1/2sidelength
+      let secondPointX = startPoint[0]+0.5
+      let secondPointY = startPoint[1]+( Math.sqrt(3) * 0.5 )
+      this.addPoint( secondPointX, secondPointY )
+
+      // just slide over sidelength from startpoint
+      let thirdPointX = startPoint[0]+1
+      let thirdPointY = startPoint[1] 
+      this.addPoint( thirdPointX, thirdPointY )
+
+    } else if(this.enemyType == CIRCLE){
+      // horizontal  lines
+
+      let point = game.randomPoint()
+      console.log( 'random point is', point  )
+      point[0] = -1*game.maxX*0.8
+
+        // left point
+      this.addPoint(point[0], point[1])
+
+      let xSign = -1
+      let ySign = -1
+
+      for(var i=0; i<3; i++){
+        // right point
+        point[0] = xSign * game.maxX*0.8
+        this.addPoint(point[0], point[1])
+        // flip every time to go to eithe rright or left edge
+        xSign = xSign*-1
+
+        // vert point
+        point[1] += ySign * 0.5
+        this.addPoint(point[0], point[1])
+
+        // if weve 'gone' over the edge, flip the y sign to go the other way
+        if(Math.abs(point[1]) > game.maxY || point[1] < 0){
+          ySign = ySign*-1
+        }
+      }
+
+    } else if(this.enemyType == STICK){
+      // vertical lines
+
+      let point = game.randomPoint()
+      point[1] = -1*game.maxY*0.8
+
+        // left point
+      this.addPoint(point[0], point[1])
+
+      let xSign = -1
+      let ySign = -1
+
+      for(var i=0; i<3; i++){
+        console.log( 'point begins as', point )
+
+        // right point
+        point[1] = ySign * game.maxY*0.8
+        this.addPoint(point)
+        // flip every time to go to eithe top or bottom edge
+        ySign = ySign*-1
+
+        // vert point
+        point[0] += xSign * 0.5
+        this.addPoint(point)
+
+        // if weve 'gone' over the edge, flip the x sign to go the other way
+        if(Math.abs(point[0]) > game.maxY || point[0] < 0){
+          xSign = xSign*-1
+        }
+
+      }
+
+
+    }
+
+    // lets move 
+    this.patternMoveStage = MOVING
+  }
+
   customAnimation(){
     // dont do it, if yA DEAD
     if(this.lifecycle == ALIVE){
@@ -449,6 +579,7 @@ class Enemy extends Character {
 
           this.health = 24
           this.corrupted = true
+          this.intention = WANDER
           this.baseColor = [255,0,0]
           this.mesh.material.color.setRGB(0xff0000)
 
@@ -467,9 +598,21 @@ class Enemy extends Character {
 
   customMovement(){
 
+    // if were allowed to, switch up the fuckkin pattern someTIMES
+    if(this.allowedToPattern && this.intentionTimer.time() > 2000 && Math.random() > 0.5){
+      this.intentionTimer.reset()
+      
+      if(this.intention == WANDER){
+        this.intention = PATTERNMOVE
+        this.patternMoveStage = PLOTTING
+      } else if(this.intention == PATTERNMOVE){
+        this.intention = WANDER
+      }
+    }
+
     //STOP RIGHT THERE - its time to corrupt
     if(this.lifecycle != CORRUPTING){
-      let speed =  Math.random()*0.03
+
 
       if(game.percentCorrupted == 1){
         // chase the player like a demon from hell if theres only corrupteds left
@@ -478,21 +621,71 @@ class Enemy extends Character {
       } else if(this.godCorrupted){
 
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y, 0.4)
-
       } else {
 
-        if(this.direction == LEFT){
-          this.accx -= speed
-        } else if(this.direction == UP){
-          this.accy += speed
-        } else if(this.direction == RIGHT){
-          this.accx += speed
-        } else if(this.direction == DOWN) {
-          this.accy -= speed
-        }      
-      }
+        if(this.intention == WANDER){
+          let chance = Math.random()
+          if(chance > 0.3 && this.directionTimer.time() > 200){
+            this.directionTimer.reset()
+            this.chooseDirection()
+          }
+          
+          let speed =  Math.random()*0.03
 
-      
+          if(this.direction == LEFT){
+            this.accx -= speed
+          } else if(this.direction == UP){
+            this.accy += speed
+          } else if(this.direction == RIGHT){
+            this.accx += speed
+          } else if(this.direction == DOWN) {
+            this.accy -= speed
+          }      
+        } else if(this.intention == PATTERNMOVE){
+          if(this.patternMoveStage == PLOTTING){
+            // plot a course
+            this.plotCourse()
+          } else if(this.patternMoveStage == MOVING) {
+            // weve got our orders sir
+
+            this.moveTowardsPoint( this.routePoints[0][0], this.routePoints[0][1], 0.6 )
+
+            if( this.arrivedAtPoint() ){
+              // this.routePoints.shift()
+              this.currentRouteIndex += 1
+
+              // if we finished the route, we finished a lap
+              if(this.currentRouteIndex == this.routePoints.length){
+                this.laps += 1
+                this.currentRouteIndex = 0
+              }
+
+              this.patternMoveStage = WAITING
+              this.patternWaitTimer.reset()
+
+              if(this.laps > 3){
+                // if we finished our laps, empty out, we get new route below on next loop
+                this.routePoints = []
+              }
+              
+            }
+            
+          } else if(this.patternMoveStage == WAITING){
+
+            // pause at point, then move again
+            if(this.patternWaitTimer.time() > 800){
+
+              if(!this.routePoints[0]){
+                // we arrive, new course plz
+                this.patternMoveStage = PLOTTING
+              } else {
+                this.patternMoveStage = MOVING
+              }
+            }
+          }
+
+        }
+      }
     }
     
   }

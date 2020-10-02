@@ -8,6 +8,9 @@ class Game {
     this.maxX = window.innerWidth / 2 / 200
     this.maxY = window.innerHeight / 2 / 200
 
+    console.log( 'max x ', this.maxX )
+    console.log( 'max y ', this.maxY )
+
     this.u = 0
     // current color
     this.backgroundColor = [0,0,0]
@@ -95,6 +98,18 @@ class Game {
       }
 
     }
+  }
+
+  randomSign(){
+    return Math.random() > 0.5 ? 1 : -1
+  }
+
+  randomPoint(){
+    // random point in play field
+    let x, y
+    x = Math.random() * this.maxX * this.randomSign()
+    y = Math.random() * this.maxY * this.randomSign()
+    return [x,y]
   }
 
   randomEnemyId(){
@@ -286,6 +301,17 @@ class Game {
 
     let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
     this.generateEnemies( numEnemies )
+
+    // this sure does not work
+    // let numCandies = Math.ceil( Math.random() * this.roundCount/2 )
+    // let enemy
+    // for(var i=0; i<numCandies; i++){
+    //   // add a vew extre candies
+    //   enemy = this.addEnemy([0,0,0], KNOWLOCTA)
+    //   this.enemies[enemy.id] = enemy
+    //   scene.add(this.enemies[enemy.id].mesh)
+    //   this.enemies[enemy.id].inScene = true
+    // }
 
     this.nowRandomBombing = false
   }
@@ -728,14 +754,12 @@ class Game {
     }
   }
 
-  addEnemy(){
-    let killer = new Enemy([0,88,255*Math.round(Math.random())]);
+  addEnemy(type=null){
+    let killer = new Enemy([0,88,255*Math.round(Math.random())], type);
 
-    let sign = Math.random() > 0.5 ? -1 : 1
-    killer.mesh.position.x = sign * Math.random()*4
+    killer.mesh.position.x = Math.random()*4*this.randomSign()
 
-    sign = Math.random() > 0.5 ? -1 : 1
-    killer.mesh.position.y = sign * Math.random()*4
+    killer.mesh.position.y = Math.random()*4*this.randomSign()
     return killer
   }
 
@@ -875,12 +899,7 @@ class Game {
   handleEnemy(enemy){
     // MOVEMENT
     let enemyId = enemy.id
-    let chance = Math.random()
-    if(chance > 0.3 && enemy.directionTimer.time() > 200){
-      enemy.directionTimer.reset()
-      enemy.chooseDirection()
-    }
-
+    
     // handle movement
     enemy.handleMovement()
     // draw other crap thats changing
@@ -935,7 +954,6 @@ class Game {
         }
       }  
     } else if(enemy.corrupted) {
-      // this is else if corrupted
 
       if(player.killingCircle && player.killingCircle.visible){
 
@@ -943,7 +961,7 @@ class Game {
 
         if(hit){
         
-          if(enemy.healthTimer.time() > 400){
+          if(enemy.healthTimer.time() > 100){
             enemy.healthTimer.reset()
 
             enemy.takeDamage( player.killingCircleDamage(), KILLINGCIRCLE )
@@ -1071,7 +1089,6 @@ class Game {
 
   handleEnemies(){
     let enemy
-    let chance
     this.numCorrupted = 0
 
     // dont be corrupting so much
