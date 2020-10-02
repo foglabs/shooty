@@ -409,7 +409,6 @@ class Enemy extends Character {
       // horizontal  lines
 
       let point = game.randomPoint()
-      console.log( 'random point is', point  )
       point[0] = -1*game.maxX*0.8
 
         // left point
@@ -448,7 +447,6 @@ class Enemy extends Character {
       let ySign = -1
 
       for(var i=0; i<3; i++){
-        console.log( 'point begins as', point )
 
         // right point
         point[1] = ySign * game.maxY*0.8
@@ -464,10 +462,7 @@ class Enemy extends Character {
         if(Math.abs(point[0]) > game.maxY || point[0] < 0){
           xSign = xSign*-1
         }
-
       }
-
-
     }
 
     // lets move 
@@ -599,20 +594,24 @@ class Enemy extends Character {
   customMovement(){
 
     // if were allowed to, switch up the fuckkin pattern someTIMES
-    if(this.allowedToPattern && this.intentionTimer.time() > 2000 && Math.random() > 0.5){
+    if(this.allowedToPattern && this.intentionTimer.time() > 2000){
       this.intentionTimer.reset()
-      
-      if(this.intention == WANDER){
-        this.intention = PATTERNMOVE
-        this.patternMoveStage = PLOTTING
-      } else if(this.intention == PATTERNMOVE){
-        this.intention = WANDER
+
+      // put this in here so we flip coin 1 time/2s, not framerate times per s, after 2s
+      if(Math.random() > 0.5){
+
+        if(this.intention == WANDER){
+          this.intention = PATTERNMOVE
+          this.patternMoveStage = PLOTTING
+        } else if(this.intention == PATTERNMOVE){
+          this.intention = WANDER
+        }
       }
+      
     }
 
     //STOP RIGHT THERE - its time to corrupt
     if(this.lifecycle != CORRUPTING){
-
 
       if(game.percentCorrupted == 1){
         // chase the player like a demon from hell if theres only corrupteds left

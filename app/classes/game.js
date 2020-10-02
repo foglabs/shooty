@@ -5,12 +5,11 @@ class Game {
     // this.maxX = 3
     // this.maxY = 3
     // divide by 2 for +/-, divide by 200 to relate to window dimensions
-    this.maxX = window.innerWidth / 2 / 200
-    this.maxY = window.innerHeight / 2 / 200
 
-    console.log( 'max x ', this.maxX )
-    console.log( 'max y ', this.maxY )
+    let sizingFactor = 5/56 * window.innerWidth - 100/7
 
+    this.maxX = window.innerWidth / 2 / sizingFactor
+    this.maxY = window.innerHeight / 2 / sizingFactor
     this.u = 0
     // current color
     this.backgroundColor = [0,0,0]
