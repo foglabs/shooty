@@ -588,6 +588,15 @@
             if(player.swordEnabled){
               player.stopSword()
             }
+          } else if(event.key == "m"){
+            // mute
+            if(game.musicEnabled){
+              fx_song2.setVolume(0)
+            } else {
+              fx_song2.setVolume(1)
+            }
+            
+            game.musicEnabled = !game.musicEnabled
           }
         }
 

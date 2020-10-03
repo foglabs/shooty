@@ -22,7 +22,7 @@ class Game {
 
     this.setDefaultGameValues()
 
-    this.musicEnabled = false
+    this.musicEnabled = true
 
     this.stage = false
     this.stageTimer = new Timer()

@@ -133,7 +133,11 @@ class Player extends Character {
         this.sword.remove()
         this.addSword()
       }
-      this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/6) 
+      this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/3)
+      
+      if(this.level != 2){
+        game.announcement("SWORD LENGTH INCREASE")
+      }
     }
 
     if(this.level == 4){
@@ -141,13 +145,6 @@ class Player extends Character {
       this.killingCircleEnabled = true
     }
 
-    // start smokes at level 6
-    this.numSmokesMax = Math.max(0, Math.floor(-2 + this.level/2))
-    if(this.level == 6){
-      game.announcement("SMOKE UNLOCKED (X)")
-    } else if(this.numSmokesMax > 1) {
-      game.announcement("EXTRA SMOKE UNLOCKED (X)")
-    }
     // smokes recharge faster with higher level
     this.smokesInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
 
@@ -158,10 +155,19 @@ class Player extends Character {
     } else if(this.numBombsMax > 1) {
       game.announcement("EXTRA BOMB UNLOCKED (C)")
     }
+
     // bombs recharge faster with higher level
     this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
 
-    // start at level 6, and every even lvl after
+    // start smokes at level 6
+    this.numSmokesMax = Math.max(0, Math.floor(-2 + this.level/2))
+    if(this.level == 6){
+      game.announcement("SMOKE UNLOCKED (X)")
+    } else if(this.numSmokesMax > 1) {
+      game.announcement("EXTRA SMOKE UNLOCKED (X)")
+    }
+
+    // start at level 10, and every even lvl after
     if(this.level >= 10 && this.level % 2 == 0){
       this.friendsAvailable += 1
       game.announcement("NEW FRIEND UNLOCKED (V)")
@@ -289,7 +295,7 @@ class Player extends Character {
 
   // sword
   addSword(){
-    this.sword = new Sword(0.5 * (1 + (this.level-1) / 10 ))
+    this.sword = new Sword(0.5 * (1 + (this.level-1) / 5 ))
     this.sword.mesh.visible = false
     scene.add( this.sword.mesh )
   }
