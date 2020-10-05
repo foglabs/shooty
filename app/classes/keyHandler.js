@@ -15,6 +15,8 @@ class KeyHandler {
     this.bumpTimer = new Timer()
     this.bumpTimer.start()
     this.bumpValue = 0.22
+
+    this.maxAcc = 1.4
   }
 
   resetHeats(){
@@ -28,7 +30,7 @@ class KeyHandler {
     // us eheat to give dee acc
     // return 0.5
     // return 1/6 * Math.pow( heat, 2 )
-    return 1/4 * Math.log( 10 * (heat + 0.1) )
+    return 5/16 * Math.log( 10 * (heat + 0.1) )
   }
 
   bumpKey(keyName){
@@ -96,17 +98,21 @@ class KeyHandler {
 
           if (keyName == "ArrowLeft"){
             // console.log("left")
-            player.accx -= accChange
+            // player.accx -= accChange
+            player.accx = incInRange(player.accx, -1*accChange, -1*this.maxAcc, this.maxAcc)
           } else if (keyName == "ArrowUp"){
             // console.log("up")
-            player.accy += accChange
+            // player.accy += accChange
+            player.accy = incInRange(player.accy, accChange, -1*this.maxAcc, this.maxAcc)
           } else if (keyName == "ArrowRight"){
             // console.log("right")
-            player.accx += accChange
+            // player.accx += accChange
+            player.accx = incInRange(player.accx, accChange, -1*this.maxAcc, this.maxAcc)
           } else if (keyName == "ArrowDown"){
             // console.log("down")
-            player.accy -= accChange
-          }        
+            // player.accy -= accChange
+            player.accy = incInRange(player.accy, -1*accChange, -1*this.maxAcc, this.maxAcc)
+          }
 
         } else {
           // console.log( 'i cool it', keyName )

@@ -43,6 +43,8 @@ class Character {
     this.bloodDusterTimer = new Timer()
 
     this.damagedBy = null
+
+    this.dragCoefficient = 0.009
   }
 
   moveTowardsPoint(destx, desty, speedFactor=1){
@@ -194,10 +196,10 @@ class Character {
   slowDown(acc){
     if(acc > 0){
       // whichever way we're currently moving, accelerate towards the opposite direction
-      acc -= 0.009;
+      acc -= this.dragCoefficient;
       if(acc < 0) {acc = 0};
     } else if(acc < 0){
-      acc += 0.009;
+      acc += this.dragCoefficient;
       if(acc > 0) {acc = 0};
     }
 

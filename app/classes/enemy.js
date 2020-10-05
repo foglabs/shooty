@@ -81,7 +81,7 @@ class Enemy extends Character {
       health = 8
       nutritionalValue = 26
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
-      base_color = [114,194,189]
+      base_color = [8,194,137]
       lightness = 0.03
       allowedToPattern = true
       intention = PATTERNMOVE
@@ -99,7 +99,7 @@ class Enemy extends Character {
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
       health = 18
       nutritionalValue = 50
-      base_color = [189,52,147]
+      base_color = [89,156,194]
       lightness = 0.02
       intention = WANDER
       allowedToPattern = false

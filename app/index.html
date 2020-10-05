@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Shooty Blasters</title>
+    <title>Shape Eater</title>
     <link href="game.css" rel="stylesheet">
   </head>
 
@@ -500,9 +500,10 @@
         
           if(keyHandler.bumpTimer.time() > 180){
             // if its been a moment, bigger bump
-            keyHandler.bumpValue = 0.20
+            keyHandler.bumpValue = 0.18
           } else {
-            keyHandler.bumpValue = 0.14
+            // keyHandler.bumpValue = 0.14
+            keyHandler.bumpValue = 0.06
           }
 
           keyHandler.bumpKey( event.key )

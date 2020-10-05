@@ -1,4 +1,4 @@
-class Game {
+ class Game {
   constructor(){
 
     // the ol square
@@ -22,7 +22,7 @@ class Game {
 
     this.setDefaultGameValues()
 
-    this.musicEnabled = true
+    this.musicEnabled = false
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -40,6 +40,8 @@ class Game {
     this.score = null
     this.scoreLightTimer = new Timer()
     this.scoreLightTimer.start()
+
+    setScores()
   }
 
   handleAnnouncements(){

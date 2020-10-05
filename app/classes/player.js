@@ -18,6 +18,7 @@ class Player extends Character {
     
     // how heavy is da guy
     this.lightness = 0.06
+    this.dragCoefficient = 0.02
 
     this.defaultPlayerValues()
   }
