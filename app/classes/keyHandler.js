@@ -16,7 +16,7 @@ class KeyHandler {
     this.bumpTimer.start()
     this.bumpValue = 0.22
 
-    this.maxAcc = 1.4
+    this.maxAcc = 1.8
   }
 
   resetHeats(){

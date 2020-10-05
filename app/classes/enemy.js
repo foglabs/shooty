@@ -99,7 +99,7 @@ class Enemy extends Character {
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
       health = 18
       nutritionalValue = 50
-      base_color = [89,156,194]
+      base_color = [57,23,194]
       lightness = 0.02
       intention = WANDER
       allowedToPattern = false

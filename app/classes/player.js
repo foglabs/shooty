@@ -320,10 +320,6 @@ class Player extends Character {
     if(this.sword.rotateTimer.time() > 2){
       this.sword.rotateTimer.reset()
 
-      // move the shit around on cirlce around the player
-      // this.sword.rotate()
-      this.sword.rotateTowardsMovement(this.accx, this.accy)
-
       this.sword.bbox.setFromObject( this.sword.mesh )
     }
   }
@@ -357,12 +353,18 @@ class Player extends Character {
       this.rotation()
 
       // this.eatAnimation()
-      if(this.sword && this.sword.mesh.visible){
-        this.drawSword()
+      if(this.sword){
 
-        if(this.sword.powerTimer.time() > 100){
-          this.sword.powerTimer.reset()
-          this.changePower(-3)
+        // move the shit around on cirlce around the player
+        this.sword.rotateTowardsMovement(this.accx, this.accy)
+
+        if(this.sword.mesh.visible){
+          this.drawSword()
+
+          if(this.sword.powerTimer.time() > 100){
+            this.sword.powerTimer.reset()
+            this.changePower(-3)
+          }
         }
       }
 
