@@ -22,7 +22,7 @@
 
     this.setDefaultGameValues()
 
-    this.musicEnabled = false
+    this.musicEnabled = true
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -41,6 +41,12 @@
     this.scoreLightTimer = new Timer()
     this.scoreLightTimer.start()
 
+    // to alternate score scroll + press space msg
+    this.attractTimer = new Timer()
+    this.attractTimer.start()
+    this.showingScores = true
+
+    // get and display score board first thing
     setScores()
   }
 
@@ -53,12 +59,12 @@
 
   clearAnnouncements(){
     this.announcements = []
+    document.getElementById('stage-info').innerHTML = ''
   }
 
   announcement(message){
     this.announcements.push(message)
 
-    console.log( 'anoncemt', this.announcements )
     // if theres no queued announcements, start the cycle up
     if(!this.announcementTimer.running){
 
@@ -221,6 +227,8 @@
         player.remove()
       }
 
+      game.scores = false
+
       game.newPlayer()
 
       this.setDefaultGameValues()
@@ -247,14 +255,12 @@
     // let newEnemyInterval = Math.round(this.enemyInterval * 0.90)
     // let newEnemyInterval = Math.round(this.defaultEnemyInterval * 90 / ( Math.pow((this.roundCount + 12), 2) ) + 13000 )
     let newEnemyInterval = Math.round(this.defaultEnemyInterval * -1 * Math.pow( this.roundCount, 2 )/700 + 36000 )
-    console.log( 'new inter', newEnemyInterval )
     // increase maximum % of corurpted by 8%
     // let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
     let newCorruptionMax = (this.corruptionMaxDefault + (this.corruptionMaxDefault * Math.pow(this.roundCount, 2)) / 64 ).toFixed(2)
 
     // how long does it take to finsih corrupting
     let newCorruptingTime = Math.round(this.corruptingTimeDefault * ( 9/(this.roundCount+8) ) )
-    console.log( 'corrupign time', newCorruptingTime )
 
     this.roundCount += 1
     // recalc chacnes for each enemy
@@ -428,8 +434,27 @@
 
     if( ( game.nameEntry == NONAME) && checkSoundsLoaded() ){
 
-      document.getElementById("stage-info").innerHTML = "PRESS SPACEBAR"
-      document.getElementById("stage-info").classList.add("static")
+      if(this.attractTimer.time() > 16000){
+        this.attractTimer.reset()
+        this.showingScores = !this.showingScores
+        console.log( 'flipping scoreshow' )
+      }
+
+      if(this.showingScores){
+        document.getElementById("scores").classList.add("score-scroll")
+        console.log( 'asdding sc' )
+        this.clearAnnouncements()
+      } else {
+        console.log( 'removing sc' )
+        document.getElementById("scores").classList.remove("score-scroll")
+
+        // reg title screen
+        // document.getElementById("stage-info").innerHTML = "PRESS SPACEBAR"
+        // document.getElementById("stage-info").classList.add("static")        
+        this.announcement("PRESS SPACEBAR")
+      }
+
+
     }
   }
 
@@ -572,7 +597,6 @@
 
       enemyId = enemiesKeys[i]
       if(this.enemies[enemyId]){
-        console.log( 'deltin', enemyId )
         // do this so we dont make a sprite
         this.enemies[enemyId].lifecycle = ALIVE
         this.enemies[enemyId].removeSprite()
@@ -658,7 +682,6 @@
     for(var i=0; i<this.friends.length; i++){
 
       if( this.friends[i] && !document.getElementById("friend"+i) ){
-        console.log( 'adding friend', i )
         // check if icon exists for friend, if not create that ho
         let r,g,b
         r = this.friends[i].baseColor[0]
@@ -746,7 +769,6 @@
       let step = 1.0/numSteps
       this.u += step
 
-      // console.log( 'step is', this.u )
 
       // done
       if(this.u > 1.0){
@@ -855,7 +877,6 @@
       // only if we did it :)
       for(var x=0;x<this.friends.length;x++){
         if(!this.friends[x]){
-          console.log( 'REMOVE SLOT frined', x )
           this.removeFriendIcon(x)
           this.friends.splice(x, 1)
         }
@@ -911,7 +932,8 @@
       enemy.handleBombs()
     }
 
-    if(player.sword && player.sword.active){
+    // doesnt seem like this should be necessary, but getting some ghost kills on last place sword was out
+    if(player.sword && player.sword.active && player.sword.mesh.visible){
       // if the swords out, get stabt
       enemy.handleSword()
     }
@@ -1061,15 +1083,18 @@
 
           // reg enemy
           score = enemy.killScore()
+          if(enemy.damagedBy == EAT)
           player.changePower( enemy.nutritionalValue )
-
-          if(enemy.knowledgeValue > 0){
-            player.changeKnowledge( enemy.knowledgeValue )
-          }
 
           if(enemy.healthValue > 0){
             player.changeHealth( enemy.healthValue )
           }
+
+          // knowledge is for everyone
+          if(enemy.knowledgeValue > 0){
+            player.changeKnowledge( enemy.knowledgeValue )
+          }
+
         }
 
         game.changeScore(score)

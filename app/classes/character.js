@@ -135,6 +135,11 @@ class Character {
       this.bloodDuster.remove()
     }
 
+    // if we're doing some extra-casino kiling
+    if(game.casino && game.casino.highlights[this.id]){
+      game.casino.removeHighlight(this.id)
+    }
+
     this.mesh.geometry.dispose()
     this.mesh.material.dispose()
     scene.remove(this.mesh)
@@ -221,7 +226,6 @@ class Character {
       // handle round-end player bomb situation
       if( bomb && bomb.exploded && this.healthTimer.time() > 100 && this.handleHit(bomb) && (!this.isPlayer || bomb.hurtsPlayer) ){
         this.healthTimer.reset()
-        // console.log( 'yall got bommmed' )
         this.takeDamage( damageVal, BOMB )
       }
     }
@@ -257,12 +261,10 @@ class Character {
 
     // stop moving duster once were dying
     if(this.lifecycle == ALIVE && this.duster){
-      // console.log( 'move my particles baby' )
       this.duster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
 
     if(this.lifecycle == ALIVE && this.bloodDuster){
-      // console.log( 'move my particles baby' )
       this.bloodDuster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
 
@@ -345,7 +347,6 @@ class Character {
     // record the last thing we were damaged byd
     this.damagedBy = damageSource
 
-    // console.log( 'take damage ', dmg )
     // this.health -= dmg
     this.health = incInRange( this.health, -1*dmg, 0, 1000 ) 
 
@@ -376,18 +377,15 @@ class Character {
     if(this.fading){
 
       if(!this.colorTimer.running){
-        // console.log( 'start ctimer' )
         this.colorTimer.start()
       }
 
       let tocolor
       let fromcolor
       if(this.isHit){
-        // console.log( 'to hit c, from base c' )
         tocolor = this.hitColor
         fromcolor = this.baseColor
       } else {
-        // console.log( 'to base c, from hit c' )
         tocolor = this.baseColor
         fromcolor = this.hitColor
       }
@@ -416,9 +414,6 @@ class Character {
           this.u = 0.0
           this.fading = false
         }
-        // console.log("u is " + this.u)
-        // console.log('fading')
-        // console.log( 'setting thiso ', r,g,b )
 
         // record this so we can compare above
         this.color = [r,g,b]
@@ -466,10 +461,8 @@ class Character {
         this.dusterTimer.reset()
 
          this.duster.particleSystem.material.opacity -= 0.1
-         // console.log( 'reduce', this.duster.particleSystem.material.opacity )
         if(this.duster.particleSystem.material.opacity <= 0){
 
-          // console.log( 'bye!' )
           this.duster.remove()
           this.duster = null
         }
@@ -483,10 +476,8 @@ class Character {
         this.bloodDusterTimer.reset()
 
          this.bloodDuster.particleSystem.material.opacity -= 0.1
-         // console.log( 'reduce', this.bloodDuster.particleSystem.material.opacity )
         if(this.bloodDuster.particleSystem.material.opacity <= 0){
 
-          // console.log( 'bye!' )
           this.bloodDuster.remove()
           this.bloodDuster = null
         }

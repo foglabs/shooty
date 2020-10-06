@@ -192,8 +192,9 @@ class Player extends Character {
   }
 
   dropBomb(){
-    // console.log( 'bmobms', this.numBombs, this.numBombsMax )
-    if(this.numBombs > 0){
+    if(this.numBombs > 0 && this.power >= 5){
+      this.changePower(-5)
+
       let bomb = new Bomb([50,50,50], this.level)
       bomb.mesh.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
       scene.add( bomb.mesh )
@@ -204,8 +205,8 @@ class Player extends Character {
   }
 
   dropSmoke(){
-    // console.log( 'bmobms', this.numBombs, this.numBombsMax )
-    if(this.numSmokes > 0){
+    if(this.numSmokes > 0 && this.power >= 5){
+      this.changePower(-5)
 
       let x = this.mesh.position.x
       let y = this.mesh.position.y

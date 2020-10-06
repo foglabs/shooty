@@ -166,6 +166,9 @@
         var xhr = new XMLHttpRequest()
         xhr.open("GET", "/score", true)
 
+        document.getElementById("scores").classList.remove("score-scroll")
+        document.getElementById("scores").innerHTML = ''
+
         xhr.onreadystatechange = function() {
           if (this.readyState == 4 && this.status == 200) { 
             let scores = JSON.parse(xhr.responseText)
@@ -177,14 +180,12 @@
       }
 
       function showScores(scoreData){
-
         document.getElementById("scores").classList.add("score-scroll")
         let scoreText = ""
         let thisScoreElement
         scoreData.map((thisScore) => {
           thisScoreElement = document.createElement("div")
           thisScoreElement.classList.add("score")
-
 
           thename = document.createElement("span")
           thename.classList.add("score-thename")
@@ -516,12 +517,11 @@
 
             if( game.nameEntry == NONAME ){
               beginNameEntry()
+            } else if(nameIsSet()){
+
+              // on gameover, use the same name
+              game.newGame()
             }
-            //  else if( game.nameEntry == NAMEENTERED && checkSoundsLoaded() ){
-              
-            //   console.log( 'new game' )
-            //   game.newGame()
-            // }
           }
 
         } else if(game.stage == PLAYING){
@@ -594,7 +594,7 @@
             if(game.musicEnabled){
               fx_song2.setVolume(0)
             } else {
-              fx_song2.setVolume(1)
+              fx_song2.setVolume(0.4)
             }
             
             game.musicEnabled = !game.musicEnabled

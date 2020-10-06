@@ -217,6 +217,7 @@ class Casino {
         this.removeHighlight(enemy.id)
 
         // might be gone already oh well!
+        enemy.damagedBy = CASINO
         enemy.health = 0
       }
     }
