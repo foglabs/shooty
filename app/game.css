@@ -40,6 +40,109 @@ div.info-bar {
   display:block;
 }
 
+div#fog-logo2 {
+  opacity: 0.4
+  transform-style: preserve-3d;
+  position: absolute;
+  top: 10vh;
+  left: 30vw;
+  background-position: center;
+  background-size: contain; 
+  width: 40vw;
+  height: 40vw;
+  background-image: url('/sprites/foglogo2.png');
+
+  -webkit-animation: spin 16s linear infinite;
+  -moz-animation: spin 16s linear infinite;
+  animation: spin 16s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    opacity: 0.2;
+    transform: rotateY(0deg);
+  }
+  20% {
+    transform: rotateY(1080deg);
+    opacity: 0.8;
+  }
+
+  60% {
+    transform: rotateY(-105deg);
+    opacity: 0.3;
+  }
+
+  70% {
+    transform: rotateY(-110deg);
+    opacity: 0.6
+  }
+
+  80% {
+    transform: rotateY(-130deg);
+    opacity: 0.8
+  }
+  
+  89% {
+    transform: rotateY(-360deg);
+    opacity: 0.8
+  }
+
+  100% {
+    transform: scale(0.6);
+    transform: rotateY(360deg);
+    opacity: 0.2;
+  }
+}
+
+div#fog-logo {
+  opacity: 0.4
+  transform-style: preserve-3d;
+  position: absolute;
+  top: 10vh;
+  left: 30vw;
+  background-position: center;
+  background-size: contain; 
+  width: 40vw;
+  height: 40vw;
+  background-image: url('/sprites/foglogo2.png');
+
+  -webkit-animation: bob 16s linear infinite;
+  -moz-animation: bob 16s linear infinite;
+  animation: bob 16s linear infinite;
+}
+
+@-webkit-keyframes bob {
+  0% {
+    opacity: 0.2;
+    transform: rotateY(2deg);
+    left: 30vw;
+  }
+  20% {
+    left: 32vw;
+    transform: rotateZ(-2deg);
+    opacity: 0.8;
+  }
+
+  60% {
+    left: 18vw;
+    transform: rotateX(-3deg);
+    transform: rotateZ(0deg);
+    opacity: 1;
+  }
+
+  89% {
+    transform: scale(2);
+  }
+
+  100% {
+    transform: scale(1.1);
+    transform: rotateY(3deg);
+    opacity: 0.6;
+    left: 30vw;
+  }
+}
+
+
 div#scores {
   font-size: 36px;
   color: #fff;
@@ -54,7 +157,14 @@ div#scores.score-scroll {
 }
 
 div.score {
+  color: #fff;
   margin-bottom: 1.6vh;
+  transition: color 3s;
+}
+
+div.score:hover {
+  transition: color 3s;
+  color: #ff0;
 }
 
 div.score-nl {

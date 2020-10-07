@@ -46,13 +46,15 @@
 
     <div id="stage-info"></div>
 
-
     <div id="player-name">
       <input id="name-entry" type="text" name="nameEntry">
       <div id="name"></div>
     </div>
 
     <div id="scores"></div>
+
+    <a href="https://foglabs.in"><div id="fog-logo" class="hidden"></div></a>
+    <a href="https://foglabs.in"><div id="fog-logo2" class="hidden"></div></a>
 
     <script type="text/javascript">
       function k(obj){
@@ -173,7 +175,7 @@
           if (this.readyState == 4 && this.status == 200) { 
             let scores = JSON.parse(xhr.responseText)
             game.scores = scores
-            showScores(scores)
+            // showScores(scores)
           }
         }
         xhr.send()
@@ -326,6 +328,14 @@
       NONAME = 0
       ENTERING = 1
       NAMEENTERED = 2
+
+      // attract mode stages
+      LOGO = 0
+      READY = 1
+      LOGO2 = 2
+      SCORES = 3
+      DEMO = 4
+      HAHA = 5
 
       // DEG0 = radian(0)
       DEG1 = radian(1)
@@ -516,6 +526,7 @@
          if (event.key == " " || event.key == "Spacebar"){
 
             if( game.nameEntry == NONAME ){
+              game.hideAttract()
               beginNameEntry()
             } else if(nameIsSet()){
 

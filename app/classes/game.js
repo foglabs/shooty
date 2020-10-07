@@ -22,6 +22,13 @@
 
     this.setDefaultGameValues()
 
+    // clean up everything
+    document.getElementById("scores").innerHTML = ""
+    document.getElementById("scores").classList.remove("score-scroll")
+    document.getElementById("fog-logo").classList.add("hidden")
+    document.getElementById("fog-logo2").classList.add("hidden")
+    this.clearAnnouncements()
+
     this.musicEnabled = true
 
     this.stage = false
@@ -42,6 +49,7 @@
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
+    this.attractStage = READY
     this.attractTimer = new Timer()
     this.attractTimer.start()
     this.showingScores = true
@@ -226,10 +234,10 @@
         player.removeSprite()
         player.remove()
       }
+      
+      this.scores = false
 
-      game.scores = false
-
-      game.newPlayer()
+      this.newPlayer()
 
       this.setDefaultGameValues()
       this.lastRoundColor = this.roundColor
@@ -402,11 +410,11 @@
       if(this.stageTimer.time() > this.loadTime){
         this.stage = GAMEOVER
         this.announcement("GAME OVER")
-        
         this.stageTimer.reset()
 
         // grabs name, level, score and posts em
         postScore()
+        setScores()
       }
     } else if(this.stage == GAMEOVER) {
 
@@ -414,11 +422,9 @@
       // this actually doesnt do anything
       // this.drawGameover()      
   
-      if(!this.scores){
+      if(this.scores){
         // flag this so we dont ask twice
-        this.scores = true
-        // async so gotta do it  inside this func
-        setScores()
+        showScores()
       }
 
       if(this.stageTimer.time() > this.loadTime ){
@@ -436,26 +442,42 @@
 
       if(this.attractTimer.time() > 16000){
         this.attractTimer.reset()
-        this.showingScores = !this.showingScores
-        console.log( 'flipping scoreshow' )
+        this.attractStage += 1
+
+        if(this.attractStage > 3){
+          this.attractStage = 0
+        }
+        console.log( 'attarct ', this.attractStage )
+
+        // clean up everything
+        this.hideAttract()
       }
 
-      if(this.showingScores){
+
+       if(this.attractStage == LOGO) {
+
+        document.getElementById("fog-logo").classList.remove("hidden")
+      } else if(this.attractStage == SCORES){
+        if(this.scores && this.scores.length > 0){
+          showScores(this.scores)
+        }
+
         document.getElementById("scores").classList.add("score-scroll")
-        console.log( 'asdding sc' )
-        this.clearAnnouncements()
-      } else {
-        console.log( 'removing sc' )
-        document.getElementById("scores").classList.remove("score-scroll")
-
-        // reg title screen
-        // document.getElementById("stage-info").innerHTML = "PRESS SPACEBAR"
-        // document.getElementById("stage-info").classList.add("static")        
+      } else if(this.attractStage == READY) {
         this.announcement("PRESS SPACEBAR")
-      }
+      } else if(this.attractStage == LOGO2) {
 
-
+        document.getElementById("fog-logo2").classList.remove("hidden")
+      } 
     }
+  }
+
+  hideAttract(){
+    document.getElementById("scores").classList.remove("score-scroll")
+    document.getElementById("scores").innerHTML = ""
+    document.getElementById("fog-logo").classList.add("hidden")
+    document.getElementById("fog-logo2").classList.add("hidden")
+    this.clearAnnouncements()
   }
 
   drawLoading(){
