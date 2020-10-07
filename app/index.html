@@ -182,6 +182,10 @@
       }
 
       function showScores(scoreData){
+        // empty first
+        document.getElementById("scores").innerHTML = ""
+
+        // draw highscores
         document.getElementById("scores").classList.add("score-scroll")
         let scoreText = ""
         let thisScoreElement

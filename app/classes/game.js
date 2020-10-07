@@ -49,10 +49,9 @@
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = READY
+    this.attractStage = LOGO2
     this.attractTimer = new Timer()
     this.attractTimer.start()
-    this.showingScores = true
 
     // get and display score board first thing
     setScores()
@@ -424,7 +423,7 @@
   
       if(this.scores){
         // flag this so we dont ask twice
-        showScores()
+        showScores(this.scores)
       }
 
       if(this.stageTimer.time() > this.loadTime ){
