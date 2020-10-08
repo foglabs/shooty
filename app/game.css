@@ -108,7 +108,7 @@ div#fog-logo {
   background-size: contain; 
   width: 100vw;
   height: 100vh;
-  background-image: url('/sprites/title.png');
+  background-image: url('/sprites/title2.png');
 
   -webkit-animation: bob 16s linear infinite;
   -moz-animation: bob 16s linear infinite;
