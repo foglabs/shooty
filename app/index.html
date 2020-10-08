@@ -53,8 +53,8 @@
 
     <div id="scores"></div>
 
-    <a href="https://foglabs.in"><div id="fog-logo" class="hidden"></div></a>
-    <div id="fog-logo2" class="hidden"></div>
+    <div id="fog-logo" class="hidden"></div>
+    <a href="https://foglabs.in"><div id="fog-logo2" class="hidden"></div></a>
 
     <script type="text/javascript">
       function k(obj){
@@ -175,7 +175,10 @@
           if (this.readyState == 4 && this.status == 200) { 
             let scores = JSON.parse(xhr.responseText)
             game.scores = scores
-            // showScores(scores)
+            if(game.stage == GAMEOVER){
+              // make sure this happens as soon as we have the data
+              showScores(scores)
+            }
           }
         }
         xhr.send()

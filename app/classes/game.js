@@ -411,20 +411,22 @@
         this.announcement("GAME OVER")
         this.stageTimer.reset()
 
-        // grabs name, level, score and posts em
+        // grabs name, level, score and posts em        
         postScore()
+        this.scores = false
         setScores()
       }
+      
     } else if(this.stage == GAMEOVER) {
 
       // ended
       // this actually doesnt do anything
       // this.drawGameover()      
   
-      if(this.scores){
-        // flag this so we dont ask twice
-        showScores(this.scores)
-      }
+      // if(this.scores){
+      //   // flag this so we dont ask twice
+      //   showScores(this.scores)
+      // }
 
       if(this.stageTimer.time() > this.loadTime ){
         this.cleanGame()
