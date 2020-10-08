@@ -49,7 +49,7 @@
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = LOGO
+    this.attractStage = SCORES
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
