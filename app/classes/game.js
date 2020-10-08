@@ -49,7 +49,7 @@
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = LOGO2
+    this.attractStage = SCORES
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
@@ -456,6 +456,7 @@
        if(this.attractStage == LOGO) {
 
         document.getElementById("fog-logo").classList.remove("hidden")
+
       } else if(this.attractStage == SCORES){
         if(this.scores && this.scores.length > 0){
           showScores(this.scores)
