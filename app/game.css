@@ -131,14 +131,14 @@ div#fog-logo {
   }
 
   60% {
-    left: -10vw;
-    transform: scale(3.2);
+    left: -11vw;
+    transform: scale(3);
     opacity: 1;
     top: 60vh;
   }
 
   89% {
-    transform: scale(3.2);
+    transform: scale(3);
     top: 60vh;
     opacity: 1;
   }
@@ -146,9 +146,9 @@ div#fog-logo {
 
 
   100% {
-    transform: scale(3.2);
+    transform: scale(3);
     /*opacity: 0.1;*/
-    left: -10vw;
+    left: -12vw;
     top: 60vh;
     opacity: 0;
   }
