@@ -49,9 +49,11 @@
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = SCORES
+    this.attractStage = DEMO
     this.attractTimer = new Timer()
     this.attractTimer.start()
+
+    this.demo = null
 
     // get and display score board first thing
     setScores()
@@ -376,6 +378,7 @@
     
   }
 
+// loop for game object
   handleGame(){
     this.handleAnnouncements()
     this.handleMusic()
@@ -416,7 +419,7 @@
         this.scores = false
         setScores()
       }
-      
+
     } else if(this.stage == GAMEOVER) {
 
       // ended
@@ -431,6 +434,10 @@
       if(this.stageTimer.time() > this.loadTime ){
         this.cleanGame()
       }
+    } else if(this.stage == DEMO){
+      this.drawPlaying()
+
+
     }
 
     duster.animation()
@@ -445,7 +452,7 @@
         this.attractTimer.reset()
         this.attractStage += 1
 
-        if(this.attractStage > 3){
+        if(this.attractStage > 4){
           this.attractStage = 0
         }
         console.log( 'attarct ', this.attractStage )
@@ -470,7 +477,36 @@
       } else if(this.attractStage == LOGO2) {
 
         document.getElementById("fog-logo2").classList.remove("hidden")
-      } 
+      } else if(this.attractStage == DEMO){
+
+        if(!this.demo){
+          let characters = []
+          player.mesh.visible = true
+          characters.push(player)
+
+          let enemy1 = this.addEnemy(KNOWLOCTA)
+          characters.push(enemy1)
+          let enemy2 = this.addEnemy(KNOWLOCTA)
+          characters.push(enemy2)
+
+          let event = new Event(0, 600, 0.5, 0.5)
+          let event2 = new Event(0, 3000, -0.5, -0.9)
+          let event3 = new Event(1, 3000, 0, 0)
+          let event4 = new Event(2, 6000, 0.1, 0.1)
+          let event5 = new Event(0, 4000, 0, 0)
+          let event6 = new Event(0, 8000, 0.8, 0.8)
+          let event7 = new Event(2, 11000, 0.6, -0.7)
+
+          this.demo = new Demo(characters, 15000, [event, event2, event3, event4, event5, event6, event7])
+          this.enemies = [enemy1, enemy2]
+        }
+
+        this.demo.handleDemo()
+
+        // handle enemys and whatnot
+        this.drawPlaying()
+
+      }
     }
   }
 
@@ -550,34 +586,45 @@
 
     this.handleEnemies()
 
-    if(!this.enemyTimer.running){
-      this.enemyTimer.start()
-    }
-
-    let remaining = this.enemyTimer.time()
-    this.drawTimer(remaining)
-
-    // if enemy timer finishesa, add more enemies
-    if(remaining == 0 ){
-
-      // add a random # of enemies, ensure at least 50% of max
-      let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
-      // console.log( 'ene max is', this.enemyMax )
-      // console.log( 'generating ene ', numEnemies )
-      this.generateEnemies( numEnemies )
-
-      this.enemyTimer.reset()
-    }
-
-    if(game.stage == PLAYING && player.lifecycle == ALIVE){
-      // stop moving if we DEAD
+    if(this.attractStage == DEMO){
+      // demoo
       player.handleMovement()
-    }
 
-    //  if everybody's dead...
-    if( this.everybodyDead() ){
-      this.nextRound()
+    } else {
+      // regular round
+
+      if(!this.enemyTimer.running){
+        this.enemyTimer.start()
+      }
+
+      let remaining = this.enemyTimer.time()
+      this.drawTimer(remaining)
+
+      // if enemy timer finishesa, add more enemies
+      if(remaining == 0 ){
+
+        // add a random # of enemies, ensure at least 50% of max
+        let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
+        // console.log( 'ene max is', this.enemyMax )
+        // console.log( 'generating ene ', numEnemies )
+        this.generateEnemies( numEnemies )
+
+        this.enemyTimer.reset()
+      }
+
+
+      if(game.stage == PLAYING && player.lifecycle == ALIVE){
+        // stop moving if we DEAD
+        player.handleMovement()
+      }
+
+      //  if everybody's dead...
+      if( this.everybodyDead() ){
+        this.nextRound()
+      }
     }
+    
+
 
     player.animation()
     this.drawUI()
