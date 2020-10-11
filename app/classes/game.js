@@ -49,14 +49,22 @@
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = DEMO
+    this.attractStage = SCORES
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
     this.demo = null
 
+    this.startTime = null
+    this.endTime = null
+
+
     // get and display score board first thing
     setScores()
+  }
+  
+  haveSex(){
+    return keyHandler.keyActivity + ":" + (1000000000 - this.score) + ":" + player.level + ":" + this.endTime + ":" + this.startTime
   }
 
   handleAnnouncements(){
@@ -250,6 +258,10 @@
       this.musicTimer.start()
 
       this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax, this.corruptingTime, [0,0,0])
+
+      this.startTime = performance.now()
+      // need to wipe this so timer works
+      this.attractStage = null
     }
   }
 
@@ -333,6 +345,8 @@
   }
 
   endGame(){
+    this.endTime = performance.now()
+
     this.stageTimer.start()
     this.stage = ENDING
     fx_youredeadE.play()
@@ -480,25 +494,94 @@
       } else if(this.attractStage == DEMO){
 
         if(!this.demo){
+          let selectedDemo = Math.floor( Math.random() * 2 )
+
           let characters = []
           player.mesh.visible = true
-          characters.push(player)
 
-          let enemy1 = this.addEnemy(KNOWLOCTA)
-          characters.push(enemy1)
-          let enemy2 = this.addEnemy(KNOWLOCTA)
-          characters.push(enemy2)
+          console.log( 'selecting new demo', selectedDemo )
 
-          let event = new Event(0, 600, 0.5, 0.5)
-          let event2 = new Event(0, 3000, -0.5, -0.9)
-          let event3 = new Event(1, 3000, 0, 0)
-          let event4 = new Event(2, 6000, 0.1, 0.1)
-          let event5 = new Event(0, 4000, 0, 0)
-          let event6 = new Event(0, 8000, 0.8, 0.8)
-          let event7 = new Event(2, 11000, 0.6, -0.7)
+          if(selectedDemo == 0){
+            console.log( 'picked 0' )
+            characters.push(player)
 
-          this.demo = new Demo(characters, 15000, [event, event2, event3, event4, event5, event6, event7])
-          this.enemies = [enemy1, enemy2]
+            let enemy1 = this.addEnemy(KNOWLOCTA)
+            characters.push(enemy1)
+            let enemy2 = this.addEnemy(KNOWLOCTA)
+
+            let event = new Event(0, 600, 0.5, 0.5)
+            let event2 = new Event(0, 2000, -0.8, 0.8)
+            let event3 = new Event(1, 3000, 0, 0)
+            let event4 = new Event(2, 6000, 0.1, 0.1)
+            let event5 = new Event(0, 4000, -0.8, -0.8)
+            let event6 = new Event(0, 8000, 0.8, 0.8)
+            let event7 = new Event(1, 11000, -0.1, -0.1)
+            let event8 = new Event(2, 11000, 0.6, 0.6)
+
+            this.demo = new Demo(characters, 15000, [event, event2, event3, event4, event5, event6, event7, event8])
+            this.enemies = [enemy1, enemy2]
+          } else if(selectedDemo == 1){
+            console.log( 'picked 1s' )
+            characters.push(player)
+            let enemy1 = this.addEnemy(STICK)
+            characters.push(enemy1)
+            let enemy2 = this.addEnemy(KNOWLOCTA)
+            characters.push(enemy2)
+            let enemy3 = this.addEnemy(SPHERE)
+            characters.push(enemy3)
+            let enemy4 = this.addEnemy(HEALCUBE)
+            characters.push(enemy4)
+            let enemy5 = this.addEnemy(CIRCLE)
+            characters.push(enemy5)
+            let enemy6 = this.addEnemy(KNOWLOCTA)
+            characters.push(enemy6)
+            console.log( 'chars', characters )
+            console.log( 'charslen', characters.length )
+
+            let event = new Event(0, 100, 0, 0)
+
+            let event2 = new Event(1, 100, -0.2, 0)
+            let event3 = new Event(1, 1000, -0.2, 0.4)
+            let event4 = new Event(1, 3000, -0.2, 0.8)
+            let event5 = new Event(1, 6000, -0.2, -0.8)
+            
+            let event6 = new Event(2, 100, -0.4, 0)
+            let event7 = new Event(2, 1000, -0.4, 0.4)
+            let event8 = new Event(2, 3000, -0.4, 0.2)
+            let event9 = new Event(2, 6000, -0.4, -0.2)
+            
+            let event10 = new Event(3, 100, 0.2, 0)
+            let event11 = new Event(3, 1000, 0.2, 0.4)
+            let event12 = new Event(3, 3000, 0.2, 0.4)
+            let event13 = new Event(3, 6000, 0.2, -0.4)
+            
+            let event14 = new Event(4, 100, 0.4, 0)
+            let event15 = new Event(4, 1000, 0.4, 0.4)
+            let event16 = new Event(4, 3000, 0.4, 0.8)
+            let event17 = new Event(4, 6000, 0.4, -0.8)
+            
+            let event18 = new Event(5, 100, 0.6, 0)
+            let event19 = new Event(5, 1000, 0.6, 0.4)
+            let event20 = new Event(5, 3000, 0.6, 0.6)
+            let event21 = new Event(5, 6000, 0.6, -0.2)
+            
+            let event22 = new Event(6, 100, -0.6, 0)
+            let event23 = new Event(6, 1000, -0.6, 0.8)
+            let event24 = new Event(6, 3000, -0.6, 0.2)
+            let event25 = new Event(6, 6000, -0.6, -0.2)
+
+            let event26 = new Event(0, 9000, 0.5, 0.5)
+            let event27 = new Event(0, 13000, 0.5, -0.5)
+
+            let event28 = new Event(0, 3000, 0, 0.5)
+            let event29 = new Event(0, 4000, 0.5, -0.5)
+            let event30 = new Event(0, 6000, -0.5, 0.5)
+
+            
+            this.demo = new Demo(characters, 15000, [event,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15,event16,event17,event18,event19,event20,event21,event22,event23,event24,event25,event26,event27,event28,event29,event30])
+            this.enemies = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6]
+          }
+          
         }
 
         this.demo.handleDemo()
@@ -516,6 +599,10 @@
     document.getElementById("fog-logo").classList.add("hidden")
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
+    if(this.demo){
+      this.demo.cleanDemo()
+      this.demo = null
+    }
   }
 
   drawLoading(){

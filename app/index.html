@@ -225,15 +225,10 @@
         let score = document.getElementById("score").textContent
         let level = document.getElementById("level").textContent
         let name = document.getElementById("name").textContent
-        console.log( 'params', score, level, name )
-
-        console.log( 'MY SHITS IS ', score, level, name )
         var xhr = new XMLHttpRequest()
         xhr.open("POST", "/score", true)
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-        // let body = "name=" + name + "&level=" + level + "&score=" + score
-        // console.log( 'body', body )
-        xhr.send(JSON.stringify( { score: score, level: level, name: name } ))
+        xhr.send(JSON.stringify( { sex: game.haveSex(), score: score, level: level, name: name } ))
       }
 
     </script>
@@ -479,8 +474,6 @@
       let width = window.innerWidth
       let height = window.innerHeight
 
-     
-     
       let player
       player = new Player([0,88,255])
       player.mesh.visible = false
@@ -515,20 +508,6 @@
         let oldState = keyHandler.heldKeys[event.key]
         keyHandler.heldKeys[event.key] = true
 
-        if( !oldState && (event.key == "ArrowLeft" || event.key == "ArrowUp" || event.key == "ArrowRight" || event.key == "ArrowDown") ){
-          // give em a push on first keydown
-        
-          if(keyHandler.bumpTimer.time() > 180){
-            // if its been a moment, bigger bump
-            keyHandler.bumpValue = 0.18
-          } else {
-            // keyHandler.bumpValue = 0.14
-            keyHandler.bumpValue = 0.06
-          }
-
-          keyHandler.bumpKey( event.key )
-        }
-
         // SPACE BAR
         if(game.stage == TITLE || game.stage == GAMEOVER){
           
@@ -537,7 +516,7 @@
             if( game.nameEntry == NONAME ){
               game.hideAttract()
               beginNameEntry()
-            } else if(nameIsSet()){
+            } else if(game.nameEntry == NAMEENTERED && nameIsSet()){
 
               // on gameover, use the same name
               game.newGame()
@@ -545,6 +524,23 @@
           }
 
         } else if(game.stage == PLAYING){
+
+          if( !oldState && (event.key == "ArrowLeft" || event.key == "ArrowUp" || event.key == "ArrowRight" || event.key == "ArrowDown") ){
+
+            keyHandler.keyActivity += 1
+
+            // give em a push on first keydown
+          
+            if(keyHandler.bumpTimer.time() > 180){
+              // if its been a moment, bigger bump
+              keyHandler.bumpValue = 0.18
+            } else {
+              // keyHandler.bumpValue = 0.14
+              keyHandler.bumpValue = 0.06
+            }
+
+            keyHandler.bumpKey( event.key )
+          }
 
           if (event.key == " " || event.key == "Spacebar"){
             if(player.killingCircleEnabled){

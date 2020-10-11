@@ -15,15 +15,14 @@ class Demo {
   handleDemo(){
     let event
 
-
-    console.log( 'im handlin it' )
+    // console.log( 'im handlin it' )
     if(this.lengthTimer.time() < this.length){
       for(var i=0; i<this.events.length; i++){
         if( this.events[i] ){
 
           // is it time to run this event yet
           event = this.events[i]
-          console.log( 'heres an event', event )
+          // console.log( 'heres an event', event )
           if(this.lengthTimer.time() > event.startTime){
             event.running = true
           }
@@ -37,27 +36,29 @@ class Demo {
               this.events[i] = null
             }
           }
-
         }  
-      
       }
 
     } else {
-      this.events = null
-      let char
-      for(var i=0; i<this.characters.length; i++){
-
-        if(this.characters[i]){
-
-          // clean it up!
-          this.characters[i].remove()
-        }
-      }
-
-
-      this.running = false
+      this.cleanDemo()
     }
 
+  }
+
+  cleanDemo(){
+    this.events = null
+    let char
+    for(var i=0; i<this.characters.length; i++){
+
+      if(this.characters[i]){
+
+        // clean it up!
+        this.characters[i].remove()
+      }
+    }
+
+
+    this.running = false
   }
 
 }
