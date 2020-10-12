@@ -49,7 +49,7 @@
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = DEMO
+    this.attractStage = SCORES
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
@@ -539,7 +539,7 @@
       } else if(this.attractStage == DEMO){
 
         if(!this.demo){
-          let selectedDemo = Math.floor( Math.random() * 2 )
+          let selectedDemo = Math.floor( Math.random() * 3 )
 
           let characters = []
           player.mesh.visible = true
@@ -621,9 +621,36 @@
             let event29 = new Event(0, 4000, 0.5, -0.5)
             let event30 = new Event(0, 6000, -0.5, 0.5)
 
-            
             this.demo = new Demo(characters, 15000, [event,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15,event16,event17,event18,event19,event20,event21,event22,event23,event24,event25,event26,event27,event28,event29,event30])
             this.enemies = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6]
+          } else if(selectedDemo == 2) {
+            let enemy1 = this.addEnemy(STICK)
+            characters.push(enemy1)
+            let enemy2 = this.addEnemy(STICK)
+            characters.push(enemy2)
+            let enemy3 = this.addEnemy(STICK)
+            characters.push(enemy3)
+            let enemy4 = this.addEnemy(STICK)
+            characters.push(enemy4)
+
+            let event = new Event(0, 100, 0, 0)
+            let event1 = new Event(1, 100, 0, 0)
+            let event2 = new Event(2, 100, 0, 0)
+            let event3 = new Event(3, 100, 0, 0)
+            let event4 = new Event(0, 1000, 0.3, 0.6)
+            let event5 = new Event(1, 1000, 0.3, 0.6)
+            let event6 = new Event(2, 1000, 0.3, 0.6)
+            let event7 = new Event(3, 1000, 0.3, 0.6)
+            let event8 = new Event(0, 5000, 0.8, -0.6)
+            let event9 = new Event(1, 5000, 0.8, -0.6)
+            let event10 = new Event(2, 5000, 0.8, -0.6)
+            let event11 = new Event(3, 5000, 0.8, -0.6)
+            let event12 = new Event(0, 8000, -0.3, 0.2)
+            let event13 = new Event(1, 8000, -0.3, 0.2)
+            let event14 = new Event(2, 8000, -0.3, 0.2)
+            let event15 = new Event(3, 8000, -0.3, 0.2)
+            this.demo = new Demo(characters, 15000, [event,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15])
+            this.enemies = [enemy1, enemy2, enemy3, enemy4]
           }
           
         }
