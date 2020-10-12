@@ -49,11 +49,15 @@
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = SCORES
+    this.attractStage = DEMO
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
+    this.flickerTimer = new Timer()
+    this.flickerTimer.start()
+
     this.demo = null
+    this.demoCharacters = []
 
     this.startTime = null
     this.endTime = null
@@ -226,7 +230,6 @@
 
     return chanceSlices
   }
-
   newPlayer(){
     player = new Player([0,88,255])
     player.mesh.visible = false
@@ -240,8 +243,8 @@
 
       if(player){
         // clean out old player
-        player.removeSprite()
         player.remove()
+        player.removeSprite()
       }
       
       this.scores = false
@@ -457,8 +460,50 @@
     duster.animation()
   }
 
+  drawFlicker(){
+    if(this.flickerTimer.time() > 120){
+      this.flickerTimer.reset()
+      let roll = Math.random()
+      if(roll > 0.9){
+        this.setBackgroundColor(143,178,255)
+
+      } else if(roll > 0.8){
+        this.setBackgroundColor(140,180,255)
+      } else if(roll > 0.3){
+        // this.setBackgroundColor(70,90,123)  
+        this.setBackgroundColor(138,176,252)
+
+      // } else {
+      //   // this.setBackgroundColor(32,40,64)  
+      //   this.setBackgroundColor(142,170,250)
+      }
+    }
+  }
+
+
+  intenseFlicker(){
+    if(this.flickerTimer.time() > 120){
+      this.flickerTimer.reset()
+      let roll = Math.random()
+      if(roll > 0.9){
+        this.setBackgroundColor(143,170,255)
+
+      } else if(roll > 0.8){
+        this.setBackgroundColor(140,180,255)
+      } else if(roll > 0.3){
+        // this.setBackgroundColor(70,90,123)  
+        this.setBackgroundColor(138,166,245)
+
+      } else {
+        // this.setBackgroundColor(32,40,64)  
+        this.setBackgroundColor(132,160,238)
+      }
+   
+    }
+  }
+
   drawTitle(){
-    this.setBackgroundColor(140,180,255)
+    this.drawFlicker()
 
     if( ( game.nameEntry == NONAME) && checkSoundsLoaded() ){
 
@@ -508,6 +553,7 @@
             let enemy1 = this.addEnemy(KNOWLOCTA)
             characters.push(enemy1)
             let enemy2 = this.addEnemy(KNOWLOCTA)
+            characters.push(enemy2)
 
             let event = new Event(0, 600, 0.5, 0.5)
             let event2 = new Event(0, 2000, -0.8, 0.8)
@@ -535,8 +581,6 @@
             characters.push(enemy5)
             let enemy6 = this.addEnemy(KNOWLOCTA)
             characters.push(enemy6)
-            console.log( 'chars', characters )
-            console.log( 'charslen', characters.length )
 
             let event = new Event(0, 100, 0, 0)
 

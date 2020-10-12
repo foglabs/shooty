@@ -53,12 +53,14 @@ class Demo {
       if(this.characters[i]){
 
         // clean it up!
-        this.characters[i].remove()
+        this.characters[i].removeNow()
       }
     }
 
+    player.removeNow()
 
     this.running = false
+    this.characters = []
   }
 
 }

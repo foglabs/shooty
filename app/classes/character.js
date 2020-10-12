@@ -145,6 +145,11 @@ class Character {
     scene.remove(this.mesh)
   }
 
+  removeNow(){
+    this.remove()
+    this.removeSprite()
+  }
+
   addSprite(mat, scale, moves=false, opacity=false){
     this.deadSprite = new THREE.Sprite( mat )
 

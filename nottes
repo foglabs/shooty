@@ -111,3 +111,15 @@ add fog labs logo
   wasnt
 
 -fix play again
+
+
+
+
+
+-need to track all sprites in some global way, too much getting disconnected from dead character when mode changes
+  trask all when they first show up... clear periodically?
+  cant expect them to have the time to fade, AND catch all edge cases of mode changes
+
+
+
+  

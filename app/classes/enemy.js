@@ -68,6 +68,7 @@ class Enemy extends Character {
     let intention    
     let allowedToPattern
     if(enemyType == STICK){
+      console.log( '0 trime' )
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
       health = 2
@@ -77,6 +78,7 @@ class Enemy extends Character {
       allowedToPattern = true
       intention = PATTERNMOVE
     } else if(enemyType == SPHERE){
+      console.log( '1 trime' )
       // sphere
       health = 8
       nutritionalValue = 26
@@ -86,6 +88,7 @@ class Enemy extends Character {
       allowedToPattern = true
       intention = PATTERNMOVE
     } else if(enemyType == CIRCLE) {
+      console.log( '2 trime' )
       // circle
       health = 0.04
       nutritionalValue = 22
@@ -95,6 +98,7 @@ class Enemy extends Character {
       allowedToPattern = true
       intention = PATTERNMOVE
     } else if(enemyType == HEALCUBE){
+      console.log( '3 trime' )
       // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
       health = 18
@@ -104,6 +108,7 @@ class Enemy extends Character {
       intention = WANDER
       allowedToPattern = false
     } else if(enemyType == KNOWLOCTA) {
+      console.log( '4 trime' )
       // knowledge octa
       health = 12
       nutritionalValue = 26
