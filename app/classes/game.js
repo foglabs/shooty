@@ -1312,18 +1312,23 @@
 
           // reg enemy
           score = enemy.killScore()
-          if(enemy.damagedBy == EAT)
-          player.changePower( enemy.nutritionalValue )
+            
+            // only health and power by eating
+          if(enemy.damagedBy == EAT){
+            player.changePower( enemy.nutritionalValue )
 
-          if(enemy.healthValue > 0){
-            player.changeHealth( enemy.healthValue )
+            if(enemy.healthValue > 0){
+              player.changeHealth( enemy.healthValue )
+            }
           }
 
-          // knowledge is for everyone
-          if(enemy.knowledgeValue > 0){
-            player.changeKnowledge( enemy.knowledgeValue )
-          }
+          if(enemy.damagedBy == EAT || enemy.damagedBy == SWORD){ 
 
+            // knowledge is for everyone
+            if(enemy.knowledgeValue > 0){
+              player.changeKnowledge( enemy.knowledgeValue )
+            }  
+          }
         }
 
         game.changeScore(score)
