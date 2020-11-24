@@ -62,7 +62,7 @@ class Bomb extends Character {
       if(this.mesh.scale.y < this.maxSize()){
         this.mesh.scale.y += 0.18
       }
-      if(this.mesh.scale.y < this.maxSize()){
+      if(this.mesh.scale.z < this.maxSize()){
         this.mesh.scale.z += 0.18
       }  
     }

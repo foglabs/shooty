@@ -1366,7 +1366,6 @@
       if(enemy){
 
         this.handleEnemy(enemy)
-
       }
     }
 

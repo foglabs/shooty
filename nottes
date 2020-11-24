@@ -120,6 +120,12 @@ add fog labs logo
   trask all when they first show up... clear periodically?
   cant expect them to have the time to fade, AND catch all edge cases of mode changes
 
+-instead of sprite attached to character, make it its own thing -> character gone, sprite keeps getting handled
 
+-double check bens friend health bug
+-add maximum sword length
+-exponential power usage for sword -> bigger, more damage, but more expensive
 
-  
+-possibly add hitman or green giant bad guys?
+
+  -enemie start to have swords

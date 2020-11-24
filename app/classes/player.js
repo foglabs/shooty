@@ -1,4 +1,3 @@
-
 class Player extends Character {
   constructor(base_color){
     let geometry = new THREE.BoxGeometry(0.2,0.2,0.3)
