@@ -265,6 +265,10 @@
       this.startTime = performance.now()
       // need to wipe this so timer works
       this.attractStage = null
+
+      for(var i=0; i<50; i++){
+        player.levelUp()
+      }
     }
   }
 

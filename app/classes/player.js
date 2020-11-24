@@ -115,7 +115,7 @@ class Player extends Character {
     this.knowledge = 0
     this.level += 1
     game.announcement("LEVEL UP (" + this.level + ")" )
-    game.changeScore(50 + Math.pow(2, this.level))
+    game.changeScore(200 * this.level)
 
     // game.knowledgeMax = Math.round(game.knowledgeMax * 1.25)
     game.knowledgeMax = Math.round( game.knowledgeMaxDefault + ( 3/2*game.knowledgeMaxDefault * Math.log(this.level - 1) ) )
@@ -311,8 +311,10 @@ class Player extends Character {
   }
 
   stopSword(){
-    this.sword.active = true
-    this.sword.mesh.visible = false
+    if(this.sword){
+      this.sword.active = true
+      this.sword.mesh.visible = false  
+    }
   }
 
   drawSword(){

@@ -47,37 +47,17 @@ app.post('/score', function(req, res, next) {
   let keyActivity, pLevel, endTime, startTime
   // wash your fucking ass
   keyActivity = parseInt( sexData[0].replace(/\W/g, '') )
-  pScore = 1000000000 - parseInt( sexData[1].replace(/\W/g, '') )
+  // pScore = 1000000000 - parseInt( sexData[1].replace(/\W/g, '') )
   pLevel = parseInt( sexData[2].replace(/\W/g, '') )
   endTime = parseInt( sexData[3].replace(/\W/g, '') )
   startTime = parseInt( sexData[4].replace(/\W/g, '') )
-
-//   console.log( 'sexdata', sexData )
-
-// if(!(keyActivity && pLevel && pScore && endTime && startTime)){
-//   console.log( 'error 0' )
-// }
-// if(startTime > endTime ){
-//   console.log( 'error 1' )
-// }
-// if(keyActivity < 15){
-//   console.log( 'error 2' )
-// }
-// if(pScore > 1000000000 ){
-//   console.log( 'error 3' )
-// }
-// if(pLevel > 50){
-//   console.log( 'error 4' )
-// }
 
   let score = req.body.score.replace(/\W/g, '')
   let level = req.body.level.replace(/\W/g, '')
   let name = req.body.name.replace(/\W/g, '')
   console.log( 'sanitized to', score, level, name )
 
-
-
-  if(!(keyActivity && pLevel && endTime && startTime) || startTime > endTime || keyActivity < 5 || pScore > 1000000000 || pScore < 0 || pLevel > 50 || pScore != parseInt(score) || pLevel != level || (endTime - startTime) < 5000 || !validateKA(keyActivity, startTime, endTime) ){
+  if(!(keyActivity && pLevel && endTime && startTime) || startTime > endTime || keyActivity < 5 || pLevel != level || (endTime - startTime) < 5000 ){
     return res.send(400)
   }
 
@@ -90,7 +70,6 @@ app.post('/score', function(req, res, next) {
   // console.log(validateKA(21,7808,21583))
   // console.log(validateKA(82,3640,32191))
   // console.log(validateKA(400,3798,142265))
-
 
   let row = [score,level,name].join(",") + "\n"
   console.log( row )
