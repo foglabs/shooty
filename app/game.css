@@ -266,9 +266,11 @@ div.friend-meter {
 }
 
 
-div.friend-meter progress {
+div.friend-meter progress, div.friend-health progress {
   width: 100%;
 }
+
+progress.friend-health::-moz-progress-bar { background: #0d4; }
 
 div.bar-ele-wide {
   display: inline;

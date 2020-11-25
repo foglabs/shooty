@@ -1,5 +1,5 @@
 class Sword {
-  constructor(length, rotation){
+  constructor(length, rotation, wielder=player){
     this.length = length
     this.active = false
 
@@ -9,6 +9,10 @@ class Sword {
     this.powerTimer = new Timer()
     this.powerTimer.start()
 
+    // deafult player
+    this.wielder = wielder
+
+    console.log( 'LENGH', this.length )
     let geo = new THREE.ConeGeometry( 0.01, this.length, 32 )
     let bbox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3())
     this.bbox = bbox
@@ -41,28 +45,28 @@ class Sword {
     // figure out where on circle we WANT to go, then figure out shortest path, then get resulting rad based on increment
     if(signx == 0 && signy == 1 && !isWithin(rad, 0, 1) ){
       // 0
-      rad = rotateToward(this.rotation, 0, player.swordSpeed)
+      rad = rotateToward(this.rotation, 0, this.wielder.swordSpeed)
     } else if(signx == 1 && signy == 1 ){
       // 45
-      rad = rotateToward(this.rotation, DEG45, player.swordSpeed)
+      rad = rotateToward(this.rotation, DEG45, this.wielder.swordSpeed)
     } else if(signx == 1 && signy == 0 ){
       // 90
-      rad = rotateToward(this.rotation, DEG90, player.swordSpeed) 
+      rad = rotateToward(this.rotation, DEG90, this.wielder.swordSpeed) 
     } else if(signx == 1 && signy == -1 ){
       // 135
-      rad = rotateToward(this.rotation, DEG135, player.swordSpeed) 
+      rad = rotateToward(this.rotation, DEG135, this.wielder.swordSpeed) 
     } else if(signx == 0 && signy == -1 ){
       // 180
-      rad = rotateToward(this.rotation, DEG180, player.swordSpeed) 
+      rad = rotateToward(this.rotation, DEG180, this.wielder.swordSpeed) 
     } else if(signx == -1 && signy == -1 ){
       // 225
-      rad = rotateToward(this.rotation, DEG225, player.swordSpeed) 
+      rad = rotateToward(this.rotation, DEG225, this.wielder.swordSpeed) 
     } else if(signx == -1 && signy == 0 ){
       // 270
-      rad = rotateToward(this.rotation, DEG270, player.swordSpeed) 
+      rad = rotateToward(this.rotation, DEG270, this.wielder.swordSpeed) 
     } else if(signx == -1 && signy == 1 ){
       // 315
-      rad = rotateToward(this.rotation, DEG315, player.swordSpeed) 
+      rad = rotateToward(this.rotation, DEG315, this.wielder.swordSpeed) 
     }
 
     if( !isWithin(rad, this.rotation, DEG1) ){
@@ -72,8 +76,8 @@ class Sword {
 
     let radius = 0.3
     // position on sword circle lol
-    let x = radius * Math.sin( this.rotation ) + player.mesh.position.x
-    let y = radius * Math.cos( this.rotation ) + player.mesh.position.y
+    let x = radius * Math.sin( this.rotation ) + this.wielder.mesh.position.x
+    let y = radius * Math.cos( this.rotation ) + this.wielder.mesh.position.y
     this.mesh.position.set( x, y, 0 )
   }
 

@@ -111,6 +111,11 @@ class Player extends Character {
     }
   }
 
+  swordLength(){
+    let calc = 0.5 * (1 + (this.level-1) / 5 )
+    return Math.min(1.8, calc)
+  }
+
   levelUp(){
     this.knowledge = 0
     this.level += 1
@@ -131,9 +136,9 @@ class Player extends Character {
       if(this.sword){
         // remove and add so that we get new length
         this.sword.remove()
-        this.addSword()
+        this.addSword( this.swordLength() )
       }
-      this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/3)
+      this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/6)
       
       if(this.level != 2){
         game.announcement("SWORD LENGTH INCREASE")
@@ -190,8 +195,13 @@ class Player extends Character {
     fx_levelupE2.play()
   }
 
+  bombSmokeCost(){
+    return Math.floor(2 * Math.log( this.level-5 ) - 2)
+  }
+
   dropBomb(){
     if(this.numBombs > 0 && this.power >= 5){
+      // less power the higher level you are, cause you have more, and you need more
       this.changePower(-5)
 
       let bomb = new Bomb([50,50,50], this.level)
@@ -296,14 +306,14 @@ class Player extends Character {
 
   // sword
   addSword(){
-    this.sword = new Sword(0.5 * (1 + (this.level-1) / 5 ))
+    this.sword = new Sword( this.swordLength() )
     this.sword.mesh.visible = false
     scene.add( this.sword.mesh )
   }
 
   startSword(){
     if(!this.sword){
-      this.addSword()
+      this.addSword( this.swordLength() )
     }
 
     this.sword.active = true
@@ -333,7 +343,7 @@ class Player extends Character {
       r = Math.floor(Math.random() * 255)
       g = Math.floor(Math.random() * 255)
       b = Math.floor(Math.random() * 255)
-      let friend = new Friend(this.level*20, 20, [r,g,b], this.mesh.position)
+      let friend = new Friend(this.level*10, 20, [r,g,b], this.mesh.position)
       scene.add( friend.mesh )
 
       game.friends.push( friend )
@@ -348,6 +358,11 @@ class Player extends Character {
       this.killingCircle.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
       this.killingCircleArea.mesh.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
     }
+  }
+
+  swordCost(){
+    // easy peezy
+    return -1 * this.level
   }
 
   customAnimation(){
@@ -365,7 +380,7 @@ class Player extends Character {
 
           if(this.sword.powerTimer.time() > 100){
             this.sword.powerTimer.reset()
-            this.changePower(-3)
+            this.changePower( this.swordCost() )
           }
         }
       }

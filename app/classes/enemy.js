@@ -221,6 +221,44 @@ class Enemy extends Character {
     this.laps = 0
     this.patternWaitTimer = new Timer()
     this.patternWaitTimer.start()
+
+
+    // copied from player
+    this.swordEnabled = false
+    this.defaultSwordSpeed = DEG1
+    this.swordSpeed = DEG1
+  }
+
+  // sword
+  addSword(length){
+    this.sword = new Sword(length, 0, this)
+    this.sword.mesh.visible = false
+    scene.add( this.sword.mesh )
+  }
+
+  startSword(){
+    if(!this.sword){
+      this.addSword()
+    }
+
+    this.sword.active = true
+    this.sword.mesh.visible = true
+  }
+
+  stopSword(){
+    if(this.sword){
+      this.sword.active = true
+      this.sword.mesh.visible = false  
+    }
+  }
+
+  drawSword(){
+
+    if(this.sword.rotateTimer.time() > 2){
+      this.sword.rotateTimer.reset()
+
+      this.sword.bbox.setFromObject( this.sword.mesh )
+    }
   }
 
 
@@ -319,6 +357,16 @@ class Enemy extends Character {
   killSound(){
     let roll = Math.floor(Math.random() * this.killSounds.length)
     this.killSounds[ roll ].play()
+  }
+
+  handleEnemySword(){
+    // sword follows the same pattern as character
+    let hit = player.handleHit( this.sword )
+    if(hit && player.healthTimer.time() > 100){
+      player.healthTimer.reset()
+      // console.log( 'uum hellow', player.health )
+      player.changeHealth( -3 * game.roundCount )
+    }
   }
 
   handleSword(){
@@ -479,6 +527,22 @@ class Enemy extends Character {
     if(this.lifecycle == ALIVE){
       this.rotation()
 
+            // this.eatAnimation()
+      if(this.sword){
+
+        // move the shit around on cirlce around the player
+        this.sword.rotateTowardsMovement(this.accx, this.accy)
+
+        if(this.sword.mesh.visible){
+          this.drawSword()
+
+          // if(this.sword.powerTimer.time() > 100){
+          //   this.sword.powerTimer.reset()
+          //   this.changePower(-3)
+          // }
+        }
+      }
+
       if(this.enemyType == HEALCUBE && this.duster){
         // need to check for duster because its gone during corrupting
 
@@ -547,6 +611,7 @@ class Enemy extends Character {
         this.lifecycle = ALIVE
 
         // console.log( 'I CORRUPT NOW...', this.id )
+
 
 
         if(this.corrupted){

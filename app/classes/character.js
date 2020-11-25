@@ -120,6 +120,11 @@ class Character {
       }
     }
 
+    if(this.sword){
+      this.sword.remove()
+      this.sword = null
+    }
+
     // clean up on aisle akuma
     if(this.banners){
       this.banners.remove()

@@ -38,6 +38,10 @@ class Friend extends Character {
     this.intention = WANDER
     this.intentionTimer = new Timer()
     this.intentionTimer.start()
+
+    // how often should I waste away
+    this.starveTimer = new Timer()
+    this.starveTimer.start()
   }
 
   changePower(pwr){
@@ -46,7 +50,6 @@ class Friend extends Character {
 
   attack(other_char){
     let health = other_char.health
-    // let pwr = Math.round( health * ( Math.pow(player.level, 2)/300 - 1/20*player.level + 0.1  ) )
     
     // damage -> by level 10, MURDER IS INEVITABLE
     let pwr = Math.ceil( health * Math.log( Math.pow( (player.level+2), 2) )/4 )
@@ -64,11 +67,15 @@ class Friend extends Character {
       // do % damage to other aguy
       if(cost != 0 && pwr > 0){
         other_char.takeDamage(pwr, FRIEND)
+        // spend some power to kill
         this.changePower(-1 * cost)
+        // get some helf back fam
         this.changeHealth(Math.ceil(cost/4))
+
+        // we got a bite, so don worry
+        this.changeHealth(50)
+        this.starveTimer.reset()
       }
-      
-      // console.log( 'hateful attack for ', pwr )
     }
   }
 
@@ -148,6 +155,12 @@ class Friend extends Character {
   }
 
   customMovement(){
+
+    if(this.starveTimer.time() > 1000){
+      this.starveTimer.reset()
+      // drop 10% health, or 1, every second
+      this.changeHealth( -1 * (1 + Math.floor(this.health * 0.1)) )
+    }
 
     // decide what to do every 1s
     if(this.intentionTimer.time() > 1000){

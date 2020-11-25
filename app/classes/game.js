@@ -29,7 +29,7 @@
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
 
-    this.musicEnabled = true
+    this.musicEnabled = false
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -266,9 +266,9 @@
       // need to wipe this so timer works
       this.attractStage = null
 
-      for(var i=0; i<50; i++){
-        player.levelUp()
-      }
+      // for(var i=0; i<500; i++){
+      //   player.levelUp()
+      // }
     }
   }
 
@@ -895,9 +895,17 @@
     let meter = document.createElement("progress")
     meter.id = "friend" + index
     meterEle.appendChild(meter)
+    let healthEle = document.createElement("div")
+    healthEle.classList.add("friend-health")
+    let health = document.createElement("progress")
+    health.classList.add("friend-health")
+    health.max = 50
+    health.id = "friend-health" + index
+    healthEle.appendChild(health)
 
     container.appendChild(nameEle)
     container.appendChild(meterEle)
+    container.appendChild(healthEle)
     document.getElementById("friend-info").appendChild(container)
   }
 
@@ -914,17 +922,21 @@
     let color
     for(var i=0; i<this.friends.length; i++){
 
-      if( this.friends[i] && !document.getElementById("friend"+i) ){
-        // check if icon exists for friend, if not create that ho
-        let r,g,b
-        r = this.friends[i].baseColor[0]
-        g = this.friends[i].baseColor[1]
-        b = this.friends[i].baseColor[2]
-        color = rgbToHex(r,g,b)
-        game.addFriendIcon("friend", i, color)
-      }
+      if( this.friends[i] ){
+        if( !document.getElementById("friend"+i) ){
+          // check if icon exists for friend, if not create that ho
+          let r,g,b
+          r = this.friends[i].baseColor[0]
+          g = this.friends[i].baseColor[1]
+          b = this.friends[i].baseColor[2]
+          color = rgbToHex(r,g,b)
+          game.addFriendIcon("friend", i, color)
+        }
 
-      document.getElementById("friend" + i).value = this.friends[i].power
+        document.getElementById("friend" + i).value = this.friends[i].power  
+        document.getElementById("friend-health" + i).value = this.friends[i].health
+      }
+      
     }
   }
 
@@ -1033,6 +1045,13 @@
       if(this.enemies[enemyId] && !this.enemies[enemyId].inScene){
         scene.add(this.enemies[enemyId].mesh)
         this.enemies[enemyId].inScene = true
+        
+        // no swords until 10, after round 64, every enemy has a sword
+        if(this.roundCount >= 10 && Math.random() > this.roundCount/-64 + 1 ){
+          // enemy sword wow!
+          this.enemies[enemyId].addSword(0.2 * (1 + (this.roundCount-1) / 8 ) )
+          this.enemies[enemyId].startSword()  
+        }
       }
     }  
     
@@ -1108,7 +1127,7 @@
 
     if(deletedSomeone){
       // only if we did it :)
-      for(var x=0;x<this.friends.length;x++){
+      for(var x=(this.friends.length-1);x>=0;x--){
         if(!this.friends[x]){
           this.removeFriendIcon(x)
           this.friends.splice(x, 1)
@@ -1165,11 +1184,17 @@
       enemy.handleBombs()
     }
 
-    // doesnt seem like this should be necessary, but getting some ghost kills on last place sword was out
+    // keep, getting some ghost kills on last place sword was out
     if(player.sword && player.sword.active && player.sword.mesh.visible){
       // if the swords out, get stabt
       enemy.handleSword()
     }
+
+    // if(enemy.sword && enemy.sword.active && enemy.sword.mesh.visible){
+    //   // if the swords out, stabt 2 you
+    //   enemy.handleEnemySword()
+    // }
+
 
     if(this.smokes.length > 0){
       enemy.handleSmokes()
@@ -1178,6 +1203,12 @@
     if(game.friends.length > 0){
       // if the friends out, get murdered
       enemy.handleFriends()
+    }
+
+    // enemy can hav sword    
+    if(enemy.sword && enemy.sword.active && enemy.sword.mesh.visible){
+      // if the swords out, stabt 2 you
+      enemy.handleEnemySword()
     }
 
     // LIFE/CORRUPTION
@@ -1238,16 +1269,19 @@
             
           if(enemy.godCorrupted){
             player.takeDamage( game.godCorruptedDamage, ENEMY )
+
           } else {
             // this is regular corrupted damage
             player.takeDamage( game.corruptedDamage, ENEMY )
           }
 
-          if(player.lifecycle == ALIVE && player.health <= 0){
-            player.lifecycle = DYING
-          }
         }
 
+      }
+
+      // if we're dead for any old reason, die 
+      if(player.lifecycle == ALIVE && player.health <= 0){
+        player.lifecycle = DYING
       }
 
       let friend
