@@ -18,13 +18,13 @@ class Friend extends Character {
     this.powerMax = 75
 
     if(this.dna <= 0.33){
-      console.log( 'creating WANDER' )
+      // console.log( 'creating WANDER' )
       this.type = WANDER
     } else if(this.dna > 0.33 && this.dna <= 0.66){
-      console.log( 'creating CHASER' )
+      // console.log( 'creating CHASER' )
       this.type = CHASER
     } else if(this.dna > 0.66){
-      console.log( 'creating FOLLOWER' )
+      // console.log( 'creating FOLLOWER' )
       this.type = FOLLOWER
     }
 

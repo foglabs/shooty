@@ -68,7 +68,7 @@ class Enemy extends Character {
     let intention    
     let allowedToPattern
     if(enemyType == STICK){
-      console.log( '0 trime' )
+      // console.log( '0 trime' )
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
       health = 2
@@ -78,7 +78,7 @@ class Enemy extends Character {
       allowedToPattern = true
       intention = PATTERNMOVE
     } else if(enemyType == SPHERE){
-      console.log( '1 trime' )
+      // console.log( '1 trime' )
       // sphere
       health = 8
       nutritionalValue = 26
@@ -88,7 +88,7 @@ class Enemy extends Character {
       allowedToPattern = true
       intention = PATTERNMOVE
     } else if(enemyType == CIRCLE) {
-      console.log( '2 trime' )
+      // console.log( '2 trime' )
       // circle
       health = 0.04
       nutritionalValue = 22
@@ -98,7 +98,7 @@ class Enemy extends Character {
       allowedToPattern = true
       intention = PATTERNMOVE
     } else if(enemyType == HEALCUBE){
-      console.log( '3 trime' )
+      // console.log( '3 trime' )
       // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
       health = 18
@@ -108,7 +108,7 @@ class Enemy extends Character {
       intention = WANDER
       allowedToPattern = false
     } else if(enemyType == KNOWLOCTA) {
-      console.log( '4 trime' )
+      // console.log( '4 trime' )
       // knowledge octa
       health = 12
       nutritionalValue = 26
@@ -300,6 +300,8 @@ class Enemy extends Character {
       score = score * 4
     } else if(this.godCorrupted){
       score = score * 16
+    } else if(this.greenCorrupted){
+      score = score * 100
     }
 
     return score
@@ -417,6 +419,53 @@ class Enemy extends Character {
         }
       }
     }
+  }
+
+  // corruption stuff
+  godCorrupt(){
+    // god corruption
+    this.godCorrupted = true
+
+    // move slowly
+    this.lightness = 0.03
+    // big helf
+    this.health = 100
+    this.baseColor = [139,60,240]
+    this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
+
+    // douse the flames
+    this.banners.remove()
+
+    this.addBanners(corruptdustMap, 0.18, 16, 0.18)
+
+    // add the unthinkable script
+    let dist = 0.1 * this.scaleFactor
+    let size = 0.666 * this.scaleFactor
+    this.addGodBanners(godkillerMap, size, dist, 0.8)
+    this.hitColor = [255,255,255]
+
+    // same proportions as a before, diff sounds
+    this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+  }
+
+  greenCorrupt(){
+    this.greenCorrupted = true
+
+    // hes abig green motherfucker
+    this.lightness = 0.003
+    this.health = 500
+    this.baseColor = [0,255,0]
+    this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
+    this.hitColor = [0,255,100]
+
+    // up to 4x scale
+    this.mesh.scale.x = this.mesh.scale.x * ( Math.random() * 2 + 2 )
+    this.mesh.scale.y = this.mesh.scale.y * ( Math.random() * 2 + 2 )
+    this.mesh.scale.z = this.mesh.scale.z * ( Math.random() * 2 + 2 )
+
+    // douse the flames
+    this.banners.remove()
+    this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
   }
 
   addPoint(x,y){
@@ -611,37 +660,21 @@ class Enemy extends Character {
         this.lifecycle = ALIVE
 
         // console.log( 'I CORRUPT NOW...', this.id )
-
-
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
         if(this.corrupted){
-          // god corruption
-          this.godCorrupted = true
 
-          // move slowly
-          this.lightness = 0.03
-          // big helf
-          this.health = 100
-          this.baseColor = [139,60,240]
-          this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
-
-          // douse the flames
-          this.banners.remove()
-
-          this.addBanners(corruptdustMap, 0.18, 16, 0.18)
-
-          // add the unthinkable script
-          let dist = 0.1 * this.scaleFactor
-          let size = 0.666 * this.scaleFactor
-          this.addGodBanners(godkillerMap, size, dist, 0.8)
-          this.hitColor = [255,255,255]
-          
-          // same proportions as a before, diff sounds
-          this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+          if(game.roundCount < 20){
+            this.godCorrupt()
+          } else {
+            if(Math.random() > 0.5){
+              this.godCorrupt()
+            } else {
+              this.greenCorrupt()
+            }
+          }
 
         } else {
           // regular corruption
-
           this.health = 24
           this.corrupted = true
           this.intention = WANDER

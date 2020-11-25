@@ -119,6 +119,7 @@ add fog labs logo
 -need to track all sprites in some global way, too much getting disconnected from dead character when mode changes
   trask all when they first show up... clear periodically?
   cant expect them to have the time to fade, AND catch all edge cases of mode changes
+  *or who cares ^
 
 -instead of sprite attached to character, make it its own thing -> character gone, sprite keeps getting handled
 
@@ -129,3 +130,28 @@ add fog labs logo
 -possibly add hitman or green giant bad guys?
 
   -enemie start to have swords
+
+
+
+
+
+
+after x level all enemies have swords
+e swords get longer with roundcount
+
+enemies with smokes/bombs?
+  maybe at least one other thing that enemies get
+  whirling dervish saw?
+
+
+
+player sword gets longer with level, reasonable maximum
+by p level 32(?) sword takes enough power to drain bar qucikly
+
+add green giant enemies
+  add 'grunt' kill sounds
+
+
+add hitman enemies
+
+

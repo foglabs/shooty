@@ -179,6 +179,9 @@
     this.godCorruptedDamageDefault = 16
     this.godCorruptedDamage = 16
 
+    this.greenCorruptedDamageDefault = 64
+    this.greenCorruptedDamage = 64
+
     this.corruptingTimeDefault = 1800
     this.corruptingTime = this.corruptingTimeDefault
 
@@ -266,9 +269,9 @@
       // need to wipe this so timer works
       this.attractStage = null
 
-      // for(var i=0; i<500; i++){
-      //   player.levelUp()
-      // }
+      for(var i=0; i<500; i++){
+        player.levelUp()
+      }
     }
   }
 
@@ -303,6 +306,7 @@
     this.corruptedDamage = Math.round( this.corruptedDamageDefault + Math.pow( (this.roundCount/5), 2 ) )
     this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
 
+    this.greenCorruptedDamage = Math.round( this.greenCorruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
 
     this.changeScore(this.roundCount * 10)
 
@@ -762,6 +766,8 @@
       let remaining = this.enemyTimer.time()
       this.drawTimer(remaining)
 
+      this.drawRound(this.roundCount)
+
       // if enemy timer finishesa, add more enemies
       if(remaining == 0 ){
 
@@ -944,6 +950,10 @@
     document.getElementById("timer").innerHTML = time
   }
 
+  drawRound(roundCount){
+    document.getElementById("roundCount").innerHTML = roundCount
+  }
+
   drawScore(){
     document.getElementById("score").innerHTML = this.score
   }
@@ -1046,8 +1056,8 @@
         scene.add(this.enemies[enemyId].mesh)
         this.enemies[enemyId].inScene = true
         
-        // no swords until 10, after round 64, every enemy has a sword
-        if(this.roundCount >= 10 && Math.random() > this.roundCount/-64 + 1 ){
+        // no swords until 10, after round 256, every enemy has a sword
+        if(this.roundCount >= 10 && Math.random() > this.roundCount/-256 + 1 ){
           // enemy sword wow!
           this.enemies[enemyId].addSword(0.2 * (1 + (this.roundCount-1) / 8 ) )
           this.enemies[enemyId].startSword()  
@@ -1269,7 +1279,8 @@
             
           if(enemy.godCorrupted){
             player.takeDamage( game.godCorruptedDamage, ENEMY )
-
+          } else if(enemy.greenCorrupted){
+            player.takeDamage( game.greenCorruptedDamage, ENEMY )
           } else {
             // this is regular corrupted damage
             player.takeDamage( game.corruptedDamage, ENEMY )
@@ -1320,11 +1331,7 @@
 
         if(ch > god){
 
-          console.log( 'I GODCORRUPTED IT' )
-          console.log( 'goddcorrupt chance...', god, ch )
-
           // godkill corruption wil just happen because were already corrupted
-          console.log( 'starting god killer' )
           enemy.startCorrupting()  
         }
         
@@ -1372,7 +1379,6 @@
         game.changeScore(score)
         enemy.lifecycle = DYING
 
-        // console.log( 'eneemy dying ', enemy.id )
         enemy.killSound()
         enemy.remove()
       }
@@ -1394,8 +1400,6 @@
       this.corruptionTimer.start()
     }
 
-    // console.log('tehre are enemies ', this.enemies.length)
-
     let enemiesKeys = k(this.enemies)
     let enemyId
     for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
@@ -1409,7 +1413,6 @@
 
     // check for player bombs if there are bombs
     if(this.nowRandomBombing && this.bombs.length > 0){
-      // console.log( 'now player bombs' )
 
       // round end bombs hurt player *a little*
       player.handleBombs()

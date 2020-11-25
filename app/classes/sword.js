@@ -12,7 +12,6 @@ class Sword {
     // deafult player
     this.wielder = wielder
 
-    console.log( 'LENGH', this.length )
     let geo = new THREE.ConeGeometry( 0.01, this.length, 32 )
     let bbox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3())
     this.bbox = bbox
