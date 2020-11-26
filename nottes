@@ -153,5 +153,44 @@ add green giant enemies
 
 
 add hitman enemies
+  big hitt, gold chain BLEENG
+
+  another corrupted type after round 30(?)
+
+
+  spawns with a $x contract on player's life
+
+  if has fromEnemy contract
+    pursues player
+    hurts player
+    at speed determined by remaining money
+    money spends down each second or whatever
+
+  if has fromPlayer contract
+    pursues random enemy
+    hurts all enemies
+    at speed determined by remaining money
+    money spends down each second or whatever
+
+  if no contract
+    wanders
+    if player touches (eat) and has money, start fromPlayer contract
+    if enemy touches and has money, start fromPlayer contract
+
+  eats shoots and leaves
+    shoots your (contract target) bich ass
+    sends bullets to target's position?
+
+
+  black/gray lookin enemy
+    toon shade?
+
+  enemies generate ~1$ a second or something
+  player gets x$ per level up/ y$ per boss kill and can earn money in casino!
+
+
+  materials
+    get some real materials ya fool
+
 
 

@@ -182,6 +182,9 @@
     this.greenCorruptedDamageDefault = 64
     this.greenCorruptedDamage = 64
 
+    this.hitmanCorruptedDamageDefault = 64
+    this.hitmanCorruptedDamage = 64
+
     this.corruptingTimeDefault = 1800
     this.corruptingTime = this.corruptingTimeDefault
 
@@ -269,9 +272,9 @@
       // need to wipe this so timer works
       this.attractStage = null
 
-      for(var i=0; i<500; i++){
-        player.levelUp()
-      }
+      // for(var i=0; i<500; i++){
+      //   player.levelUp()
+      // }
     }
   }
 

@@ -45,6 +45,16 @@ class Character {
     this.damagedBy = null
 
     this.dragCoefficient = 0.009
+
+    this.money = 0
+  }
+
+  drawMoney(){
+    // draw money over chars head... when they spennin
+  }
+
+  changeMoney(amt){
+    this.money += amt
   }
 
   moveTowardsPoint(destx, desty, speedFactor=1){

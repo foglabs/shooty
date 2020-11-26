@@ -227,6 +227,9 @@ class Enemy extends Character {
     this.swordEnabled = false
     this.defaultSwordSpeed = DEG1
     this.swordSpeed = DEG1
+
+    this.moneyTimer = new Timer()
+    this.moneyTimer.start()
   }
 
   // sword
@@ -468,6 +471,21 @@ class Enemy extends Character {
     this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
   }
 
+  hitmanCorrupt(){
+    this.hitmanCorrupted = true
+
+    // hes abig hitman motherfucker
+    this.lightness = 0.3
+    this.health = 180
+    this.baseColor = [40,40,40]
+    this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
+    this.hitColor = [80,80,80]
+
+    // douse the flames
+    this.banners.remove()
+    this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3] 
+  }
+
   addPoint(x,y){
     // can use this to snap coordinates to game area edges
     // console.log( 'input ', x,y )
@@ -576,6 +594,11 @@ class Enemy extends Character {
     if(this.lifecycle == ALIVE){
       this.rotation()
 
+      if(this.moneyTimer.time() > 1000){
+        this.moneyTimer.reset()
+        this.money += 1
+      }
+
             // this.eatAnimation()
       if(this.sword){
 
@@ -584,11 +607,6 @@ class Enemy extends Character {
 
         if(this.sword.mesh.visible){
           this.drawSword()
-
-          // if(this.sword.powerTimer.time() > 100){
-          //   this.sword.powerTimer.reset()
-          //   this.changePower(-3)
-          // }
         }
       }
 
