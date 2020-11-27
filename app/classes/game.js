@@ -1,4 +1,4 @@
- class Game {
+class Game {
   constructor(){
 
     // the ol square
@@ -30,6 +30,10 @@
     this.clearAnnouncements()
 
     this.musicEnabled = false
+
+    this.showMoneyLabelState = SHOWING
+    this.showMoneyLabelTimer = new Timer()
+    this.showMoneyLabelTimer.start()
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -410,6 +414,7 @@
   handleGame(){
     this.handleAnnouncements()
     this.handleMusic()
+    this.handleMoneyLabels()
 
     if(this.stage == TITLE){      
 
@@ -1174,13 +1179,52 @@
         }
       }
     }
-
-
   }
 
   everybodyDead(){
     // need to flag rounds getting enemies so rounds dont just end instantly
     return k(this.enemies).every((enemyId) => this.enemies[enemyId].lifecycle == DEAD || this.enemies[enemyId].lifecycle == DYING)
+  }
+
+  showMoneyLabels(){
+    this.showMoneyLabelState = SHOWING
+  }
+
+  hideMoneyLabels(){
+    this.showMoneyLabelState = HIDING
+  }
+
+  handleMoneyLabels(){
+    if(this.showMoneyLabelTimer.time() > 100){
+      this.showMoneyLabelTimer.reset()
+    
+      if(this.showMoneyLabelState == SHOWING || this.showMoneyLabelState == HIDING){
+
+        let enemy, eKeys
+        eKeys = k(this.enemies)
+        for(var i=0; i<eKeys.length; i++){
+          enemy = this.enemies[ eKeys[i] ]
+          if(enemy.moneyLabel){
+
+            if(this.showMoneyLabelState == SHOWING && enemy.moneyLabel.material.opacity < 1){
+              enemy.moneyLabel.material.opacity += 0.1
+            } else if(this.showMoneyLabelState == HIDING && enemy.moneyLabel.material.opacity > 0){
+              enemy.moneyLabel.material.opacity -= 0.1
+            }
+          }
+        }
+
+        if(player.moneyLabel){
+
+          if(this.showMoneyLabelState == SHOWING && player.moneyLabel.material.opacity < 1){
+            player.moneyLabel.material.opacity += 0.1
+          } else if(this.showMoneyLabelState == HIDING && player.moneyLabel.material.opacity > 0){
+            player.moneyLabel.material.opacity -= 0.1
+          }
+        }
+      }
+      
+    }
   }
 
   handleEnemy(enemy){
@@ -1203,12 +1247,6 @@
       enemy.handleSword()
     }
 
-    // if(enemy.sword && enemy.sword.active && enemy.sword.mesh.visible){
-    //   // if the swords out, stabt 2 you
-    //   enemy.handleEnemySword()
-    // }
-
-
     if(this.smokes.length > 0){
       enemy.handleSmokes()
     }
@@ -1222,6 +1260,10 @@
     if(enemy.sword && enemy.sword.active && enemy.sword.mesh.visible){
       // if the swords out, stabt 2 you
       enemy.handleEnemySword()
+    }
+
+    if(enemy.contract){
+      enemy.handleContract()
     }
 
     // LIFE/CORRUPTION
@@ -1256,10 +1298,10 @@
     } else if(enemy.corrupted) {
 
       if(player.killingCircle && player.killingCircle.visible){
-
         let hit = enemy.handleHit( player.killingCircleArea )
 
         if(hit){
+          // killing circle is out and hitting this enemy
         
           if(enemy.healthTimer.time() > 100){
             enemy.healthTimer.reset()
@@ -1284,13 +1326,14 @@
             player.takeDamage( game.godCorruptedDamage, ENEMY )
           } else if(enemy.greenCorrupted){
             player.takeDamage( game.greenCorruptedDamage, ENEMY )
+          } else if(enemy.hitmanCorrupted){
+            // will fuck you up
+            player.takeDamage( game.hitmanCorruptedDamage, ENEMY )
           } else {
             // this is regular corrupted damage
             player.takeDamage( game.corruptedDamage, ENEMY )
           }
-
         }
-
       }
 
       // if we're dead for any old reason, die 
@@ -1340,16 +1383,35 @@
         
       }
 
+      if(enemy.hitmanCorrupted && !enemy.contract){
+        // if we're a big hitt and not already on a contract, check all living enemies for money, then touch
+
+        let en, eK
+        eK = k(this.enemies)
+        for(var i=0;i<eK.length;i++){
+          en = this.enemies[ eK[i] ]
+          if(!en.hitmanCorrupted && en.lifecycle == ALIVE && en.money >= 50){
+            
+            if( enemy.handleHit( en ) ){
+              // if en is not hitman, and touch and money, start contract
+              let cost = en.money
+              en.changeMoney( -1 * cost )
+              enemy.addPlayerContract(cost, en.mesh.id)
+            }
+          }
+        }
+      }
+
       this.numCorrupted += 1
     }
 
 
-   if(enemy.health <= 0){
+    if(enemy.health <= 0){
       // reward your KILLING
 
       // this removes the mesh right now
       // you can kill while corrupting, make sure they actually die
-      if(enemy.lifecycle == ALIVE || enemy.lifecycle == CORRUPTING){
+      if( enemy.lifecycle == ALIVE || enemy.lifecycle == CORRUPTING ){
 
         // only score once
         let score

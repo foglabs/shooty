@@ -228,8 +228,17 @@ class Enemy extends Character {
     this.defaultSwordSpeed = DEG1
     this.swordSpeed = DEG1
 
+    // MONEY
     this.moneyTimer = new Timer()
     this.moneyTimer.start()
+
+    // if you are a hitman, on a contract, you gradually spend that breado
+    this.contractSpendTimer = new Timer()
+    this.contractSpendTimer.start()
+
+    this.money = 0
+    this.lastMoney = 0
+    this.addMoneyLabel("#00ff00")
   }
 
   // sword
@@ -474,6 +483,7 @@ class Enemy extends Character {
   hitmanCorrupt(){
     this.hitmanCorrupted = true
 
+    console.log( 'corrupt your bitch ass' )
     // hes abig hitman motherfucker
     this.lightness = 0.3
     this.health = 180
@@ -484,6 +494,60 @@ class Enemy extends Character {
     // douse the flames
     this.banners.remove()
     this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3] 
+  }
+
+  handleContract(){
+    if(this.money > 0){
+
+      if(this.contract.type == ONPLAYER){
+        console.log( '' )
+
+        this.moveTowardsPoint( player.mesh.position.x, player.mesh.position.y, player.mesh.position.z )
+      } else if(this.contract.type == ONENEMY && game.enemies[this.contract.targetId] && game.enemies[this.contract.targetId].lifecycle == ALIVE){
+
+        // kill em
+        // purseu enemy
+        this.moveTowardsPoint( game.enemies[ this.contract.targetId ].mesh.position.x, game.enemies[ this.contract.targetId ].mesh.position.y, game.enemies[ this.contract.targetId ].mesh.position.z )
+      }
+
+      if(this.contractSpendTimer.time() > 1000){
+        this.contractSpendTimer.reset()
+        // if we're on any kind of contract, spend 10 bones a sex
+        this.changeMoney(-10)
+      }
+    } else {
+
+      this.endContract()
+    }
+
+  }
+
+  addPlayerContract(cost, clientId){
+    this.contract = new Contract(ONPLAYER, cost, null, clientId)
+    console.log( 'add p contract', cost, clientId )
+  }
+
+  addEnemyContract(targetId){
+    // charge player
+
+    let cost = 500
+    player.changeMoney(-500)
+    this.contract = new Contract(ONENEMY, cost, targetId)
+    console.log( 'add e contract', cost, targetId )
+  }
+
+  endContract(){
+    // temp
+    if(this.contract.type == ONPLAYER){
+      console.log( 'end contract' )
+      if(game.enemies[ this.contract.clientId ]){
+        game.enemies[ this.contract.clientId ].base_color = [0,255,255]
+        game.enemies[ this.contract.clientId ].setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])    
+      }
+      
+    }
+    
+    this.contract = null
   }
 
   addPoint(x,y){
@@ -594,9 +658,9 @@ class Enemy extends Character {
     if(this.lifecycle == ALIVE){
       this.rotation()
 
-      if(this.moneyTimer.time() > 1000){
+      if(!this.hitmanCorrupted && this.moneyTimer.time() > 1000){
         this.moneyTimer.reset()
-        this.money += 1
+        this.changeMoney(10)
       }
 
             // this.eatAnimation()
@@ -683,15 +747,25 @@ class Enemy extends Character {
 
           if(game.roundCount < 20){
             this.godCorrupt()
-          } else {
+          } else if(game.roundCount < 30) {
             if(Math.random() > 0.5){
               this.godCorrupt()
             } else {
               this.greenCorrupt()
             }
+          } else {
+            let roll = Math.random()
+            if(roll > 0.66){
+              this.godCorrupt()
+            } else if(roll > 0.33) {
+              this.greenCorrupt()
+            } else {
+              this.hitmanCorrupt()
+            }
           }
 
         } else {
+
           // regular corruption
           this.health = 24
           this.corrupted = true
@@ -706,6 +780,9 @@ class Enemy extends Character {
           this.hitColor = [255,0,0]
           // same proportions as a before, diff sounds
           this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+          
+          this.hitmanCorrupt()
+
         }
         
       }

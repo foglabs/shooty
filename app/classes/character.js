@@ -46,7 +46,7 @@ class Character {
 
     this.dragCoefficient = 0.009
 
-    this.money = 0
+    // set money label in subclasses so it doesnt get put on bombs and stuff
   }
 
   drawMoney(){
@@ -54,6 +54,7 @@ class Character {
   }
 
   changeMoney(amt){
+    this.lastMoney = this.money
     this.money += amt
   }
 
@@ -130,6 +131,10 @@ class Character {
       }
     }
 
+    if(this.moneyLabel){
+      this.removeMoneyLabel()
+    }
+
     if(this.sword){
       this.sword.remove()
       this.sword = null
@@ -194,6 +199,11 @@ class Character {
     }
   }
 
+  removeMoneyLabel(){
+    this.moneyLabel.material.dispose()
+    scene.remove(this.moneyLabel)
+  }
+
   red(){
     this.color[0]
   }
@@ -251,6 +261,13 @@ class Character {
     }
   }
 
+  handleMoneyLabel(){
+    if(this.money !== this.lastMoney){
+      this.lastMoney = this.money
+      this.removeMoneyLabel()
+      this.addMoneyLabel("#00ff00")
+    }
+  }
 
   // this gets redefined in subclasses to contain other every-loop movement logic specific to the class
   customMovement(){}
@@ -295,6 +312,10 @@ class Character {
       if(this.godBanners){
         this.godBanners.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
       }
+
+      if(this.moneyLabel){
+        this.moneyLabel.position.set( this.mesh.position.x+0.5, this.mesh.position.y+0.3, this.mesh.position.z )
+      }
     }
 
     // this will be for sprites attached to living moving things
@@ -315,11 +336,6 @@ class Character {
 
       // hittin it
       this.isHit = true
-
-      // if(!this.corrupted){
-      //   this.health -= 1
-      // }
-
     } else {
 
       this.isHit = false
@@ -350,6 +366,38 @@ class Character {
     // ignores distance and num if badge == true
     this.godBanners = new Duster(map, size, 1, dist, this.mesh.position, opacity, true)
   }
+
+  addMoneyLabel(colorStr){
+    // create a canvas element
+    let moneyText = "$" + this.money
+    let mat = this.createTextMat(moneyText, colorStr, 0)
+    this.moneyLabel = new THREE.Sprite( mat )
+    this.moneyLabel.center.set( 0.5, 0.5 )
+    this.moneyLabel.scale.set( 1, 0.2, 1 )
+    scene.add( this.moneyLabel )
+  }
+
+  createTextMat(text, colorStr, opacity){
+    let canvas1 = document.createElement('canvas')
+    canvas1.width = 300
+    canvas1.height = 60
+    let context1 = canvas1.getContext('2d')
+    context1.font = "Bold 24px vcr"
+    // context1.fillStyle = "rgba(0,255,0,1)"
+    context1.fillStyle = colorStr
+    context1.textBaseLine = "middle"
+    context1.fillText( text, 0, 50)
+
+    // canvas contents will be used for a texture
+    let texture1 = new THREE.CanvasTexture(canvas1) 
+    texture1.needsUpdate = true
+
+    let material1 = new THREE.MeshBasicMaterial( { map: texture1, side: THREE.DoubleSide, opacity: opacity } )
+    material1.transparent = true
+
+    return material1
+  }
+
 
   changeHealth(healthChange){
     // this is for healing, dont want to use v similar takeDamage because it makes sounds
@@ -461,6 +509,10 @@ class Character {
     this.bbox.setFromObject(this.mesh)
 
     this.colorCycle()
+
+    if(this.money >= 0){
+      this.handleMoneyLabel()
+    }
 
     if(this.deadSprite && this.deadSpriteMoves){
       this.deadSprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)

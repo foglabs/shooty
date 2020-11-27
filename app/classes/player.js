@@ -19,7 +19,7 @@ class Player extends Character {
     this.lightness = 0.06
     this.dragCoefficient = 0.022
 
-    this.defaultPlayerValues()
+    this.defaultPlayerValues()    
   }
 
   defaultPlayerValues(){
@@ -67,6 +67,10 @@ class Player extends Character {
     this.knowledge = 0
     this.level = 1
     this.health = 100
+    
+    this.money = 0
+    this.lastMoney = 0
+    this.addMoneyLabel("#00ff00")
   }
   
   rotation(){
