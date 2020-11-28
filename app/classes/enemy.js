@@ -485,7 +485,7 @@ class Enemy extends Character {
 
     console.log( 'corrupt your bitch ass' )
     // hes abig hitman motherfucker
-    this.lightness = 0.3
+    this.lightness = 0.01
     this.health = 180
     this.baseColor = [40,40,40]
     this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
@@ -500,20 +500,20 @@ class Enemy extends Character {
     if(this.money > 0){
 
       if(this.contract.type == ONPLAYER){
-        console.log( '' )
 
-        this.moveTowardsPoint( player.mesh.position.x, player.mesh.position.y, player.mesh.position.z )
+        this.moveTowardsPoint( player.mesh.position.x, player.mesh.position.y, 3 )
       } else if(this.contract.type == ONENEMY && game.enemies[this.contract.targetId] && game.enemies[this.contract.targetId].lifecycle == ALIVE){
 
         // kill em
         // purseu enemy
-        this.moveTowardsPoint( game.enemies[ this.contract.targetId ].mesh.position.x, game.enemies[ this.contract.targetId ].mesh.position.y, game.enemies[ this.contract.targetId ].mesh.position.z )
+        this.moveTowardsPoint( game.enemies[ this.contract.targetId ].mesh.position.x, game.enemies[ this.contract.targetId ].mesh.position.y, 3 )
       }
 
       if(this.contractSpendTimer.time() > 1000){
         this.contractSpendTimer.reset()
         // if we're on any kind of contract, spend 10 bones a sex
         this.changeMoney(-10)
+        console.log( 'money is now', this.money )
       }
     } else {
 
@@ -781,7 +781,7 @@ class Enemy extends Character {
           // same proportions as a before, diff sounds
           this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
           
-          this.hitmanCorrupt()
+          // this.hitmanCorrupt()
 
         }
         

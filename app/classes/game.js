@@ -1326,7 +1326,7 @@ class Game {
             player.takeDamage( game.godCorruptedDamage, ENEMY )
           } else if(enemy.greenCorrupted){
             player.takeDamage( game.greenCorruptedDamage, ENEMY )
-          } else if(enemy.hitmanCorrupted){
+          } else if(enemy.hitmanCorrupted && enemy.contract && enemy.contract.type == ONPLAYER){
             // will fuck you up
             player.takeDamage( game.hitmanCorruptedDamage, ENEMY )
           } else {
