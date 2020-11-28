@@ -31,7 +31,7 @@ class Game {
 
     this.musicEnabled = false
 
-    this.showMoneyLabelState = SHOWING
+    this.showMoneyLabelState = HIDING
     this.showMoneyLabelTimer = new Timer()
     this.showMoneyLabelTimer.start()
 
@@ -1329,6 +1329,15 @@ class Game {
           } else if(enemy.hitmanCorrupted && enemy.contract && enemy.contract.type == ONPLAYER){
             // will fuck you up
             player.takeDamage( game.hitmanCorruptedDamage, ENEMY )
+
+          } else if(enemy.hitmanCorrupted && !enemy.contract){
+            // if no contract, check for player contract
+            if(player.money >= 500){
+              let cost = player.money
+              let randomTargetId = Math.floor( Math.random() * k(this.enemies).length )
+              enemy.addEnemyContract( cost, randomTargetId )
+            }
+
           } else {
             // this is regular corrupted damage
             player.takeDamage( game.corruptedDamage, ENEMY )

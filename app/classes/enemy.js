@@ -502,11 +502,21 @@ class Enemy extends Character {
       if(this.contract.type == ONPLAYER){
 
         this.moveTowardsPoint( player.mesh.position.x, player.mesh.position.y, 3 )
-      } else if(this.contract.type == ONENEMY && game.enemies[this.contract.targetId] && game.enemies[this.contract.targetId].lifecycle == ALIVE){
+      } else if(this.contract.type == ONENEMY){
 
         // kill em
         // purseu enemy
-        this.moveTowardsPoint( game.enemies[ this.contract.targetId ].mesh.position.x, game.enemies[ this.contract.targetId ].mesh.position.y, 3 )
+
+        if(game.enemies[this.contract.targetId] && game.enemies[this.contract.targetId].lifecycle == ALIVE){
+          // if target is still alive, KILL EM
+          this.moveTowardsPoint( game.enemies[ this.contract.targetId ].mesh.position.x, game.enemies[ this.contract.targetId ].mesh.position.y, 3 )
+
+        } else {
+          // if targets dead, pick a new one as long as we still got de dough
+          let randomTargetId = Math.floor( Math.random() * k(this.enemies).length )
+          this.contract.newTarget( randomTargetId )
+          game.enemies[ this.contract.targetId ]
+        }
       }
 
       if(this.contractSpendTimer.time() > 1000){
@@ -527,11 +537,9 @@ class Enemy extends Character {
     console.log( 'add p contract', cost, clientId )
   }
 
-  addEnemyContract(targetId){
+  addEnemyContract(cost, targetId){
     // charge player
-
-    let cost = 500
-    player.changeMoney(-500)
+    player.changeMoney(cost)
     this.contract = new Contract(ONENEMY, cost, targetId)
     console.log( 'add e contract', cost, targetId )
   }
