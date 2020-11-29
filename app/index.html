@@ -519,7 +519,7 @@
         keyHandler.heldKeys[event.key] = true
 
         // SPACE BAR
-        if(game.stage == TITLE || game.stage == GAMEOVER){
+        if( (game.stage == TITLE || game.stage == GAMEOVER) && game.readyToStartGame){
           
          if (event.key == " " || event.key == "Spacebar"){
 

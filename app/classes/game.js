@@ -31,10 +31,6 @@ class Game {
 
     this.musicEnabled = false
 
-    this.showMoneyLabelState = HIDING
-    this.showMoneyLabelTimer = new Timer()
-    this.showMoneyLabelTimer.start()
-
     this.stage = false
     this.stageTimer = new Timer()
     this.loadTime = 2000
@@ -65,8 +61,6 @@ class Game {
 
     this.startTime = null
     this.endTime = null
-
-
     // get and display score board first thing
     setScores()
   }
@@ -221,6 +215,12 @@ class Game {
     this.chanceSlices = this.calcChanceSlices()
 
     this.nowRandomBombing = false
+
+    this.showMoneyLabelState = HIDING
+    this.showMoneyLabelTimer = new Timer()
+    this.showMoneyLabelTimer.start()
+
+    this.readyToStartGame = true
   }
   
   calcChanceSlices(){
@@ -275,6 +275,9 @@ class Game {
       this.startTime = performance.now()
       // need to wipe this so timer works
       this.attractStage = null
+
+      // block this so that we cant retry before ENDING animation finishes
+      this.readyToStartGame = false
 
       // for(var i=0; i<500; i++){
       //   player.levelUp()
@@ -464,13 +467,13 @@ class Game {
       //   showScores(this.scores)
       // }
 
-      if(this.stageTimer.time() > this.loadTime ){
+      if(this.stageTimer.time() > this.loadTime && !this.readyToStartGame ){
+
+        // use readyTo to flag this so it only happens once
         this.cleanGame()
       }
     } else if(this.stage == DEMO){
       this.drawPlaying()
-
-
     }
 
     duster.animation()
@@ -827,7 +830,7 @@ class Game {
   // }
 
   cleanGame(){
-    
+    console.log( 'cleaning game' )
     this.cleanEnemies()
     this.cleanBombs()
     this.setDefaultGameValues()
