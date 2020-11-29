@@ -1273,7 +1273,7 @@ class Game {
 
       if(player.lifecycle == ALIVE && hitresult){
 
-        if(enemy.healthTimer.time() > 100){
+        if(enemy.healthTimer.time() > 60){
           // console.log( 'eneymy hit' )
           enemy.healthTimer.reset()
           enemy.takeDamage(4, EAT)

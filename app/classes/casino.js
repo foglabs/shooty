@@ -223,6 +223,7 @@ class Casino {
     }
 
     player.changePower(2*this.bet)
+    player.changeMoney(10*this.bet)
   }
 
   lose(){
@@ -236,6 +237,7 @@ class Casino {
     }
 
     player.changePower(-1*this.bet)
+    player.changeMoney(-10*this.bet)
   }
 
   removeHighlights(){

@@ -71,7 +71,7 @@ class Enemy extends Character {
       // console.log( '0 trime' )
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
-      health = 2
+      health = 1
       nutritionalValue = 16
       base_color = [72,201,46]
       lightness = 0.1
@@ -80,7 +80,7 @@ class Enemy extends Character {
     } else if(enemyType == SPHERE){
       // console.log( '1 trime' )
       // sphere
-      health = 8
+      health = 4
       nutritionalValue = 26
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
       base_color = [8,194,137]
@@ -90,7 +90,7 @@ class Enemy extends Character {
     } else if(enemyType == CIRCLE) {
       // console.log( '2 trime' )
       // circle
-      health = 0.04
+      health = 0.02
       nutritionalValue = 22
       geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [214,189,58]
@@ -101,7 +101,7 @@ class Enemy extends Character {
       // console.log( '3 trime' )
       // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
-      health = 18
+      health = 9
       nutritionalValue = 50
       base_color = [57,23,194]
       lightness = 0.02
@@ -110,7 +110,7 @@ class Enemy extends Character {
     } else if(enemyType == KNOWLOCTA) {
       // console.log( '4 trime' )
       // knowledge octa
-      health = 12
+      health = 6
       nutritionalValue = 26
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
@@ -554,6 +554,11 @@ class Enemy extends Character {
       }
       
     }
+
+    if(this.laserSight){
+      // thats enough
+      this.removeLaserSight()
+    }
     
     this.contract = null
   }
@@ -669,6 +674,35 @@ class Enemy extends Character {
       if(!this.hitmanCorrupted && this.moneyTimer.time() > 1000){
         this.moneyTimer.reset()
         this.changeMoney(10)
+      } else if(this.hitmanCorrupted && this.contract){
+        // only laser when hitman is working
+
+        if(this.moneyTimer.time() > 80){
+          this.moneyTimer.reset()
+          if(this.laserSight){
+            // get rid of old one
+            this.removeLaserSight()
+          }
+          
+          let edges = new THREE.EdgesGeometry( this.mesh.geometry, 90 )
+          let col
+
+          if(this.contract.type == ONPLAYER){
+            // red sights for onp contracts
+            col = rgbToHex( Math.floor( Math.random() * 200 + 55 ), 0, 0 )
+
+          } else {
+            // blue for player contracts
+          col = rgbToHex( 0, 0, Math.floor(Math.random() * 200 + 55 ) )
+
+          }
+          this.laserSight = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: col } ) )
+          this.laserSight.position.set( this.mesh.position.x,this.mesh.position.y,this.mesh.position.z )
+          this.laserSight.setRotationFromEuler( this.mesh.rotation )
+
+          scene.add( this.laserSight )  
+        }
+        
       }
 
             // this.eatAnimation()

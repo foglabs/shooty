@@ -119,6 +119,12 @@ class Character {
     }
   }
 
+  removeLaserSight(){
+    // only for hitman corrupted
+    this.laserSight.material.dispose()
+    scene.remove( this.laserSight )  
+  }
+
   remove(){
     // add sprite, then start fading it out - has to come before removing mesh to get position!
     if(this.lifecycle == DYING){
@@ -158,6 +164,13 @@ class Character {
     // if we're doing some extra-casino kiling
     if(game.casino && game.casino.highlights[this.id]){
       game.casino.removeHighlight(this.id)
+    }
+
+
+    if(this.hitmanCorrupted){
+      if(this.laserSight){
+        this.removeLaserSight()
+      }
     }
 
     this.mesh.geometry.dispose()
