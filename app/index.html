@@ -434,6 +434,10 @@
 
       // scene contains objects
       var scene = new THREE.Scene();
+      var light = new THREE.HemisphereLight( 0xffffff, 0x000000, 0.98 )
+      light.position.set( 0, 0, 2 )
+      scene.add( light )
+
 
       // clear name input
       document.getElementById("name-entry").value = ""
@@ -475,6 +479,9 @@
 
       let lightweightMap = loader.load( "sprites/lightweight.png")
       lightweightMaterial = new THREE.SpriteMaterial( { map: lightweightMap } )
+
+      let biggreenspriteMap = loader.load( "sprites/biggreensprite.png")
+      biggreenspriteMaterial = new THREE.SpriteMaterial( { map: biggreenspriteMap } )
 
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )

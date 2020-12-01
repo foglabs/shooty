@@ -4,7 +4,7 @@ class Character {
     this.accy = 0
 
     let basestr = rgbToHex(base_color[0], base_color[1], base_color[2])
-    this.mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial( { color: basestr, transparent: true }))
+    this.mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial( { reflectivity: 0.9, color: basestr, transparent: true }))
 
     this.bbox = bbox
 
@@ -376,7 +376,6 @@ class Character {
   }
 
   addGodBanners(map, size, dist, opacity=1){
-    // ignores distance and num if badge == true
     this.godBanners = new Duster(map, size, 1, dist, this.mesh.position, opacity, true)
   }
 

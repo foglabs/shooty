@@ -200,16 +200,17 @@ class Player extends Character {
   }
 
   bombSmokeCost(){
-    return Math.floor( Math.log( this.level-6 ) - 1)
+    // console.log( 'cost is ', Math.log( this.level-6 ) - 1)
+
+    // y = (x/2 - 5)^3
+    return Math.min(0, Math.floor( Math.pow(this.level/2 - 5, 3) ) )
   }
 
   dropBomb(){
     if(this.numBombs > 0 && this.power >= 5){
       // less power the higher level you are, cause you have more, and you need more
       let cost = this.bombSmokeCost()
-      if(cost > 0){
-        this.changePower(cost)
-      }
+      this.changePower(cost)
 
       let bomb = new Bomb([50,50,50], this.level)
       bomb.mesh.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)

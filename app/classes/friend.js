@@ -71,9 +71,12 @@ class Friend extends Character {
         this.changePower(-1 * cost)
         // get some helf back fam
         this.changeHealth(Math.ceil(cost/4))
+        
+        // give the player a lil power from.. symbiosis
+        player.changePower(1)        
 
         // we got a bite, so don worry
-        this.changeHealth(50)
+        // this.changeHealth(50)
         this.starveTimer.reset()
       }
     }

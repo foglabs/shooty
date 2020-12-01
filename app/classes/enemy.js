@@ -71,7 +71,7 @@ class Enemy extends Character {
       // console.log( '0 trime' )
       // stick
       geometry = new THREE.BoxGeometry(0.02,0.02,0.6)
-      health = 1
+      health = Math.ceil(1 * game.enemyHealthFactor)
       nutritionalValue = 16
       base_color = [72,201,46]
       lightness = 0.1
@@ -80,7 +80,7 @@ class Enemy extends Character {
     } else if(enemyType == SPHERE){
       // console.log( '1 trime' )
       // sphere
-      health = 4
+      health = Math.ceil(4 * game.enemyHealthFactor)
       nutritionalValue = 26
       geometry = new THREE.SphereGeometry( 0.09, 32, 32 )
       base_color = [8,194,137]
@@ -90,7 +90,7 @@ class Enemy extends Character {
     } else if(enemyType == CIRCLE) {
       // console.log( '2 trime' )
       // circle
-      health = 0.02
+      health = Math.ceil(0.02 * game.enemyHealthFactor)
       nutritionalValue = 22
       geometry = new THREE.CircleGeometry( 0.240, 32 )
       base_color = [214,189,58]
@@ -101,7 +101,7 @@ class Enemy extends Character {
       // console.log( '3 trime' )
       // heal cube
       geometry = new THREE.BoxGeometry(0.2,0.2,0.2)
-      health = 9
+      health = Math.ceil(9 * game.enemyHealthFactor)
       nutritionalValue = 50
       base_color = [57,23,194]
       lightness = 0.02
@@ -110,7 +110,7 @@ class Enemy extends Character {
     } else if(enemyType == KNOWLOCTA) {
       // console.log( '4 trime' )
       // knowledge octa
-      health = 6
+      health = Math.ceil(6 * game.enemyHealthFactor)
       nutritionalValue = 26
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
@@ -379,7 +379,9 @@ class Enemy extends Character {
     if(hit && player.healthTimer.time() > 100){
       player.healthTimer.reset()
       // console.log( 'uum hellow', player.health )
-      player.changeHealth( -3 * game.roundCount )
+
+      // e sword damage goes up slowly with roundcount
+      player.changeHealth( -1 * Math.ceil(game.roundCount / 3) )
     }
   }
 
@@ -461,6 +463,7 @@ class Enemy extends Character {
   }
 
   greenCorrupt(){
+    // this can happen mulitple times, getting bigger
     this.greenCorrupted = true
 
     // hes abig green motherfucker
@@ -471,12 +474,20 @@ class Enemy extends Character {
     this.hitColor = [0,255,100]
 
     // up to 4x scale
-    this.mesh.scale.x = this.mesh.scale.x * ( Math.random() * 2 + 2 )
-    this.mesh.scale.y = this.mesh.scale.y * ( Math.random() * 2 + 2 )
-    this.mesh.scale.z = this.mesh.scale.z * ( Math.random() * 2 + 2 )
+    this.mesh.scale.x = this.mesh.scale.x * ( Math.random() * 2 )
+    this.mesh.scale.y = this.mesh.scale.y * ( Math.random() * 2 )
+    this.mesh.scale.z = this.mesh.scale.z * ( Math.random() * 2 )
 
     // douse the flames
     this.banners.remove()
+    if(this.godBanners){
+      // if we're already green but growing we have these
+      this.godBanners.remove()
+    }
+
+    let dist = 0.1 * this.scaleFactor
+    let size = 0.5 * this.scaleFactor
+    this.addGodBanners(biggreenspriteMap, size, dist, 0.8)
     this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
   }
 
@@ -787,25 +798,37 @@ class Enemy extends Character {
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         if(this.corrupted){
 
-          if(game.roundCount < 20){
-            this.godCorrupt()
-          } else if(game.roundCount < 30) {
-            if(Math.random() > 0.5){
-              this.godCorrupt()
-            } else {
-              this.greenCorrupt()
-            }
-          } else {
-            let roll = Math.random()
-            if(roll > 0.66){
-              this.godCorrupt()
-            } else if(roll > 0.33) {
-              this.greenCorrupt()
-            } else {
-              this.hitmanCorrupt()
-            }
-          }
+          // only go once, as cool as the changing is...
+          if(!this.godCorrupted && !this.greenCorrupted && !this.hitmanCorrupted){
 
+            if(game.roundCount < 20){
+              this.godCorrupt()
+            } else if(game.roundCount < 30) {
+              if(Math.random() > 0.5){
+                this.godCorrupt()
+              } else {
+                this.greenCorrupt()
+              }
+            } else {
+              let roll = Math.random()
+              if(roll > 0.66){
+                this.godCorrupt()
+              } else if(roll > 0.33) {
+                this.greenCorrupt()
+              } else {
+                this.hitmanCorrupt()
+              }
+            }
+
+
+          } else if(this.greenCorrupted){
+            // green corrupt can keep growin bigger
+            this.greenCorrupt()
+            // wait another corrTime to do again
+            this.corruptingTimer.reset()
+            
+          }
+          
         } else {
 
           // regular corruption

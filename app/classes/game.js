@@ -177,8 +177,8 @@ class Game {
     this.godCorruptedDamageDefault = 16
     this.godCorruptedDamage = 16
 
-    this.greenCorruptedDamageDefault = 64
-    this.greenCorruptedDamage = 64
+    this.greenCorruptedDamageDefault = 32
+    this.greenCorruptedDamage = 32
 
     this.hitmanCorruptedDamageDefault = 64
     this.hitmanCorruptedDamage = 64
@@ -198,6 +198,8 @@ class Game {
     this.enemyInterval = 36000
     this.defaultEnemyMax = 5
     this.enemyMax = 5
+    this.defaultEnemyHealthFactor = 1
+    this.enemyHealthFactor = 1
 
     this.bombs = []
     this.randomBombsTimer = new Timer()
@@ -279,8 +281,12 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<500; i++){
+      // for(var i=0; i<30; i++){
       //   player.levelUp()
+      // }
+
+      // for(var i=0; i<30; i++){
+      //   game.nextRound()
       // }
     }
   }
@@ -288,14 +294,22 @@ class Game {
   nextRound(){
     // ramp up difficulty for next round
     // exponential, but dull it down so we get to about x20 base #enemies by round 12
-    let maxBump = 1 + Math.pow(this.roundCount, 2)/25
+
+    let maxBump
+    if(this.roundCount < 10){
+      // steeper enemy max curve until r10
+      maxBump = 1 + Math.pow(this.roundCount, 2)/25
+    } else {
+      maxBump = 4 + Math.pow(this.roundCount, 2)/100
+    }
+
     // make the max # of enemeis per gen bigger, floor it with 5 so we dont have 3 rounds of 2 enemies
-    // let newEnemyMax = this.defaultEnemyMax + Math.round(this.enemyMax * maxBump)
     let newEnemyMax = Math.round(this.defaultEnemyMax * maxBump)
+
     // make the enemy timer shorter
-    // let newEnemyInterval = Math.round(this.enemyInterval * 0.90)
-    // let newEnemyInterval = Math.round(this.defaultEnemyInterval * 90 / ( Math.pow((this.roundCount + 12), 2) ) + 13000 )
-    let newEnemyInterval = Math.round(this.defaultEnemyInterval * -1 * Math.pow( this.roundCount, 2 )/700 + 36000 )
+    // min 10s, decrease towards that until round 35
+    let newEnemyInterval = Math.max( 10000, Math.round(this.defaultEnemyInterval * -1 * Math.pow( this.roundCount, 2 )/1700 + 36000 ) )
+
     // increase maximum % of corurpted by 8%
     // let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
     let newCorruptionMax = (this.corruptionMaxDefault + (this.corruptionMaxDefault * Math.pow(this.roundCount, 2)) / 64 ).toFixed(2)
@@ -319,6 +333,12 @@ class Game {
     this.greenCorruptedDamage = Math.round( this.greenCorruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
 
     this.changeScore(this.roundCount * 10)
+
+    if(this.roundCount >= 20){
+      this.enemyHealthFactor = Math.max( 0.01, Math.log(this.roundCount/-3 + 12) )
+    } else {
+      this.enemyHealthFactor = 1
+    }
 
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b])
   }
@@ -799,6 +819,7 @@ class Game {
 
       //  if everybody's dead...
       if( this.everybodyDead() ){
+        this.cleanEnemies()
         this.nextRound()
       }
     }
@@ -1328,6 +1349,7 @@ class Game {
           if(enemy.godCorrupted){
             player.takeDamage( game.godCorruptedDamage, ENEMY )
           } else if(enemy.greenCorrupted){
+            console.log( 'gree corr damg' )
             player.takeDamage( game.greenCorruptedDamage, ENEMY )
           } else if(enemy.hitmanCorrupted && enemy.contract && enemy.contract.type == ONPLAYER){
             // will fuck you up
