@@ -4,7 +4,7 @@ class Character {
     this.accy = 0
 
     let basestr = rgbToHex(base_color[0], base_color[1], base_color[2])
-    this.mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial( { reflectivity: 0.9, color: basestr, transparent: true }))
+    this.mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1.0, clearcoatRoughness: 0.1 }))
 
     this.bbox = bbox
 

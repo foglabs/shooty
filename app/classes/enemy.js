@@ -448,7 +448,10 @@ class Enemy extends Character {
     this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
 
     // douse the flames
-    this.banners.remove()
+    if(this.banners){
+      // this if is only necessary because we want to instantly corrupt during demo - otherwise, this enemy would always have corurpt banners
+      this.banners.remove()
+    }
 
     this.addBanners(corruptdustMap, 0.18, 16, 0.18)
 
@@ -479,7 +482,9 @@ class Enemy extends Character {
     this.mesh.scale.z = this.mesh.scale.z * ( Math.random() * 2 )
 
     // douse the flames
-    this.banners.remove()
+    if(this.banners){
+      this.banners.remove()
+    }
     if(this.godBanners){
       // if we're already green but growing we have these
       this.godBanners.remove()
@@ -503,7 +508,9 @@ class Enemy extends Character {
     this.hitColor = [80,80,80]
 
     // douse the flames
-    this.banners.remove()
+    if(this.banners){
+      this.banners.remove()
+    }
     this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3] 
   }
 
@@ -795,7 +802,7 @@ class Enemy extends Character {
         this.lifecycle = ALIVE
 
         // console.log( 'I CORRUPT NOW...', this.id )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
         if(this.corrupted){
 
           // only go once, as cool as the changing is...

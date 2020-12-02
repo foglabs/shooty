@@ -49,7 +49,7 @@ class Game {
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = SCORES
+    this.attractStage = DEMO
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
@@ -100,7 +100,6 @@ class Game {
         // switch to actual show timer
         this.announcementFadeTimer.stop()
         this.announcementTimer.start()
-
       }
     }
 
@@ -496,7 +495,10 @@ class Game {
       this.drawPlaying()
     }
 
+    // 'stars'
     duster.animation()
+    pduster.animation()
+    p2duster.animation()
   }
 
   drawFlicker(){
@@ -504,17 +506,14 @@ class Game {
       this.flickerTimer.reset()
       let roll = Math.random()
       if(roll > 0.9){
-        this.setBackgroundColor(143,178,255)
-
+        // this.setBackgroundColor(143,178,255)
+        this.setBackgroundColor( Math.floor(this.backgroundColor[0] * 1.02), Math.floor(this.backgroundColor[1] * 1.01), Math.floor(this.backgroundColor[2] * 1.03) )
       } else if(roll > 0.8){
-        this.setBackgroundColor(140,180,255)
+        // this.setBackgroundColor(140,180,255)
+        this.setBackgroundColor( this.backgroundColor[0], this.backgroundColor[1], this.backgroundColor[2] )
       } else if(roll > 0.3){
-        // this.setBackgroundColor(70,90,123)  
-        this.setBackgroundColor(138,176,252)
-
-      // } else {
-      //   // this.setBackgroundColor(32,40,64)  
-      //   this.setBackgroundColor(142,170,250)
+        // this.setBackgroundColor(138,176,252)
+        this.setBackgroundColor( Math.floor(this.backgroundColor[0] * 0.982), Math.floor(this.backgroundColor[1] * 0.981), Math.floor(this.backgroundColor[2] * 0.983) )
       }
     }
   }
@@ -542,6 +541,19 @@ class Game {
   }
 
   drawTitle(){
+    // if we finished fadhing to a color, stop all that fadin
+    if(isWithin(this.backgroundColor[0], this.roundColor[0], 5) && isWithin(this.backgroundColor[1], this.roundColor[1], 5) && isWithin(this.backgroundColor[2], this.roundColor[2], 5)){
+      this.lastRoundColor[0] = this.roundColor[0]
+      this.lastRoundColor[1] = this.roundColor[1]
+      this.lastRoundColor[2] = this.roundColor[2]
+
+      this.setBackgroundColor( this.roundColor[0],this.roundColor[1],this.roundColor[2] )
+    } else {
+      this.fadeBackgroundToward()
+    }
+
+
+    // waver the actual bg color a bit
     this.drawFlicker()
 
     if( ( game.nameEntry == NONAME) && checkSoundsLoaded() ){
@@ -549,6 +561,9 @@ class Game {
       if(this.attractTimer.time() > 16000){
         this.attractTimer.reset()
         this.attractStage += 1
+
+        this.roundColor = [140,180,255]
+        this.roundColor = [Math.floor( Math.random() * 255 ), Math.floor( Math.random() * 255 ), Math.floor( Math.random() * 255 )]
 
         if(this.attractStage > 4){
           this.attractStage = 0
@@ -579,7 +594,7 @@ class Game {
 
         if(!this.demo){
           let selectedDemo = Math.floor( Math.random() * 3 )
-
+          selectedDemo = 3
           let characters = []
           player.mesh.visible = true
 
@@ -590,8 +605,10 @@ class Game {
             characters.push(player)
 
             let enemy1 = this.addEnemy(KNOWLOCTA)
+            scene.add(enemy1.mesh)
             characters.push(enemy1)
             let enemy2 = this.addEnemy(KNOWLOCTA)
+            scene.add(enemy2.mesh)
             characters.push(enemy2)
 
             let event = new Event(0, 600, 0.5, 0.5)
@@ -609,16 +626,22 @@ class Game {
             console.log( 'picked 1s' )
             characters.push(player)
             let enemy1 = this.addEnemy(STICK)
+            scene.add(enemy1.mesh)
             characters.push(enemy1)
             let enemy2 = this.addEnemy(KNOWLOCTA)
+            scene.add(enemy2.mesh)
             characters.push(enemy2)
             let enemy3 = this.addEnemy(SPHERE)
+            scene.add(enemy3.mesh)
             characters.push(enemy3)
             let enemy4 = this.addEnemy(HEALCUBE)
+            scene.add(enemy4.mesh)
             characters.push(enemy4)
             let enemy5 = this.addEnemy(CIRCLE)
+            scene.add(enemy5.mesh)
             characters.push(enemy5)
             let enemy6 = this.addEnemy(KNOWLOCTA)
+            scene.add(enemy6.mesh)
             characters.push(enemy6)
 
             let event = new Event(0, 100, 0, 0)
@@ -663,13 +686,18 @@ class Game {
             this.demo = new Demo(characters, 15000, [event,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15,event16,event17,event18,event19,event20,event21,event22,event23,event24,event25,event26,event27,event28,event29,event30])
             this.enemies = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6]
           } else if(selectedDemo == 2) {
+
             let enemy1 = this.addEnemy(STICK)
+            scene.add(enemy1.mesh)
             characters.push(enemy1)
             let enemy2 = this.addEnemy(STICK)
+            scene.add(enemy2.mesh)
             characters.push(enemy2)
             let enemy3 = this.addEnemy(STICK)
+            scene.add(enemy3.mesh)
             characters.push(enemy3)
             let enemy4 = this.addEnemy(STICK)
+            scene.add(enemy4.mesh)
             characters.push(enemy4)
 
             let event = new Event(0, 100, 0, 0)
@@ -690,6 +718,107 @@ class Game {
             let event15 = new Event(3, 8000, -0.3, 0.2)
             this.demo = new Demo(characters, 15000, [event,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15])
             this.enemies = [enemy1, enemy2, enemy3, enemy4]
+          
+          } else if(selectedDemo == 3) {
+            this.roundColor = [0,0,0]
+            this.roundCount = 30
+
+            // temp set this so we can just instantly do our shit
+            this.corruptingTime = 100
+
+            let enemy1 = this.addEnemy(STICK, -3, 2)
+            scene.add(enemy1.mesh)
+            enemy1.inScene = true
+            characters.push(enemy1)
+            
+            let enemy2 = this.addEnemy(SPHERE, -3, 1)
+            scene.add(enemy2.mesh)
+            enemy2.inScene = true
+            characters.push(enemy2)
+            
+            let enemy3 = this.addEnemy(CIRCLE, -3, 0)
+            scene.add(enemy3.mesh)
+            enemy3.inScene = true
+            characters.push(enemy3)
+            
+            let enemy4 = this.addEnemy(HEALCUBE, -3, -1)
+            scene.add(enemy4.mesh)
+            enemy4.inScene = true
+            characters.push(enemy4)
+            
+            let enemy5 = this.addEnemy(KNOWLOCTA, -3, -2)
+            scene.add(enemy5.mesh)
+            enemy5.inScene = true
+            characters.push(enemy5)
+            
+
+            // random enemy types for ex corrupt demos
+            let enemy6 = this.addEnemy( Math.floor( Math.random() * 5 ) , 3 , 2)
+            scene.add(enemy6.mesh)
+            enemy6.inScene = true
+            characters.push(enemy6)
+            
+            enemy6.startCorrupting()
+            let enemy7 = this.addEnemy( Math.floor( Math.random() * 5 ) , 3 , 1)
+            scene.add(enemy7.mesh)
+            enemy7.inScene = true
+            characters.push(enemy7)
+            
+            enemy6.startCorrupting()
+            enemy7.corrupted = true
+            enemy7.godCorrupt()
+            let enemy8 = this.addEnemy( Math.floor( Math.random() * 5 ) , 3 , 0)
+            scene.add(enemy8.mesh)
+            enemy8.inScene = true
+            characters.push(enemy8)
+            
+            enemy6.startCorrupting()
+            enemy8.corrupted = true
+            enemy8.greenCorrupt()
+            let enemy9 = this.addEnemy( Math.floor( Math.random() * 5 ) , 3 , -1)
+            scene.add(enemy9.mesh)
+            enemy9.inScene = true
+            characters.push(enemy9)
+            
+            enemy6.startCorrupting()
+            enemy9.corrupted = true
+            enemy9.hitmanCorrupt()
+            // let enemy10 = this.addEnemy(KNOWLOCTA)
+            // scene.add(enemy10.mesh)
+            // characters.push(enemy10)
+            // enemy10.corrupted = true
+            // enemy10.corrupt()
+
+            let event00 = new Event(9, 0, 0, -1)
+            let event01 = new Event(9, 2000, -1, -2.8)
+            let event02 = new Event(9, 4000, 1, -2.8)
+            let event03 = new Event(9, 8000, -1, -2.8)
+
+            let event0 = new Event(0, 6000, 0, 0)
+            let event1 = new Event(1, 6000, 1, 0)
+            let event2 = new Event(2, 6000, 2, 0)
+            let event3 = new Event(3, 6000, 3, 0)
+            let event4 = new Event(4, 6000, 4, 0)
+            let event5 = new Event(5, 6000, -1, 0)
+            let event6 = new Event(6, 6000, -2, 0)
+            let event7 = new Event(7, 6000, -3, 0)
+            let event8 = new Event(8, 6000, -4, 0)
+
+            let event9 = new Event(0, 12000, -3, 3)
+            let event10 = new Event(1, 12000, -3, 2)
+            let event11 = new Event(2, 12000, -3, 1)
+            let event12 = new Event(3, 12000, -3, 0)
+            let event13 = new Event(4, 12000, -3, -1)
+            let event14 = new Event(5, 12000, 3, 0)
+            let event15 = new Event(6, 12000, 3, 1)
+            let event16 = new Event(7, 12000, 3, 2)
+            let event17 = new Event(8, 12000, 3, 3)
+
+            characters.push(player)
+            player.mesh.visible = true
+
+            this.demo = new Demo(characters, 15000, [event00,event01,event02,event03, event0,event1,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15,event16,event17])
+            this.enemies = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8,enemy9]
           }
           
         }
@@ -718,6 +847,8 @@ class Game {
   drawLoading(){
     // this.announcement("ROUND " + this.roundCount +  " LOADING...")
     duster.loadingAnimation()
+    pduster.loadingAnimation()
+    p2duster.loadingAnimation()
 
     // fade toward blac
     // this.fadeBackgroundToward(this.roundColor[0], this.roundColor[1], this.roundColor[2], 2)
@@ -786,7 +917,6 @@ class Game {
     if(this.attractStage == DEMO){
       // demoo
       player.handleMovement()
-
     } else {
       // regular round
 
@@ -1064,12 +1194,20 @@ class Game {
     }
   }
 
-  addEnemy(type=null){
+  addEnemy(type=null, posx=null, posy=null){
     let killer = new Enemy([0,88,255*Math.round(Math.random())], type);
 
-    killer.mesh.position.x = Math.random()*4*this.randomSign()
+    if(posx){
+      killer.mesh.position.x = posx
+    } else {
+      killer.mesh.position.x = Math.random()*4*this.randomSign()
+    }
 
-    killer.mesh.position.y = Math.random()*4*this.randomSign()
+    if(posy){
+      killer.mesh.position.y = posy
+    } else {
+      killer.mesh.position.y = Math.random()*4*this.randomSign()
+    }
     return killer
   }
 
@@ -1371,7 +1509,7 @@ class Game {
       }
 
       // if we're dead for any old reason, die 
-      if(player.lifecycle == ALIVE && player.health <= 0){
+      if(this.stage != TITLE && player.lifecycle == ALIVE && player.health <= 0){
         player.lifecycle = DYING
       }
 
@@ -1523,7 +1661,20 @@ class Game {
 
         console.log( 'YOU HAVE DIED' )
         player.lifecycle = DEAD
+
+        // if(this.stage == TITLE){
+        //   // dying on a demo
+        //   this.demo.cleanDemo()
+        //   this.demo = null
+        //   this.hideAttract()
+        //   this.attractStage = LOGO2
+        // } else {
+        // }
+        
         this.endGame()
+
+        // real play
+
       }
     }
     

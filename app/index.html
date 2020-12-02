@@ -434,9 +434,23 @@
 
       // scene contains objects
       var scene = new THREE.Scene();
-      var light = new THREE.HemisphereLight( 0xffffff, 0x000000, 0.98 )
-      light.position.set( 0, 0, 2 )
-      scene.add( light )
+
+      // var light = new THREE.HemisphereLight( 0xffffff, 0x000000, 0.98 )
+      // light.position.set( 0, 0, 5 )
+      // scene.add( light )
+
+
+      var spotlight = new THREE.SpotLight("#ffffff", 1.1)
+      spotlight.castShadow = true
+      spotlight.shadow.mapSize.width = 1024*4
+      spotlight.shadow.mapSize.height = 1024*4
+      spotlight.position.set(0,0,5)
+      spotlight.lookAt(0,0,0)
+      spotlight.shadow.camera.near = 0.5; // default
+      spotlight.shadow.camera.far = 100; // default
+      spotlight.shadow.focus = 1; // default
+      scene.add(spotlight)
+
 
 
       // clear name input
@@ -453,6 +467,9 @@
       let corruptorMaterial = new THREE.SpriteMaterial( { map: corruptorMatMap } )
       // we pass this in to select
       let pointMatMap = new THREE.TextureLoader().load("sprites/pointsprite.png")
+      let planetspriteMatMap = new THREE.TextureLoader().load("sprites/planetsprite.png")
+      let planetsprite2MatMap = new THREE.TextureLoader().load("sprites/planetsprite2.png")
+
       let pbloodspriteMap = loader.load( "sprites/playerblood.png")
       let pbloodspriteMaterial = new THREE.SpriteMaterial( { map: pbloodspriteMap } )
       let healthenemyMap = loader.load( "sprites/healthenemy.png")
@@ -500,7 +517,15 @@
 
       game.setBackgroundColor(game.backgroundColor[0],game.backgroundColor[1],game.backgroundColor[2])
       
-      let duster = new Duster(pointMatMap, 0.2, 2000, 30)
+      // let starColor = rgbToHex( Math.floor( Math.random() * 255 ), Math.floor( Math.random() * 255 ), Math.floor( Math.random() * 255 ) )
+      let duster = new Duster(pointMatMap, 0.2, 1400, 30)
+      
+      let pColor = rgbToHex( Math.floor( Math.random() * 100 + 155 ), Math.floor( Math.random() * 100 + 155 ), Math.floor( Math.random() * 100 + 155 ) )
+      let p2Color = rgbToHex( Math.floor( Math.random() * 100 + 155 ), Math.floor( Math.random() * 100 + 155 ), Math.floor( Math.random() * 100 + 155 ) )
+      let pduster = new Duster(planetspriteMatMap, 0.2, 300, 30, null, null, null, pColor)
+      pduster.randomizeRotation()
+      let p2duster = new Duster(planetsprite2MatMap, 0.2, 300, 30, null, null, null, p2Color)
+      p2duster.randomizeRotation()
 
       // create bounding box object for intersection
 

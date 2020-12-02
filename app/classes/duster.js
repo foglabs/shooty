@@ -1,5 +1,5 @@
 class Duster {
-  constructor(map, size, particleCount, distance, position=null, opacity=null, badge=false){
+  constructor(map, size, particleCount, distance, position=null, opacity=null, badge=false, matColor="#ffffff"){
     // position is a vector3
     this.particleCount = particleCount
     let geometry = new THREE.Geometry()
@@ -13,7 +13,8 @@ class Duster {
 
     this.distance = distance
     
-    let pointMat = new THREE.PointsMaterial({color: 0xffffff,
+    let pointMat = new THREE.PointsMaterial({
+      color: matColor,
       size: this.size,
       map: map,
       blending: THREE.AdditiveBlending,
@@ -65,6 +66,12 @@ class Duster {
     this.animTimer = new Timer()
 
     scene.add( this.particleSystem )
+  }
+
+  randomizeRotation(){
+    // initialize different rotation
+    this.particleSystem.rotation.y = Math.random() * 2*Math.PI
+    this.particleSystem.rotation.x = Math.random() * 2*Math.PI
   }
 
   setPosition(pos){
