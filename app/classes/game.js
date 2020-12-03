@@ -49,7 +49,7 @@ class Game {
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = DEMO
+    this.attractStage = SCORES
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
@@ -280,13 +280,13 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      for(var i=0; i<30; i++){
-        player.levelUp()
-      }
+      // for(var i=0; i<30; i++){
+      //   player.levelUp()
+      // }
 
-      for(var i=0; i<30; i++){
-        game.nextRound()
-      }
+      // for(var i=0; i<30; i++){
+      //   game.nextRound()
+      // }
     }
   }
 
@@ -593,7 +593,7 @@ class Game {
 
         if(!this.demo){
           let selectedDemo = Math.floor( Math.random() * 3 )
-          selectedDemo = 3
+          // selectedDemo = 3
           let characters = []
           player.mesh.visible = true
 
