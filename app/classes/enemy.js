@@ -182,6 +182,7 @@ class Enemy extends Character {
     // base enemy health
     this.health = health
     this.damageSounds = [fx_edmg1, fx_edmg2, fx_edmg3]
+    this.attackSounds = null
 
     this.killSounds = [fx_ekill1, fx_ekill2, fx_ekill3, fx_ekill4, fx_ekill5, fx_ekill6]
 
@@ -329,6 +330,16 @@ class Enemy extends Character {
     }
   }
 
+  attackSound(){
+    // pick a random one from this array
+    if(this.attackSoundTimer.time() > 30){
+      this.attackSoundTimer.reset()
+      
+      let roll = Math.floor( Math.random() * this.attackSounds.length )
+      this.attackSounds[ roll ].play()  
+    }
+  }
+
   startCorrupting(){
 
     // remove health guy glows if necessary
@@ -462,7 +473,8 @@ class Enemy extends Character {
     this.hitColor = [255,255,255]
 
     // same proportions as a before, diff sounds
-    this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+    this.killSounds = [fx_godcorruptkill1, fx_godcorruptkill2, fx_godcorruptkill3]
+    this.attackSounds = [fx_godcorrupt1, fx_godcorrupt2, fx_godcorrupt3]
   }
 
   greenCorrupt(){
@@ -493,7 +505,11 @@ class Enemy extends Character {
     let dist = 0.1 * this.scaleFactor
     let size = 0.5 * this.scaleFactor
     this.addGodBanners(biggreenspriteMap, size, dist, 0.8)
-    this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3]
+
+    // when I die
+    this.killSounds = [fx_greenkill1, fx_greenkill2, fx_greenkill3]
+    // when I maim
+    this.attackSounds = [fx_green1, fx_green2, fx_green3]
   }
 
   hitmanCorrupt(){
@@ -511,7 +527,8 @@ class Enemy extends Character {
     if(this.banners){
       this.banners.remove()
     }
-    this.killSounds = [fx_ckill1, fx_ckill2, fx_ckill3] 
+    this.killSounds = [fx_hitmankill1, fx_hitmankill2, fx_hitmankill3] 
+    this.attackSounds = [fx_hitman1, fx_hitman2, fx_hitman3]
   }
 
   handleContract(){
@@ -553,6 +570,7 @@ class Enemy extends Character {
   addPlayerContract(cost, clientId){
     this.contract = new Contract(ONPLAYER, cost, null, clientId)
     console.log( 'add p contract', cost, clientId )
+    this.attackSound()
   }
 
   addEnemyContract(cost, targetId){
@@ -560,6 +578,7 @@ class Enemy extends Character {
     player.changeMoney(cost)
     this.contract = new Contract(ONENEMY, cost, targetId)
     console.log( 'add e contract', cost, targetId )
+    this.attackSound()
   }
 
   endContract(){

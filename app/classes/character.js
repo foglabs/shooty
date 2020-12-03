@@ -31,6 +31,11 @@ class Character {
     // get this running because ima about to do some dmg
     this.damageSoundTimer.start()
 
+    this.attackSounds = null
+    this.attackSoundTimer = new Timer()
+    // get this running because ima about to do some dmg
+    this.attackSoundTimer.start()
+
     this.lifecycle = ALIVE
 
     this.spriteOpacity = 1

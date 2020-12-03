@@ -280,13 +280,13 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<30; i++){
-      //   player.levelUp()
-      // }
+      for(var i=0; i<30; i++){
+        player.levelUp()
+      }
 
-      // for(var i=0; i<30; i++){
-      //   game.nextRound()
-      // }
+      for(var i=0; i<30; i++){
+        game.nextRound()
+      }
     }
   }
 
@@ -573,7 +573,6 @@ class Game {
         // clean up everything
         this.hideAttract()
       }
-
 
        if(this.attractStage == LOGO) {
 
@@ -1483,14 +1482,20 @@ class Game {
           // how often can the player *take* damage
           player.healthTimer.reset()
           // need to gate this so 10 corrupteds dont just saw your head off before you can react
-            
+
           if(enemy.godCorrupted){
+            enemy.attackSound()
             player.takeDamage( game.godCorruptedDamage, ENEMY )
           } else if(enemy.greenCorrupted){
             console.log( 'gree corr damg' )
+
+            enemy.attackSound()
             player.takeDamage( game.greenCorruptedDamage, ENEMY )
           } else if(enemy.hitmanCorrupted && enemy.contract && enemy.contract.type == ONPLAYER){
             // will fuck you up
+
+
+            enemy.attackSound()
             player.takeDamage( game.hitmanCorruptedDamage, ENEMY )
 
           } else if(enemy.hitmanCorrupted && !enemy.contract){
