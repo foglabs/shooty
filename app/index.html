@@ -460,7 +460,6 @@
       // light.position.set( 0, 0, 5 )
       // scene.add( light )
 
-
       var spotlight = new THREE.SpotLight("#ffffff", 1.1)
       spotlight.castShadow = true
       spotlight.shadow.mapSize.width = 1024*4
@@ -471,6 +470,36 @@
       spotlight.shadow.camera.far = 100; // default
       spotlight.shadow.focus = 1; // default
       scene.add(spotlight)
+
+
+      // let r,g,b
+      // r = Math.floor( Math.random() * 255 )
+      // g = Math.floor( Math.random() * 255 )
+      // b = Math.floor( Math.random() * 255 )
+      // let sidelightCol = rgbToHex(r,g,b)
+      let sidelightCol = "#ffffff"
+      var spotlight2 = new THREE.SpotLight(sidelightCol, 3.8)
+      spotlight2.castShadow = true
+      spotlight2.shadow.mapSize.width = 1024*4
+      spotlight2.shadow.mapSize.height = 1024*4
+      spotlight2.position.set(-0.1,0,-5)
+      spotlight2.lookAt(0,0,0)
+      spotlight2.shadow.camera.near = 0.5; // default
+      spotlight2.shadow.camera.far = 100; // default
+      spotlight2.shadow.focus = 1; // default
+      scene.add(spotlight2)
+      spotlight2.color = new THREE.Color("#ff0000")
+
+      // var spotlight2 = new THREE.SpotLight("#ff0000", 0.6)
+      // spotlight2.castShadow = true
+      // spotlight2.shadow.mapSize.width = 1024*4
+      // spotlight2.shadow.mapSize.height = 1024*4
+      // spotlight2.position.set(5,0,0)
+      // spotlight2.lookAt(0,0,0)
+      // spotlight2.shadow.camera.near = 0.5; // default
+      // spotlight2.shadow.camera.far = 100; // default
+      // spotlight2.shadow.focus = 1; // default
+      // scene.add(spotlight2)
 
 
 
@@ -510,7 +539,7 @@
 
 
       let casinohighlightMap = loader.load( "sprites/casinohighlight.png")
-      casinohighlightMaterial = new THREE.SpriteMaterial( { map: casinohighlightMap } )
+      casinohighlightMaterial = new THREE.SpriteMaterial( { map: casinohighlightMap, needsUpdate: true } )
 
       let godkillerMap = loader.load( "sprites/godkiller.png")
       godkillerMaterial = new THREE.SpriteMaterial( { map: godkillerMap } )

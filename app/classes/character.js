@@ -4,7 +4,9 @@ class Character {
     this.accy = 0
 
     let basestr = rgbToHex(base_color[0], base_color[1], base_color[2])
-    this.mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1.0, clearcoatRoughness: 0.1 }))
+    // this.mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1.0, clearcoatRoughness: 0.1 }))
+    // this.mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1.0, clearcoatRoughness: 0.1 }))
+    this.mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1, specular: "#222266", clearcoatRoughness: 0.1 }))
 
     this.bbox = bbox
 
@@ -51,6 +53,7 @@ class Character {
 
     this.dragCoefficient = 0.009
 
+    this.casinoHighlight = false
     // set money label in subclasses so it doesnt get put on bombs and stuff
   }
 
@@ -176,6 +179,11 @@ class Character {
       if(this.laserSight){
         this.removeLaserSight()
       }
+    }
+
+    if(this.deadSprite){
+      // casino highlight
+      this.removeSprite()
     }
 
     this.mesh.geometry.dispose()

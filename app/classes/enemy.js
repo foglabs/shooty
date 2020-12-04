@@ -708,6 +708,11 @@ class Enemy extends Character {
     if(this.lifecycle == ALIVE){
       this.rotation()
 
+      if(this.casinoHighlight){
+        this.deadSprite.material.rotation += 0.033
+      }
+
+
       if(!this.hitmanCorrupted && this.moneyTimer.time() > 1000){
         this.moneyTimer.reset()
         this.changeMoney(10)

@@ -179,7 +179,8 @@ class Casino {
     if(enemy){
       // console.log( 'found enemy' )
       // highlight sprite - scales a guess
-      enemy.addSprite(casinohighlightMaterial.clone(), 0.777, true, 0.8)
+      enemy.addSprite(casinohighlightMaterial.clone(), 0.777, true, 0.1)
+      enemy.casinoHighlight = true
       this.highlights[enemyId] = true
       // scene.add( this.highlights[enemyId] )
       // console.log( 'added highlights' )
