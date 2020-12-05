@@ -154,6 +154,7 @@ class Enemy extends Character {
       let dist = 0.1 * this.scaleFactor
       let size = 0.46 * this.scaleFactor
       this.addBanners(candyspriteMap, size, 2, dist, true)
+
     }
 
     if(Math.random() > 0.6){
@@ -183,6 +184,7 @@ class Enemy extends Character {
     this.health = health
     this.damageSounds = [fx_edmg1, fx_edmg2, fx_edmg3]
     this.attackSounds = null
+
 
     this.killSounds = [fx_ekill1, fx_ekill2, fx_ekill3, fx_ekill4, fx_ekill5, fx_ekill6]
 
@@ -315,6 +317,8 @@ class Enemy extends Character {
       score = score * 16
     } else if(this.greenCorrupted){
       score = score * 100
+    } else if(this.hitmanCorrupted){
+      score = score * 1000 
     }
 
     return score

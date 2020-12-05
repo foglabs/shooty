@@ -451,6 +451,19 @@
       let fx_hitmankill2 = new Sound("sounds/hitmankill2.mp3", 0.6)
       let fx_hitmankill3 = new Sound("sounds/hitmankill3.mp3", 0.6)
 
+      let fx_eatpurple1 = new Sound("sounds/eatpurple1.mp3", 0.35)
+      let fx_eatpurple2 = new Sound("sounds/eatpurple2.mp3", 0.35)
+      let fx_eatpurple3 = new Sound("sounds/eatpurple3.mp3", 0.35)
+      let fx_newfriend1 = new Sound("sounds/newfriend1.mp3", 0.6)
+      let fx_newfriend2 = new Sound("sounds/newfriend2.mp3", 0.6)
+      let fx_newfriend3 = new Sound("sounds/newfriend3.mp3", 0.6)
+      let fx_newfrienddmg1 = new Sound("sounds/newfrienddmg1.mp3", 0.2)
+      let fx_newfrienddmg2 = new Sound("sounds/newfrienddmg2.mp3", 0.2)
+      let fx_newfrienddmg3 = new Sound("sounds/newfrienddmg3.mp3", 0.2)
+      let fx_newfriendkill1 = new Sound("sounds/newfriendkill1.mp3", 0.6)
+      let fx_newfriendkill2 = new Sound("sounds/newfriendkill2.mp3", 0.6)
+      let fx_newfriendkill3 = new Sound("sounds/newfriendkill3.mp3", 0.6)
+
 
 
       // scene contains objects
@@ -477,7 +490,7 @@
       // g = Math.floor( Math.random() * 255 )
       // b = Math.floor( Math.random() * 255 )
       // let sidelightCol = rgbToHex(r,g,b)
-      let sidelightCol = "#ffffff"
+      let sidelightCol = "#aaaaaa"
       var spotlight2 = new THREE.SpotLight(sidelightCol, 3.8)
       spotlight2.castShadow = true
       spotlight2.shadow.mapSize.width = 1024*4
@@ -488,7 +501,6 @@
       spotlight2.shadow.camera.far = 100; // default
       spotlight2.shadow.focus = 1; // default
       scene.add(spotlight2)
-      spotlight2.color = new THREE.Color("#ff0000")
 
       // var spotlight2 = new THREE.SpotLight("#ff0000", 0.6)
       // spotlight2.castShadow = true

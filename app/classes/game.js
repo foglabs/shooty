@@ -280,13 +280,13 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      for(var i=0; i<12; i++){
-        player.levelUp()
-      }
+      // for(var i=0; i<22; i++){
+      //   player.levelUp()
+      // }
 
-      for(var i=0; i<25; i++){
-        game.nextRound()
-      }
+      // for(var i=0; i<20; i++){
+      //   game.nextRound()
+      // }
     }
   }
 
@@ -382,6 +382,29 @@ class Game {
     // }
 
     this.nowRandomBombing = false
+
+    if(this.roundCount == 5){
+      spotlight2.color = new THREE.Color("#00ffaa")
+    } else if(this.roundCount == 10){
+      spotlight2.color = new THREE.Color("#ffaa00")
+    } else if(this.roundCount == 15){
+      spotlight2.color = new THREE.Color("#aa00ff")
+    } else if(this.roundCount == 20){
+      // silver
+      spotlight2.color = new THREE.Color("#ffffff")
+    } else if(this.roundCount == 25){
+      // gold
+      spotlight2.color = new THREE.Color("#FFD700")
+    } else if(this.roundCount == 30){
+      // evil
+      spotlight2.color = new THREE.Color("#c2191f")
+    } else if(this.roundCount == 35){
+
+      spotlight2.color = new THREE.Color("#ff0000")
+    } else if(this.roundCount >= 40){
+      // purple to the death of me
+      spotlight2.color = new THREE.Color("#ff00ff")
+    }
   }
 
   endGame(){
@@ -1046,10 +1069,6 @@ class Game {
     this.handleScoreLight()
   }
 
-  // drawCasino(){
-
-  // }
-
   addFriendIcon(name, index, color){
     let container = document.createElement("div")
     container.classList.add("bar-icon")
@@ -1191,6 +1210,10 @@ class Game {
         this.u = 0
       }
     }
+  }
+
+  knowledgeSound(){
+    [fx_eatpurple1, fx_eatpurple2, fx_eatpurple3][ Math.floor( Math.random() * 3 ) ].play()
   }
 
   addEnemy(type=null, posx=null, posy=null){
@@ -1494,7 +1517,6 @@ class Game {
           } else if(enemy.hitmanCorrupted && enemy.contract && enemy.contract.type == ONPLAYER){
             // will fuck you up
 
-
             enemy.attackSound()
             player.takeDamage( game.hitmanCorruptedDamage, ENEMY )
 
@@ -1535,6 +1557,7 @@ class Game {
                 if(friend.health <= 0){
                   // might as well do this here since its the moment health went to death
                   friend.lifecycle = DYING
+                  friend.killSound()
                   friend.remove()
                 }
 
@@ -1613,6 +1636,7 @@ class Game {
 
             // knowledge is for everyone
             if(enemy.knowledgeValue > 0){
+              this.knowledgeSound()
               player.changeKnowledge( enemy.knowledgeValue )
             }  
           }

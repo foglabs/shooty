@@ -28,6 +28,10 @@ class Friend extends Character {
       this.type = FOLLOWER
     }
 
+    this.bornSounds = [fx_newfriend1,fx_newfriend2,fx_newfriend3]
+    this.doDamageSounds = [fx_newfrienddmg1,fx_newfrienddmg2,fx_newfrienddmg3]
+    this.killSounds = [fx_newfriendkill1,fx_newfriendkill2,fx_newfriendkill3]
+
     this.position = position
     this.mesh.position.x = this.position.x
     this.mesh.position.y = this.position.y
@@ -42,6 +46,11 @@ class Friend extends Character {
     // how often should I waste away
     this.starveTimer = new Timer()
     this.starveTimer.start()
+
+    this.doDamageSoundTimer = new Timer()
+    this.doDamageSoundTimer.start()
+
+    this.bornSound()
   }
 
   changePower(pwr){
@@ -67,6 +76,9 @@ class Friend extends Character {
       // do % damage to other aguy
       if(cost != 0 && pwr > 0){
         other_char.takeDamage(pwr, FRIEND)
+
+        this.doDamageSound()
+
         // spend some power to kill
         this.changePower(-1 * cost)
         // get some helf back fam
@@ -80,6 +92,26 @@ class Friend extends Character {
         this.starveTimer.reset()
       }
     }
+  }
+
+  doDamageSound(){
+    // pick a random one from this array
+    if(this.doDamageSoundTimer.time() > 2000){
+      this.doDamageSoundTimer.reset()
+      
+      let roll = Math.floor( Math.random() * this.doDamageSounds.length )
+      this.doDamageSounds[ roll ].play()  
+    }
+  }
+
+  bornSound(){
+    let roll = Math.floor(Math.random() * this.bornSounds.length)
+    this.bornSounds[ roll ].play()
+  }
+
+  killSound(){
+    let roll = Math.floor(Math.random() * this.killSounds.length)
+    this.killSounds[ roll ].play()
   }
 
   changePowerMax(max){
