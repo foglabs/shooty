@@ -41,7 +41,7 @@ div.info-bar {
 }
 
 div#fog-logo2 {
-  opacity: 0.4
+  opacity: 0.4;
   transform-style: preserve-3d;
   position: absolute;
   top: 10vh;
@@ -99,7 +99,7 @@ div#fog-logo2 {
 }
 
 div#fog-logo {
-  opacity: 0.4
+  opacity: 0.4;
   transform-style: preserve-3d;
   position: absolute;
   top: 0vh;

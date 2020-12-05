@@ -397,6 +397,7 @@ class Enemy extends Character {
 
       // e sword damage goes up slowly with roundcount
       player.changeHealth( -1 * Math.ceil(game.roundCount / 3) )
+      player.takeDamageSound()
     }
   }
 
@@ -482,20 +483,26 @@ class Enemy extends Character {
   }
 
   greenCorrupt(){
-    // this can happen mulitple times, getting bigger
-    this.greenCorrupted = true
 
+    if(!this.greenCorrupted){
+      this.health = 500
+    } else {
+      this.health = Math.ceil( this.health * 1.3 )
+    }
+    
     // hes abig green motherfucker
     this.lightness = 0.003
-    this.health = 500
     this.baseColor = [0,255,0]
     this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
     this.hitColor = [0,255,100]
 
-    // up to 4x scale
-    this.mesh.scale.x = this.mesh.scale.x * ( Math.random() * 2 )
-    this.mesh.scale.y = this.mesh.scale.y * ( Math.random() * 2 )
-    this.mesh.scale.z = this.mesh.scale.z * ( Math.random() * 2 )
+    // this can happen mulitple times, getting bigger
+    this.greenCorrupted = true
+
+    // up to ?x scale
+    this.mesh.scale.x = this.mesh.scale.x * ( 1 + Math.random() * 1.1 )
+    this.mesh.scale.y = this.mesh.scale.y * ( 1 + Math.random() * 1.1 )
+    this.mesh.scale.z = this.mesh.scale.z * ( 1 + Math.random() * 1.1 )
 
     // douse the flames
     if(this.banners){
@@ -539,22 +546,27 @@ class Enemy extends Character {
     if(this.money > 0){
 
       if(this.contract.type == ONPLAYER){
-
+        console.log( 'moving p con' )
         this.moveTowardsPoint( player.mesh.position.x, player.mesh.position.y, 3 )
       } else if(this.contract.type == ONENEMY){
 
         // kill em
         // purseu enemy
 
+        // console.log( 'con check ', this.contract.targetId, game.enemies[this.contract.targetId], game.enemies[this.contract.targetId].lifecycle == ALIVE )
+
         if(game.enemies[this.contract.targetId] && game.enemies[this.contract.targetId].lifecycle == ALIVE){
+
+          console.log( 'pursing con-e ', this.contract.targetId  )
           // if target is still alive, KILL EM
           this.moveTowardsPoint( game.enemies[ this.contract.targetId ].mesh.position.x, game.enemies[ this.contract.targetId ].mesh.position.y, 3 )
 
         } else {
           // if targets dead, pick a new one as long as we still got de dough
-          let randomTargetId = Math.floor( Math.random() * k(this.enemies).length )
+          let randomTargetId = Math.floor( Math.random() * k(game.enemies).length )
           this.contract.newTarget( randomTargetId )
-          game.enemies[ this.contract.targetId ]
+          console.log( 'chose new con-target ', randomTargetId )
+          // game.enemies[ this.contract.targetId ]
         }
       }
 
@@ -836,25 +848,25 @@ class Enemy extends Character {
           // only go once, as cool as the changing is...
           if(!this.godCorrupted && !this.greenCorrupted && !this.hitmanCorrupted){
 
-            if(game.roundCount < 20){
-              this.godCorrupt()
-            } else if(game.roundCount < 30) {
-              if(Math.random() > 0.5){
-                this.godCorrupt()
-              } else {
-                this.greenCorrupt()
-              }
-            } else {
-              let roll = Math.random()
-              if(roll > 0.66){
-                this.godCorrupt()
-              } else if(roll > 0.33) {
-                this.greenCorrupt()
-              } else {
-                this.hitmanCorrupt()
-              }
-            }
-
+            // if(game.roundCount < 20){
+            //   this.godCorrupt()
+            // } else if(game.roundCount < 30) {
+            //   if(Math.random() > 0.5){
+            //     this.godCorrupt()
+            //   } else {
+            //     this.greenCorrupt()
+            //   }
+            // } else {
+            //   let roll = Math.random()
+            //   if(roll > 0.66){
+            //     this.godCorrupt()
+            //   } else if(roll > 0.33) {
+            //     this.greenCorrupt()
+            //   } else {
+            //     this.hitmanCorrupt()
+            //   }
+            // }
+            this.hitmanCorrupt()
 
           } else if(this.greenCorrupted){
             // green corrupt can keep growin bigger

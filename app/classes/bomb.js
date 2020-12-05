@@ -1,12 +1,14 @@
 class Bomb extends Character {
   constructor(base_color, playerLevel, hurtsPlayer=false){
     let geometry = new THREE.SphereGeometry( 0.06, 32, 32 )
+    let basestr = rgbToHex(base_color[0], base_color[1], base_color[2])
     super(
       // de geo
       geometry,
       // de box
       new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()),
-      base_color
+      base_color,
+      new THREE.MeshToonMaterial( { color: basestr })
     )
 
     this.strength = playerLevel * 5
@@ -20,7 +22,8 @@ class Bomb extends Character {
     // when will it begin to fade out, lvl 1 is 1800ms
     this.disappearTime = 800 * Math.log( 10 * player.level )
 
-    this.boomColor = [255,191,103]
+    // this.boomColor = [255,191,103]
+    this.boomColor = [153,115,62]
     this.timeToBoomColor = 300
     this.u = 0
 

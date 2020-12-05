@@ -1,12 +1,18 @@
 class Character {
-  constructor(geo, bbox, base_color){
+  constructor(geo, bbox, base_color, mat=false){
     this.accx = 0
     this.accy = 0
 
     let basestr = rgbToHex(base_color[0], base_color[1], base_color[2])
-    // this.mesh = new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1.0, clearcoatRoughness: 0.1 }))
-    // this.mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1.0, clearcoatRoughness: 0.1 }))
-    this.mesh = new THREE.Mesh(geo, new THREE.MeshPhongMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1, specular: "#222266", clearcoatRoughness: 0.1 }))
+    if(!mat){
+      // deefault
+      mat = new THREE.MeshPhongMaterial( { color: basestr, reflectivity: 0.2, shininess: 40 })
+      // mat = new THREE.MeshLambertMaterial( { color: basestr })
+      // mat = new THREE.MeshPhysicalMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1.0, clearcoatRoughness: 0.1 })
+      // mat = new THREE.MeshToonMaterial( { color: basestr })
+    }
+
+    this.mesh = new THREE.Mesh(geo, mat)
 
     this.bbox = bbox
 
@@ -181,7 +187,7 @@ class Character {
       }
     }
 
-    if(this.deadSprite){
+    if(this.casinoHighlight && this.deadSprite){
       // casino highlight
       this.removeSprite()
     }
@@ -205,6 +211,9 @@ class Character {
     // random radian baby
     this.deadSprite.material.rotation = Math.random() * 2 * Math.PI
     this.deadSprite.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+
+    let col = rgbToHex( Math.floor( Math.random() * 100 + 155 ), Math.floor( Math.random() * 100 + 155 ), Math.floor( Math.random() * 100 + 155 ) )
+    this.deadSprite.material.color = new THREE.Color(col)
 
     if(moves){
       // udpate in animation
@@ -291,7 +300,19 @@ class Character {
     if(this.money !== this.lastMoney){
       this.lastMoney = this.money
       this.removeMoneyLabel()
-      this.addMoneyLabel("#00ff00")
+
+      let colorStr = "#00ff00"
+
+      // if(this.money >= 25 && this.money < 50){
+      //   colorStr = "#ffff00"
+      // } else if(this.money > 50){
+      //   colorStr = "#ff0000"
+      // }
+      if(this.money > 50){
+        colorStr = "#ff0000"
+      }
+
+      this.addMoneyLabel(colorStr)
     }
   }
 

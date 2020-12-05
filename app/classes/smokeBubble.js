@@ -3,8 +3,10 @@ class SmokeBubble extends Character {
     let geometry = new THREE.SphereGeometry( radius, 32, 32 )
     let bbox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3())
     // it gray
-    let color = [150,150,150]
-    super(geometry, bbox, color)
+    let color = [90,90,90]
+    let basestr = rgbToHex(color[0], color[1], color[2])
+    let mat = new THREE.MeshToonMaterial( { color: basestr, transparent: true })
+    super(geometry, bbox, color, mat)
 
     this.x = x
     this.y = y

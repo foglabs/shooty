@@ -1,7 +1,10 @@
 class Friend extends Character {
   constructor(health, power, baseColor, position){
     let geo = new THREE.TetrahedronGeometry(0.2)
-    super(geo, new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()), baseColor)
+
+    let basestr = rgbToHex(baseColor)
+    let mat = new THREE.MeshPhysicalMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1.0, clearcoatRoughness: 0.1 })
+    super(geo, new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()), baseColor, mat)
 
     this.health = health
     this.power = power

@@ -196,6 +196,8 @@ class Player extends Character {
       this.casinoEnabled = true
     }
 
+    this.changeMoney( Math.ceil( this.level * 5 ) )
+
     fx_levelupE2.play()
   }
 

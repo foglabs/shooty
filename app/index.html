@@ -444,16 +444,18 @@
       let fx_greenkill1 = new Sound("sounds/greenkill1.mp3", 0.6)
       let fx_greenkill2 = new Sound("sounds/greenkill2.mp3", 0.6)
       let fx_greenkill3 = new Sound("sounds/greenkill3.mp3", 0.6)
-      let fx_hitman1 = new Sound("sounds/hitman1.mp3", 0.6)
-      let fx_hitman2 = new Sound("sounds/hitman2.mp3", 0.6)
-      let fx_hitman3 = new Sound("sounds/hitman3.mp3", 0.6)
-      let fx_hitmankill1 = new Sound("sounds/hitmankill1.mp3", 0.6)
-      let fx_hitmankill2 = new Sound("sounds/hitmankill2.mp3", 0.6)
-      let fx_hitmankill3 = new Sound("sounds/hitmankill3.mp3", 0.6)
+      let fx_hitman1 = new Sound("sounds/hitman1.mp3", 0.37)
+      let fx_hitman2 = new Sound("sounds/hitman2.mp3", 0.37)
+      let fx_hitman3 = new Sound("sounds/hitman3.mp3", 0.37)
+      let fx_hitmankill1 = new Sound("sounds/hitmankill1.mp3", 0.37)
+      let fx_hitmankill2 = new Sound("sounds/hitmankill2.mp3", 0.37)
+      let fx_hitmankill3 = new Sound("sounds/hitmankill3.mp3", 0.37)
 
-      let fx_eatpurple1 = new Sound("sounds/eatpurple1.mp3", 0.35)
-      let fx_eatpurple2 = new Sound("sounds/eatpurple2.mp3", 0.35)
-      let fx_eatpurple3 = new Sound("sounds/eatpurple3.mp3", 0.35)
+      let fx_eatpurple1 = new Sound("sounds/eatpurple1.mp3", 0.28)
+      let fx_eatpurple2 = new Sound("sounds/eatpurple2.mp3", 0.28)
+      let fx_eatpurple3 = new Sound("sounds/eatpurple3.mp3", 0.28)
+
+      // friend sounds
       let fx_newfriend1 = new Sound("sounds/newfriend1.mp3", 0.6)
       let fx_newfriend2 = new Sound("sounds/newfriend2.mp3", 0.6)
       let fx_newfriend3 = new Sound("sounds/newfriend3.mp3", 0.6)
@@ -464,8 +466,6 @@
       let fx_newfriendkill2 = new Sound("sounds/newfriendkill2.mp3", 0.6)
       let fx_newfriendkill3 = new Sound("sounds/newfriendkill3.mp3", 0.6)
 
-
-
       // scene contains objects
       var scene = new THREE.Scene();
 
@@ -473,14 +473,14 @@
       // light.position.set( 0, 0, 5 )
       // scene.add( light )
 
-      var spotlight = new THREE.SpotLight("#ffffff", 1.1)
+      var spotlight = new THREE.SpotLight("#ffffff", 0.99)
       spotlight.castShadow = true
       spotlight.shadow.mapSize.width = 1024*4
       spotlight.shadow.mapSize.height = 1024*4
       spotlight.position.set(0,0,5)
       spotlight.lookAt(0,0,0)
       spotlight.shadow.camera.near = 0.5; // default
-      spotlight.shadow.camera.far = 100; // default
+      spotlight.shadow.camera.far = 500; // default
       spotlight.shadow.focus = 1; // default
       scene.add(spotlight)
 
@@ -491,29 +491,16 @@
       // b = Math.floor( Math.random() * 255 )
       // let sidelightCol = rgbToHex(r,g,b)
       let sidelightCol = "#aaaaaa"
-      var spotlight2 = new THREE.SpotLight(sidelightCol, 3.8)
+      var spotlight2 = new THREE.SpotLight(sidelightCol, 0.87)
       spotlight2.castShadow = true
       spotlight2.shadow.mapSize.width = 1024*4
       spotlight2.shadow.mapSize.height = 1024*4
-      spotlight2.position.set(-0.1,0,-5)
+      spotlight2.position.set(0,0,-5)
       spotlight2.lookAt(0,0,0)
       spotlight2.shadow.camera.near = 0.5; // default
-      spotlight2.shadow.camera.far = 100; // default
+      spotlight2.shadow.camera.far = 500; // default
       spotlight2.shadow.focus = 1; // default
       scene.add(spotlight2)
-
-      // var spotlight2 = new THREE.SpotLight("#ff0000", 0.6)
-      // spotlight2.castShadow = true
-      // spotlight2.shadow.mapSize.width = 1024*4
-      // spotlight2.shadow.mapSize.height = 1024*4
-      // spotlight2.position.set(5,0,0)
-      // spotlight2.lookAt(0,0,0)
-      // spotlight2.shadow.camera.near = 0.5; // default
-      // spotlight2.shadow.camera.far = 100; // default
-      // spotlight2.shadow.focus = 1; // default
-      // scene.add(spotlight2)
-
-
 
       // clear name input
       document.getElementById("name-entry").value = ""
@@ -551,7 +538,7 @@
 
 
       let casinohighlightMap = loader.load( "sprites/casinohighlight.png")
-      casinohighlightMaterial = new THREE.SpriteMaterial( { map: casinohighlightMap, needsUpdate: true } )
+      casinohighlightMaterial = new THREE.SpriteMaterial( { map: casinohighlightMap } )
 
       let godkillerMap = loader.load( "sprites/godkiller.png")
       godkillerMaterial = new THREE.SpriteMaterial( { map: godkillerMap } )

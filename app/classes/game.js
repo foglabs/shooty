@@ -280,13 +280,13 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<22; i++){
-      //   player.levelUp()
-      // }
+      for(var i=0; i<10; i++){
+        player.levelUp()
+      }
 
-      // for(var i=0; i<20; i++){
-      //   game.nextRound()
-      // }
+      for(var i=0; i<30; i++){
+        game.nextRound()
+      }
     }
   }
 
@@ -616,7 +616,7 @@ class Game {
 
         if(!this.demo){
           let selectedDemo = Math.floor( Math.random() * 3 )
-          // selectedDemo = 3
+          selectedDemo = 3
           let characters = []
           player.mesh.visible = true
 
@@ -1522,9 +1522,10 @@ class Game {
 
           } else if(enemy.hitmanCorrupted && !enemy.contract){
             // if no contract, check for player contract
-            if(player.money >= 500){
+            if(player.money >= 50){
               let cost = player.money
-              let randomTargetId = Math.floor( Math.random() * k(this.enemies).length )
+              let keyz = k(this.enemies)
+              let randomTargetId = keyz[Math.floor( Math.random() * keyz.length )]
               enemy.addEnemyContract( cost, randomTargetId )
             }
 
@@ -1569,7 +1570,7 @@ class Game {
         }
       }
 
-      if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 ){
+      if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && !enemy.greenCorrupted && !enemy.hitmanCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 ){
           // god killer corruption! more likely with higher power level
           let god = ( 10/ (2*(player.level+7)) + 0.5 )
           let ch = Math.random()
@@ -1594,6 +1595,7 @@ class Game {
             
             if( enemy.handleHit( en ) ){
               // if en is not hitman, and touch and money, start contract
+
               let cost = en.money
               en.changeMoney( -1 * cost )
               enemy.addPlayerContract(cost, en.mesh.id)
@@ -1605,13 +1607,14 @@ class Game {
       this.numCorrupted += 1
     }
 
-
     if(enemy.health <= 0){
       // reward your KILLING
 
       // this removes the mesh right now
       // you can kill while corrupting, make sure they actually die
       if( enemy.lifecycle == ALIVE || enemy.lifecycle == CORRUPTING ){
+
+        let gainedKnowledge = false
 
         // only score once
         let score
@@ -1637,6 +1640,7 @@ class Game {
             // knowledge is for everyone
             if(enemy.knowledgeValue > 0){
               this.knowledgeSound()
+              gainedKnowledge = true
               player.changeKnowledge( enemy.knowledgeValue )
             }  
           }
@@ -1645,7 +1649,10 @@ class Game {
         game.changeScore(score)
         enemy.lifecycle = DYING
 
-        enemy.killSound()
+        if(!gainedKnowledge){
+          // block kill sound if we play the knowledge sound
+          enemy.killSound()
+        }
         enemy.remove()
       }
 
