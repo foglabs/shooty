@@ -599,14 +599,14 @@ class Enemy extends Character {
 
   endContract(){
     // temp
-    if(this.contract.type == ONPLAYER){
-      console.log( 'end contract' )
-      if(game.enemies[ this.contract.clientId ]){
-        game.enemies[ this.contract.clientId ].base_color = [0,255,255]
-        game.enemies[ this.contract.clientId ].setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])    
-      }
-      
-    }
+    // if(this.contract.type == ONPLAYER){
+    //   console.log( 'end contract' )
+    //   if(game.enemies[ this.contract.clientId ]){
+    //     game.enemies[ this.contract.clientId ].base_color = [0,255,255]
+    //     game.enemies[ this.contract.clientId ].setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])    
+    //   }
+
+    // }
 
     if(this.laserSight){
       // thats enough

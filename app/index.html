@@ -671,6 +671,10 @@
           } else if(event.key == "n"){
 
             game.showMoneyLabels()
+            if(player.moneyCircleEnabled){
+              player.startMoneyCircle()
+            }
+
           }
         }
 
@@ -710,6 +714,9 @@
             game.musicEnabled = !game.musicEnabled
           } else if(event.key == "n"){
             game.hideMoneyLabels()
+            if(player.moneyCircleEnabled){
+              player.stopMoneyCircle()
+            }
           }
         }
 

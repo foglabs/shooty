@@ -61,6 +61,15 @@ class Character {
 
     this.casinoHighlight = false
     // set money label in subclasses so it doesnt get put on bombs and stuff
+    this.moneyCircle = null
+    this.moneyCircleArea = {}
+    this.moneyCircleArea.mesh = null
+    this.moneyCircleArea.bbox = null
+    this.moneyCircleActive = false
+    this.moneyCircleTimer = new Timer()
+    this.moneyCircleSpendTimer = new Timer()
+    this.moneyCircleSpendTimer.start()
+    this.moneyCircleEnabled = false
   }
 
   drawMoney(){
@@ -137,6 +146,78 @@ class Character {
     // only for hitman corrupted
     this.laserSight.material.dispose()
     scene.remove( this.laserSight )  
+  }
+
+  // MONEY cirlce - spend mone yto extend shrinking hitman-contract-buying circle
+  addMoneyCircle(){
+    // bigger power, bigger circle
+    let geometry = new THREE.Geometry()
+    let monCol = this.money >= 50 ? "#ff0000" : "#00ff00" 
+    this.moneyCircle = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: monCol }))
+    this.moneyCircle.geometry.verticesNeedUpdate = true
+    // console.log( 'we addin that damn cirlce bitch  ' )
+
+    // toprad, bottomrad, height, segments
+    this.moneyCircleArea.mesh = new THREE.Mesh( new THREE.CylinderGeometry(1, 1, 0.2, 32), new THREE.MeshBasicMaterial({ color: monCol, transparent: true  }) )
+    // about face on to camera
+    this.moneyCircleArea.mesh.rotation.x = 1.57
+    this.moneyCircleArea.mesh.material.opacity = 0.05
+    this.drawMoneyCircle()
+    scene.add(this.moneyCircle, this.moneyCircleArea.mesh)
+  }
+
+  removeMoneyCircle(){
+    this.moneyCircle.geometry.dispose()
+    this.moneyCircle.material.dispose()
+    scene.remove(this.moneyCircle)
+    this.moneyCircle = null
+
+    this.moneyCircleArea.mesh.geometry.dispose()
+    this.moneyCircleArea.mesh.material.dispose()
+    scene.remove(this.moneyCircleArea.mesh)
+    this.moneyCircleArea.mesh = null
+    this.moneyCircleArea = {}
+  }
+
+  drawMoneyCircle(){
+
+    let segmentCount = 32
+    let radius
+    // radius = this.power/game.powerMax*2
+    // need more beeg
+    radius = this.money / 300
+
+    this.moneyCircle.geometry.vertices = []
+    var theta
+    for (var i = 0; i <= segmentCount; i++) {
+      theta = (i / segmentCount) * Math.PI * 2
+      this.moneyCircle.geometry.vertices.push( new THREE.Vector3( Math.cos(theta) * radius, Math.sin(theta) * radius, 0 ) )
+    }
+
+    // update
+    this.moneyCircleArea.mesh.scale.set( radius*1.1, radius*1.1, radius*1.1 )
+  }
+
+  startMoneyCircle(){
+    if(!this.moneyCircle){
+      this.addMoneyCircle()
+    }
+
+    this.moneyCircle.visible = true
+    this.moneyCircleArea.mesh.visible = true
+
+    if(!this.moneyCircleTimer.running){
+      // console.log( 'bgegin circ timer' )
+      this.moneyCircleTimer.start()
+    }
+  }
+
+  stopMoneyCircle(){
+    if(this.moneyCircle && this.moneyCircle.visible){
+      // console.log( 'stop that circle' )
+      this.moneyCircle.visible = false
+      this.moneyCircleArea.mesh.visible = false
+    }
   }
 
   remove(){
@@ -350,6 +431,12 @@ class Character {
 
     if(this.lifecycle == ALIVE && this.bloodDuster){
       this.bloodDuster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
+    }
+
+    if(this.lifecycle == ALIVE && this.moneyCircle && this.moneyCircle.visible){
+      // console.log( 'move tha tcircle' )
+      this.moneyCircle.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+      this.moneyCircleArea.mesh.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
     }
 
     if(this.lifecycle == ALIVE || this.lifecycle == CORRUPTING){
@@ -601,6 +688,37 @@ class Character {
         }
       }
     }
-    
+
+    if(this.moneyCircle && this.moneyCircle.visible){
+        
+      if(this.moneyCircleTimer.time() > 100){
+        this.moneyCircleTimer.reset()
+        // console.log( 'time to draw bitch' )
+        this.removeMoneyCircle()
+        this.addMoneyCircle()
+        this.moneyCircleArea.mesh.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+
+
+        // spend power to have killing circle open
+        this.changePower(-4)
+      }
+
+      this.drawMoneyCircle()
+      this.moneyCircle.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+      this.moneyCircleArea.mesh.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+
+      if(this.moneyCircleArea && this.moneyCircleArea.mesh){
+        this.moneyCircleArea.bbox = new THREE.Box3().setFromObject( this.moneyCircleArea.mesh )
+      }
+
+      if(this.moneyCircleSpendTimer.time() > 1000){
+        this.moneyCircleSpendTimer.reset()
+        // spend racks to have money circle open
+        this.changeMoney(-10)
+      }
+
+
+    }
+  
   }
 }

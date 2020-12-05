@@ -19,7 +19,9 @@ class Player extends Character {
     this.lightness = 0.06
     this.dragCoefficient = 0.022
 
-    this.defaultPlayerValues()    
+    this.moneyCircleEnabled = true
+
+    this.defaultPlayerValues()
   }
 
   defaultPlayerValues(){

@@ -1320,6 +1320,7 @@ class Game {
               }
             }
           }
+
         } else if(friend.lifecycle == DEAD){
           delete this.friends[i]
           deletedSomeone = true
@@ -1493,6 +1494,54 @@ class Game {
             enemy.takeDamage( player.killingCircleDamage(), KILLINGCIRCLE )
             enemy.setColor(0,0,255)
           }  
+        }
+      }
+
+
+      if(enemy.hitmanCorrupted && player.moneyCircle && player.moneyCircle.visible){
+        // if a friend is in the killing circle, give a lil powe3r!
+        let hit = enemy.handleHit( player.moneyCircleArea )
+        if(hit){
+
+          // hitman is touched by money cirlce area
+
+
+          if(enemy.contract && enemy.contract.type == ONPLAYER){
+            // try to spend  your way outta it
+
+            let playerMoney = player.money
+             player.changeMoney( -1 * playerMoney )
+
+            if(playerMoney >= enemy.money){
+              // if we have more money than hitman, add ours in and turn thables
+              enemy.changeMoney( playerMoney )
+              enemy.endContract()
+
+              let keyz = k(this.enemies)
+              let randomTargetId = keyz[Math.floor( Math.random() * keyz.length )]
+              enemy.addEnemyContract( cost, randomTargetId )
+            } else {
+              // if we have less than hitman, pay em to shorten the contract
+              enemy.changeMoney(-1 * playerMoney)
+            }
+
+          } if(enemy.contract && enemy.contract.type == ONENEMY) {
+            // if we alraedy hafev hitman hired, add to the contract pot
+            let playerMoney = player.money
+            player.changeMoney( -1 * playerMoney )
+            enemy.changeMoney(playerMoney)
+
+          } else {
+            // regular buy conract if no contract
+            if(player.money >= 50){
+              let cost = player.money
+              let keyz = k(this.enemies)
+              let randomTargetId = keyz[Math.floor( Math.random() * keyz.length )]
+              enemy.addEnemyContract( cost, randomTargetId )
+            }
+
+          }
+
         }
       }
 
