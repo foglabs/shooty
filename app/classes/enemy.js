@@ -852,25 +852,24 @@ class Enemy extends Character {
           // only go once, as cool as the changing is...
           if(!this.godCorrupted && !this.greenCorrupted && !this.hitmanCorrupted){
 
-            // if(game.roundCount < 20){
-            //   this.godCorrupt()
-            // } else if(game.roundCount < 30) {
-            //   if(Math.random() > 0.5){
-            //     this.godCorrupt()
-            //   } else {
-            //     this.greenCorrupt()
-            //   }
-            // } else {
-            //   let roll = Math.random()
-            //   if(roll > 0.66){
-            //     this.godCorrupt()
-            //   } else if(roll > 0.33) {
-            //     this.greenCorrupt()
-            //   } else {
-            //     this.hitmanCorrupt()
-            //   }
-            // }
-            this.hitmanCorrupt()
+            if(game.roundCount < 20){
+              this.godCorrupt()
+            } else if(game.roundCount < 30) {
+              if(Math.random() > 0.5){
+                this.godCorrupt()
+              } else {
+                this.greenCorrupt()
+              }
+            } else {
+              let roll = Math.random()
+              if(roll > 0.66){
+                this.godCorrupt()
+              } else if(roll > 0.33) {
+                this.greenCorrupt()
+              } else {
+                this.hitmanCorrupt()
+              }
+            }
 
           } else if(this.greenCorrupted){
             // green corrupt can keep growin bigger
