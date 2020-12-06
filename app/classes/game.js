@@ -280,13 +280,13 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      for(var i=0; i<10; i++){
-        player.levelUp()
-      }
+      // for(var i=0; i<14; i++){
+      //   player.levelUp()
+      // }
 
-      for(var i=0; i<30; i++){
-        game.nextRound()
-      }
+      // for(var i=0; i<50; i++){
+      //   game.nextRound()
+      // }
     }
   }
 
@@ -1504,7 +1504,7 @@ class Game {
         if(hit){
 
           // hitman is touched by money cirlce area
-
+          let playerMoney = player.money
 
           if(enemy.contract && enemy.contract.type == ONPLAYER){
             // try to spend  your way outta it
@@ -1519,18 +1519,17 @@ class Game {
 
               let keyz = k(this.enemies)
               let randomTargetId = keyz[Math.floor( Math.random() * keyz.length )]
-              enemy.addEnemyContract( cost, randomTargetId )
+              enemy.addEnemyContract( enemy.money, randomTargetId )
             } else {
-              // if we have less than hitman, pay em to shorten the contract
+              // if we have less than hitman, pay em off to shorten the contract
               enemy.changeMoney(-1 * playerMoney)
             }
 
           } if(enemy.contract && enemy.contract.type == ONENEMY) {
             // if we alraedy hafev hitman hired, add to the contract pot
-            let playerMoney = player.money
+            
             player.changeMoney( -1 * playerMoney )
             enemy.changeMoney(playerMoney)
-
           } else {
             // regular buy conract if no contract
             if(player.money >= 50){
@@ -1563,19 +1562,27 @@ class Game {
 
             enemy.attackSound()
             player.takeDamage( game.greenCorruptedDamage, ENEMY )
-          } else if(enemy.hitmanCorrupted && enemy.contract && enemy.contract.type == ONPLAYER){
-            // will fuck you up
+          } else if(enemy.hitmanCorrupted){
 
-            enemy.attackSound()
-            player.takeDamage( game.hitmanCorruptedDamage, ENEMY )
+            if(enemy.contract && enemy.contract.type == ONPLAYER){
+              // will fuck you up
 
-          } else if(enemy.hitmanCorrupted && !enemy.contract){
-            // if no contract, check for player contract
-            if(player.money >= 50){
-              let cost = player.money
-              let keyz = k(this.enemies)
-              let randomTargetId = keyz[Math.floor( Math.random() * keyz.length )]
-              enemy.addEnemyContract( cost, randomTargetId )
+              enemy.attackSound()
+              player.takeDamage( game.hitmanCorruptedDamage, ENEMY )
+
+            } else if(!enemy.contract){
+              // if no contract, check for player contract
+              if(player.money >= 50){
+                let cost = player.money
+                let keyz = k(this.enemies)
+                let randomTargetId = keyz[Math.floor( Math.random() * keyz.length )]
+
+                let playerMoney = player.money
+                player.changeMoney( -1 * playerMoney )
+                enemy.changeMoney( playerMoney )
+                enemy.addEnemyContract( cost, randomTargetId )
+              }
+
             }
 
           } else {

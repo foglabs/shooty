@@ -546,18 +546,22 @@ class Enemy extends Character {
     if(this.money > 0){
 
       if(this.contract.type == ONPLAYER){
-        console.log( 'moving p con' )
+        // console.log( 'moving p con' )
         this.moveTowardsPoint( player.mesh.position.x, player.mesh.position.y, 3 )
       } else if(this.contract.type == ONENEMY){
 
         // kill em
         // purseu enemy
 
-        // console.log( 'con check ', this.contract.targetId, game.enemies[this.contract.targetId], game.enemies[this.contract.targetId].lifecycle == ALIVE )
+        // console.log( 'id', this.contract.targetId )
+        // console.log( 'enem', game.enemies[this.contract.targetId] )
+        // if(game.enemies[this.contract.targetId]){
+        //   console.log( 'life', game.enemies[this.contract.targetId].lifecycle )
+        // }
 
         if(game.enemies[this.contract.targetId] && game.enemies[this.contract.targetId].lifecycle == ALIVE){
 
-          console.log( 'pursing con-e ', this.contract.targetId  )
+          // console.log( 'pursing con-e ', this.contract.targetId  )
           // if target is still alive, KILL EM
           this.moveTowardsPoint( game.enemies[ this.contract.targetId ].mesh.position.x, game.enemies[ this.contract.targetId ].mesh.position.y, 3 )
 
@@ -565,7 +569,7 @@ class Enemy extends Character {
           // if targets dead, pick a new one as long as we still got de dough
           let randomTargetId = Math.floor( Math.random() * k(game.enemies).length )
           this.contract.newTarget( randomTargetId )
-          console.log( 'chose new con-target ', randomTargetId )
+          // console.log( 'chose new con-target ', randomTargetId )
           // game.enemies[ this.contract.targetId ]
         }
       }
@@ -574,7 +578,7 @@ class Enemy extends Character {
         this.contractSpendTimer.reset()
         // if we're on any kind of contract, spend 10 bones a sex
         this.changeMoney(-10)
-        console.log( 'money is now', this.money )
+        // console.log( 'money is now', this.money )
       }
     } else {
 
@@ -667,7 +671,7 @@ class Enemy extends Character {
       let xSign = -1
       let ySign = -1
 
-      for(var i=0; i<3; i++){
+      for(var i=0; i<12; i++){
         // right point
         point[0] = xSign * game.maxX*0.8
         this.addPoint(point[0], point[1])
@@ -696,7 +700,7 @@ class Enemy extends Character {
       let xSign = -1
       let ySign = -1
 
-      for(var i=0; i<3; i++){
+      for(var i=0; i<12; i++){
 
         // right point
         point[1] = ySign * game.maxY*0.8

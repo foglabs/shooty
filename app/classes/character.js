@@ -152,7 +152,7 @@ class Character {
   addMoneyCircle(){
     // bigger power, bigger circle
     let geometry = new THREE.Geometry()
-    let monCol = this.money >= 50 ? "#ff0000" : "#00ff00" 
+    let monCol = this.money >= 50 ? "#00ff00" : "#ff0000" 
     this.moneyCircle = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: monCol }))
     this.moneyCircle.geometry.verticesNeedUpdate = true
     // console.log( 'we addin that damn cirlce bitch  ' )
@@ -382,7 +382,7 @@ class Character {
       this.lastMoney = this.money
       this.removeMoneyLabel()
 
-      let colorStr = "#00ff00"
+      let colorStr = "#ff0000"
 
       // if(this.money >= 25 && this.money < 50){
       //   colorStr = "#ffff00"
@@ -390,7 +390,7 @@ class Character {
       //   colorStr = "#ff0000"
       // }
       if(this.money > 50){
-        colorStr = "#ff0000"
+        colorStr = "#00ff00"
       }
 
       this.addMoneyLabel(colorStr)
