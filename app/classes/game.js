@@ -222,6 +222,11 @@ class Game {
     this.showMoneyLabelTimer.start()
 
     this.readyToStartGame = true
+
+    this.bonusEnergyTimer = new Timer()
+    this.bonusEnergyTimer.start()
+    this.bonusMoneyTimer = new Timer()
+    this.bonusMoneyTimer.start()
   }
   
   calcChanceSlices(){
@@ -1769,15 +1774,28 @@ class Game {
 
       }
     }
+
+    if(this.bonusMoneyTimer.time() > 1000){
+      this.bonusMoneyTimer.reset()
+      player.changeMoney(1)
+    }
+
     
     // record this after we've added new corrupts, and cleaned up dead enemies
     this.percentCorrupted = this.numCorrupted/enemiesKeys.length
+    if(this.percentCorrupted == 1){
+      if(player.power <= 10 && this.bonusEnergyTimer.time() > 600){
+        this.bonusEnergyTimer.reset()
+        player.changePower(1)
+      }
 
-    // only do this if we got no weapons
-    if(player.level < 2 && this.percentCorrupted == 1){
-      this.nowRandomBombing = true
-      this.randomBombs()      
-      // add random bombs if we're stuck on all corrupted and dont got bombs yet
+      // only do this if we got no weapons
+      if(player.level < 2){
+        this.nowRandomBombing = true
+        this.randomBombs()      
+        // add random bombs if we're stuck on all corrupted and dont got bombs yet
+      }  
     }
+    
   }  
 }

@@ -337,7 +337,7 @@ class Player extends Character {
 
   stopSword(){
     if(this.sword){
-      this.sword.active = true
+      this.sword.active = false
       this.sword.mesh.visible = false  
     }
   }
@@ -396,6 +396,11 @@ class Player extends Character {
           if(this.sword.powerTimer.time() > 100){
             this.sword.powerTimer.reset()
             this.changePower( this.swordCost() )
+
+            // if we ran out of power, kill sword
+            if(this.power <= 0){
+              this.stopSword()
+            }
           }
         }
       }

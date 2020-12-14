@@ -711,10 +711,10 @@ class Character {
         this.moneyCircleArea.bbox = new THREE.Box3().setFromObject( this.moneyCircleArea.mesh )
       }
 
-      if(this.moneyCircleSpendTimer.time() > 1000){
+      if(this.moneyCircleSpendTimer.time() > 5000){
         this.moneyCircleSpendTimer.reset()
         // spend racks to have money circle open
-        this.changeMoney(-10)
+        this.changeMoney(-1)
       }
 
 
