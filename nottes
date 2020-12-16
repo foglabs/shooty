@@ -207,23 +207,27 @@ materials
 -toon shade explosions
 
 
+FIX DIS
+-=-=-=-===
+*-by round 31, there are 0 knowloctas
+  eventually only sticks
 
--by round 31, there are 0 knowloctas
+  try shallow scale > round 20
+
+
 -pattern move doesnt work properly for sticks
 
-
-
-
-
--sword stays out if you hold sword down, even after energy depleted
+*-sword stays out if you hold sword down, even after energy depleted
   
 -add 'merchant' enemy, buy stuff with money
   screen clear
   health
   knowl
 
--caught with no energy against 2 godcorrupted
+*-caught with no energy against 2 godcorrupted
   just have to wait out the timer
   this sucks
 
   slowly regen 1 e/s during post-sword 'avoid the bombs scenario'
+
+-healcube sparklies dont get cleared from cleangame

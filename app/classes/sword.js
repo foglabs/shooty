@@ -68,7 +68,7 @@ class Sword {
       rad = rotateToward(this.rotation, DEG315, this.wielder.swordSpeed) 
     }
 
-    if( !isWithin(rad, this.rotation, DEG1) ){
+    if( isWithin(rad, this.rotation, DEG1) ){
       // chill if we're close enough to destination alraedy 
       this.rotateTo(rad)
     }

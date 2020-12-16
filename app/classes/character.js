@@ -241,6 +241,11 @@ class Character {
       this.sword = null
     }
 
+    // clean up on aisle healthglo
+    if(this.duster){
+      this.duster.remove()
+    }
+
     // clean up on aisle akuma
     if(this.banners){
       this.banners.remove()

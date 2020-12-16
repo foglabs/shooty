@@ -119,6 +119,10 @@
         return Math.PI/180*deg
       }
 
+      function degree(rad){
+        return 180/Math.PI*rad
+      }
+
       function shuffle(arra1) {
         let ctr = arra1.length
         let temp
@@ -242,6 +246,8 @@
     <script src="classes/character.js"></script>
     <script src="classes/player.js"></script>
     <script src="classes/enemy.js"></script>
+    <script src="classes/merchant.js"></script>
+    <script src="classes/item.js"></script>
     <script src="classes/contract.js"></script>
     <script src="classes/bomb.js"></script>
     <script src="classes/sword.js"></script>
@@ -350,6 +356,11 @@
       SCORES = 3
       DEMO = 4
       HAHA = 5
+
+      // item types
+      ITEMKNOW = 0
+      ITEMHEAL = 1
+      ITEMCLR = 2
 
       // DEG0 = radian(0)
       DEG1 = radian(1)
@@ -548,6 +559,9 @@
 
       let biggreenspriteMap = loader.load( "sprites/biggreensprite.png")
       biggreenspriteMaterial = new THREE.SpriteMaterial( { map: biggreenspriteMap } )
+
+      let merchantMap = loader.load( "sprites/merchant.png")
+      merchantMaterial = new THREE.SpriteMaterial( { map: merchantMap } )
 
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )

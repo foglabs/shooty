@@ -227,23 +227,35 @@ class Game {
     this.bonusEnergyTimer.start()
     this.bonusMoneyTimer = new Timer()
     this.bonusMoneyTimer.start()
+
+    this.merchant = null
   }
   
   calcChanceSlices(){
-    // let chanceSlices = [0.2,0.4,0.6,0.8]
-    let chanceSlices = [0.2,0.4,0.6,0.75]
-    for(var i=0; i<4; i++){
-      // bend the base chances based on round number, kinda weighted by index
-      chanceSlices[i] = chanceSlices[i] * i + Math.pow( this.roundCount, 2 )/3000
+    let chanceSlices
+    if(this.roundCount<20){
+      chanceSlices = [0.2,0.4,0.6,0.75]
+      for(var i=0; i<4; i++){
+        // bend the base chances based on round number, kinda weighted by index
+        chanceSlices[i] = chanceSlices[i] * i + Math.pow( this.roundCount, 2 )/3000
+      }
+
+      // adding these constants puts these shits on the right place for x==1 (level 1)
+      chanceSlices[0] = chanceSlices[0] + 0.2
+      chanceSlices[1] = chanceSlices[1]
+      chanceSlices[2] = chanceSlices[2] - 0.6
+      // chanceSlices[3] = chanceSlices[3] - 1.6
+      chanceSlices[3] = chanceSlices[3] - 1.5
+  
+    } else {
+      // after round 20, get buck
+      chanceSlices = [0.2,0.4,0.6,0.75]
+
+      for(var i=0; i<4; i++){
+        chanceSlices[i] = chanceSlices[i] * ( Math.pow(this.roundCount, 2) / 4500 ) + chanceSlices[i]
+      }
     }
-
-    // adding these constants puts these shits on the right place for x==1 (level 1)
-    chanceSlices[0] = chanceSlices[0] + 0.2
-    chanceSlices[1] = chanceSlices[1]
-    chanceSlices[2] = chanceSlices[2] - 0.6
-    // chanceSlices[3] = chanceSlices[3] - 1.6
-    chanceSlices[3] = chanceSlices[3] - 1.5
-
+    
     return chanceSlices
   }
   newPlayer(){
@@ -288,7 +300,6 @@ class Game {
       // for(var i=0; i<14; i++){
       //   player.levelUp()
       // }
-
       // for(var i=0; i<50; i++){
       //   game.nextRound()
       // }
@@ -374,6 +385,8 @@ class Game {
 
     let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
     this.generateEnemies( numEnemies )
+
+    this.addMerchant()
 
     // this sure does not work
     // let numCandies = Math.ceil( Math.random() * this.roundCount/2 )
@@ -940,6 +953,10 @@ class Game {
     }
 
     this.handleEnemies()
+
+    if(this.merchant){
+      this.handleMerchant()
+    }
 
     if(this.attractStage == DEMO){
       // demoo
@@ -1725,6 +1742,22 @@ class Game {
     }
   }
 
+  addMerchant(){
+    this.merchant = new Merchant()
+    scene.add( this.merchant.mesh )
+  }
+
+  removeMerchant(){
+    this.merchant.remove()
+    scene.remove( this.merchant.mesh )
+  }
+
+  handleMerchant(){
+    this.merchant.handleMovement()
+    this.merchant.handleBuying()
+    this.merchant.animation()
+  }
+
   handleEnemies(){
     let enemy
     this.numCorrupted = 0
@@ -1769,7 +1802,6 @@ class Game {
         // }
         
         this.endGame()
-
         // real play
 
       }
