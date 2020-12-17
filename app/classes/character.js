@@ -388,12 +388,6 @@ class Character {
       this.removeMoneyLabel()
 
       let colorStr = "#ff0000"
-
-      // if(this.money >= 25 && this.money < 50){
-      //   colorStr = "#ffff00"
-      // } else if(this.money > 50){
-      //   colorStr = "#ff0000"
-      // }
       if(this.money > 50){
         colorStr = "#00ff00"
       }

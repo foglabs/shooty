@@ -63,6 +63,8 @@ class Game {
     this.endTime = null
     // get and display score board first thing
     setScores()
+
+    this.merchantTimer = new Timer()
   }
   
   haveSex(){
@@ -386,7 +388,10 @@ class Game {
     let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
     this.generateEnemies( numEnemies )
 
-    this.addMerchant()
+    // if(this.roundCount % 5 == 0){
+      // LETS SHOP
+      this.addMerchant()
+    // }
 
     // this sure does not work
     // let numCandies = Math.ceil( Math.random() * this.roundCount/2 )
@@ -1430,7 +1435,6 @@ class Game {
           }
         }
       }
-      
     }
   }
 
@@ -1744,7 +1748,12 @@ class Game {
 
   addMerchant(){
     this.merchant = new Merchant()
+    let entryPoint = this.merchant.pickEntryPoint()
+    console.log( 'ep ', entryPoint )
+    this.merchant.mesh.position.set( entryPoint.x, entryPoint.y, entryPoint.z )
     scene.add( this.merchant.mesh )
+
+    this.merchantTimer.start()
   }
 
   removeMerchant(){
@@ -1756,6 +1765,11 @@ class Game {
     this.merchant.handleMovement()
     this.merchant.handleBuying()
     this.merchant.animation()
+
+    if(this.merchantTimer.time() > 10000){
+      this.merchant.closeShop()
+      this.merchant = null
+    }
   }
 
   handleEnemies(){
