@@ -38,6 +38,8 @@ class Game {
 
     // wait a bit to start music
     this.musicTimer = new Timer()
+    // flag to show msg once
+    this.muteMessage = false
 
     this.announcements = []
     this.announcementTimer = new Timer()
@@ -63,8 +65,6 @@ class Game {
     this.endTime = null
     // get and display score board first thing
     setScores()
-
-    this.merchantTimer = new Timer()
   }
   
   haveSex(){
@@ -231,6 +231,7 @@ class Game {
     this.bonusMoneyTimer.start()
 
     this.merchant = null
+    this.merchantTimer = new Timer()
   }
   
   calcChanceSlices(){
@@ -407,6 +408,10 @@ class Game {
     //   this.enemies[enemy.id].inScene = true
     // }
 
+    if(this.nowRandomBombing && player.level < 2){
+      // we won round during bombing, give em a little snac
+      this.bonusPurps()
+    }
     this.nowRandomBombing = false
 
     if(this.roundCount == 5){
@@ -452,6 +457,12 @@ class Game {
         // oh forget it!      
         // music start
         if(this.musicTimer.running && this.musicTimer.time() > 4000){
+
+          if(!this.muteMessage && this.musicTimer.time() > 4000){
+            this.announcement("MUTE MUSIC (M)")
+            this.muteMessage = true
+          }
+
 
           if(this.merchant){
             if(!fx_merchantamb.playing()){
@@ -901,6 +912,9 @@ class Game {
 
   randomBombs(){
     if(this.randomBombsTimer.time() > 3000){
+      // flag so we know when we won round during atb
+      this.randomBombing = true
+
       this.announcement("AVOID THE BOMBS")
       this.randomBombsTimer.reset()
 
@@ -921,6 +935,18 @@ class Game {
       }
       
     }
+  }
+
+  bonusPurps(){
+    let num = 2 + Math.floor( Math.random() * 2)
+
+    let enemy
+    for(var i=0; i<num; i++){
+      enemy = this.addEnemy(KNOWLOCTA)
+      this.enemies[enemy.id] = enemy
+      scene.add(this.enemies[enemy.id].mesh)
+      this.enemies[enemy.id].inScene = true
+    } 
   }
 
   drawPlaying(){
