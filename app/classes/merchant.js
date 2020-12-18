@@ -5,10 +5,11 @@ class Merchant extends Character {
     material = new THREE.MeshBasicMaterial( {color: 0xffff00} )
     super(geometry, new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()), [255,255,255])
 
-    let item1 = new Item("#784ec8", 0, ITEMKNOW, 50)
-    let item2 = new Item("#59e85b", 72, ITEMHEAL, 100)
+    let know = Math.floor( Math.random() * 10) * 50
+    let item1 = new Item("#784ec8", 0, ITEMKNOW, know, know)
+    let item2 = new Item("#59e85b", 72, ITEMHEAL, 100, 100)
     let item3 = new Item("#ff0000", 144, ITEMCLER, 300)
-    let item4 = new Item("#ffff22", 216, ITEMPOWR, 25)
+    let item4 = new Item("#ffff22", 216, ITEMPOWR, 25, 100)
     let item5 = new Item("#38D5F2", 288, ITEMFRND, 500)
     scene.add(item1.mesh)
     scene.add(item2.mesh)

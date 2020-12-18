@@ -1060,10 +1060,11 @@ class Game {
 
       if(this.friends.length > 0){
         for(var i=0; i<this.friends.length; i++){
-          this.friends[i].remove()
+          if(this.friends[i].health <= 0){
+            this.friends[i].remove()
+          }
         }
 
-        this.friends = []
       }
     }
   }

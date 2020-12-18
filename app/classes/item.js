@@ -1,5 +1,5 @@
 class Item {
-  constructor(color, rotation, type, cost){
+  constructor(color, rotation, type, cost, amount=null){
     let geometry = new THREE.BoxGeometry(0.1,0.1,0.1)
     let material = new THREE.MeshBasicMaterial( {color: color} )
     this.mesh = new THREE.Mesh(geometry, material)
@@ -10,7 +10,7 @@ class Item {
 
     this.type = type
     this.cost = cost
-    this.amount = 100
+    this.amount = amount
 
     // block until we get positioned properly
     this.available = false

@@ -70,7 +70,7 @@ class Player extends Character {
     this.level = 1
     this.health = 100
     
-    this.money = 10000
+    this.money = 0
     this.lastMoney = 0
     this.addMoneyLabel("#00ff00")
   }
