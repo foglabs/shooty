@@ -1,5 +1,5 @@
 class Item {
-  constructor(color, rotation, type){
+  constructor(color, rotation, type, cost){
     let geometry = new THREE.BoxGeometry(0.1,0.1,0.1)
     let material = new THREE.MeshBasicMaterial( {color: color} )
     this.mesh = new THREE.Mesh(geometry, material)
@@ -9,7 +9,7 @@ class Item {
     this.bbox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3())
 
     this.type = type
-    this.cost = 100
+    this.cost = cost
     this.amount = 100
 
     // block until we get positioned properly
@@ -17,22 +17,25 @@ class Item {
 
     this.moneyLabel = null
     this.moneyLabelColor = "#ff0000"
-    this.addMoneyLabel()
   }
 
   buy(){
     if(player.money >= this.cost){
-      console.log( 'hey there' )
+
+      fx_buysomething.play()
 
       this.mesh.visible = false
       this.available = false
       player.changeMoney(this.cost)
+      this.removeMoneyLabel()
       
       if(this.type == ITEMKNOW){
         player.changeKnowledge( this.amount )
       } else if(this.type == ITEMHEAL){
         player.changeHealth( this.amount )
-      } else {
+      } else if(this.type == ITEMCLER) {
+        game.merchant.closeShop()  
+
         let eKey
         let eKeys = k(game.enemies)
         for(var i=0; i<eKeys.length;i++){
@@ -40,7 +43,13 @@ class Item {
           game.enemies[eKey].changeHealth(-1000)
         }
 
-        game.merchant.closeShop()  
+      } else if(this.type == ITEMPOWR){
+
+        player.changePower(100)
+      } else if(this.type == ITEMFRND){
+
+        player.friendsAvailable = 1
+        player.addFriend()
       }
     }   
   }
@@ -53,6 +62,8 @@ class Item {
     this.moneyLabel.center.set( 0.5, 0.5 )
     this.moneyLabel.scale.set( 1, 0.2, 1 )
     scene.add( this.moneyLabel )
+
+    this.moneyLabelColor = colorStr
   }
 
   removeMoneyLabel(){
@@ -71,9 +82,15 @@ class Item {
     }
 
     if(colorChange){
-      this.removeMoneyLabel()
+      if(this.moneyLabel){
+        this.removeMoneyLabel()
+      }
       this.addMoneyLabel(colorChange)
     }
+  }
+
+  positionMoneyLabel(){
+    this.moneyLabel.position.set( this.mesh.position.x+0.5, this.mesh.position.y+0.3, this.mesh.position.z )
   }
 
   createTextMat(text, colorStr, opacity){
@@ -91,17 +108,14 @@ class Item {
     let texture1 = new THREE.CanvasTexture(canvas1) 
     texture1.needsUpdate = true
 
-    let material1 = new THREE.MeshBasicMaterial( { map: texture1, side: THREE.DoubleSide, opacity: opacity, needsUpdate: true } )
+    let material1 = new THREE.MeshBasicMaterial( { map: texture1, side: THREE.DoubleSide, opacity: opacity } )
     material1.transparent = true
 
     return material1
   }
 
   remove(){
-    if(this.moneyLabel){
-      this.removeMoneyLabel()
-    }
-
+    this.removeMoneyLabel()
     this.mesh.geometry.dispose()
     this.mesh.material.dispose()
     scene.remove(this.mesh)

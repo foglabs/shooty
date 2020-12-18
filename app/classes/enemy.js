@@ -67,6 +67,7 @@ class Enemy extends Character {
   
     let intention    
     let allowedToPattern
+    let moneyValue
     if(enemyType == STICK){
       // console.log( '0 trime' )
       // stick
@@ -77,6 +78,8 @@ class Enemy extends Character {
       lightness = 0.1
       allowedToPattern = true
       intention = PATTERNMOVE
+
+      moneyValue = 5
     } else if(enemyType == SPHERE){
       // console.log( '1 trime' )
       // sphere
@@ -212,6 +215,7 @@ class Enemy extends Character {
     this.color = this.baseColor
     this.nutritionalValue = nutritionalValue
     this.knowledgeValue = knowledgeValue
+    this.moneyValue = moneyValue
 
     this.inScene = false
 

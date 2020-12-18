@@ -8,9 +8,7 @@ class Duster {
     this.size = size
     this.position = position
     this.opacity = opacity || 0.24
-
     this.badge = badge
-
     this.distance = distance
     
     let pointMat = new THREE.PointsMaterial({

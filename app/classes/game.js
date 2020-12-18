@@ -29,7 +29,7 @@ class Game {
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
 
-    this.musicEnabled = false
+    this.musicEnabled = true
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -388,10 +388,13 @@ class Game {
     let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
     this.generateEnemies( numEnemies )
 
-    // if(this.roundCount % 5 == 0){
+    if(this.roundCount % 5 == 0){
       // LETS SHOP
+
+      this.announcement("ITEM SHOP HAS OPENED")
+      this.announcement("VIEW MONEY (N)")
       this.addMerchant()
-    // }
+    }
 
     // this sure does not work
     // let numCandies = Math.ceil( Math.random() * this.roundCount/2 )
@@ -449,29 +452,25 @@ class Game {
         // oh forget it!      
         // music start
         if(this.musicTimer.running && this.musicTimer.time() > 4000){
-          // fx_song2.setVolume(0.0)
 
-          if(!fx_song2.playing()){
-            fx_song2.play()
+          if(this.merchant){
+            if(!fx_merchantamb.playing()){
+              fx_merchantamb.play()
+  
+              if(fx_song2.playing()){
+                fx_song2.stop()
+              }
+            }
+
+          } else {
+            if(!fx_song2.playing()){
+              fx_song2.play()
+
+              if(fx_merchantamb.playing()){
+                fx_merchantamb.stop()
+              }
+            }
           }
-
-        //   if(!this.musicFadeTimer.running){
-        //     this.musicFadeTimer.start()
-        //   }
-
-        //   // music fade
-        //   if(this.musicFadeTimer.time() > 100){
-        //     this.musicFadeTimer.reset()
-
-        //     this.musicVolume = this.musicVolume + 0.01
-        //     console.log( 'added musicvolume', this.musicVolume )
-        //     fx_song2.setVolume( this.musicVolume )
-
-        //     if(this.musicVolume > 0.6){
-        //       // stop changing once we reach the right volume
-        //       this.musicTimer.stop()
-        //     }
-        //   }
         }
       }  
     }
@@ -1053,6 +1052,19 @@ class Game {
         this.enemies[enemyId].remove()
         delete this.enemies[enemyId]
       }
+
+      if(this.merchant){
+        // bye bye!
+        this.removeMerchant()
+      }
+
+      if(this.friends.length > 0){
+        for(var i=0; i<this.friends.length; i++){
+          this.friends[i].remove()
+        }
+
+        this.friends = []
+      }
     }
   }
 
@@ -1243,6 +1255,11 @@ class Game {
     [fx_eatpurple1, fx_eatpurple2, fx_eatpurple3][ Math.floor( Math.random() * 3 ) ].play()
   }
 
+  moneySound(){
+    // [fx_money41, fx_money42][ Math.floor( Math.random() * 2 ) ].play()
+    fx_money.play()
+  }
+
   addEnemy(type=null, posx=null, posy=null){
     let killer = new Enemy([0,88,255*Math.round(Math.random())], type);
 
@@ -1341,7 +1358,9 @@ class Game {
             if(hit){
               if(friend.rechargeTimer.time() > 60){
                 friend.rechargeTimer.reset()
+                // little bitta both
                 friend.changePower(2)
+                friend.changeHealth(2)
                 // console.log( 'chare him to ', friend.power )
 
               }
@@ -1725,6 +1744,12 @@ class Game {
               gainedKnowledge = true
               player.changeKnowledge( enemy.knowledgeValue )
             }  
+
+            // knowledge is for everyone
+            if(enemy.moneyValue > 0){
+              this.moneySound()
+              player.changeMoney( enemy.knowledgeValue )
+            }  
           }
         }
 
@@ -1749,7 +1774,6 @@ class Game {
   addMerchant(){
     this.merchant = new Merchant()
     let entryPoint = this.merchant.pickEntryPoint()
-    console.log( 'ep ', entryPoint )
     this.merchant.mesh.position.set( entryPoint.x, entryPoint.y, entryPoint.z )
     scene.add( this.merchant.mesh )
 
@@ -1767,6 +1791,7 @@ class Game {
     this.merchant.animation()
 
     if(this.merchantTimer.time() > 10000){
+      this.announcement("ITEM SHOP HAS CLOSED")
       this.merchant.closeShop()
       this.merchant = null
     }
@@ -1820,12 +1845,6 @@ class Game {
 
       }
     }
-
-    if(this.bonusMoneyTimer.time() > 1000){
-      this.bonusMoneyTimer.reset()
-      player.changeMoney(1)
-    }
-
     
     // record this after we've added new corrupts, and cleaned up dead enemies
     this.percentCorrupted = this.numCorrupted/enemiesKeys.length

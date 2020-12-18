@@ -146,6 +146,10 @@
         return arra1
       }
 
+      function distance(x1,y1,x2,y2){
+        return Math.sqrt( Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2) )
+      }
+
       function beginNameEntry(){
         console.log( 'focusing' )
         game.nameEntry = ENTERING
@@ -364,7 +368,9 @@
       // item types
       ITEMKNOW = 0
       ITEMHEAL = 1
-      ITEMCLR = 2
+      ITEMCLER = 2
+      ITEMPOWR = 3
+      ITEMFRND = 4
 
       // DEG0 = radian(0)
       DEG1 = radian(1)
@@ -480,6 +486,10 @@
       let fx_newfriendkill1 = new Sound("sounds/newfriendkill1.mp3", 0.6)
       let fx_newfriendkill2 = new Sound("sounds/newfriendkill2.mp3", 0.6)
       let fx_newfriendkill3 = new Sound("sounds/newfriendkill3.mp3", 0.6)
+
+      let fx_buysomething = new Sound("sounds/buysomething.mp3", 0.6)
+      let fx_merchantamb = new Sound("sounds/merchantamb.mp3", 0.6)
+      let fx_money = new Sound("sounds/money.mp3", 0.6)
 
       // scene contains objects
       var scene = new THREE.Scene();

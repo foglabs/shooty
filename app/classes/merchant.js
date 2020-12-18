@@ -1,18 +1,22 @@
 class Merchant extends Character {
   constructor(){
     let geometry, material
-    geometry = new THREE.ConeGeometry(0.3,0.6,7)
+    geometry = new THREE.ConeGeometry(0.3,0.2,7)
     material = new THREE.MeshBasicMaterial( {color: 0xffff00} )
     super(geometry, new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()), [255,255,255])
 
-    let item1 = new Item("#784ec8", 0, ITEMKNOW)
-    let item2 = new Item("#59e85b", 120, ITEMHEAL)
-    let item3 = new Item("#0000ff", 240, ITEMCLR)
+    let item1 = new Item("#784ec8", 0, ITEMKNOW, 50)
+    let item2 = new Item("#59e85b", 72, ITEMHEAL, 100)
+    let item3 = new Item("#ff0000", 144, ITEMCLER, 300)
+    let item4 = new Item("#ffff22", 216, ITEMPOWR, 25)
+    let item5 = new Item("#38D5F2", 288, ITEMFRND, 500)
     scene.add(item1.mesh)
     scene.add(item2.mesh)
     scene.add(item3.mesh)
+    scene.add(item4.mesh)
+    scene.add(item5.mesh)
 
-    this.items = [item1,item2,item3]
+    this.items = [item1,item2,item3,item4,item5]
 
     this.directionTimer = new Timer()
     this.directionTimer.start()
@@ -20,13 +24,15 @@ class Merchant extends Character {
     this.health = 10000
     this.lightness = 0.001
 
-    this.addBanners(merchantMap, 1.22, null, 0.1, true)
+    this.addBanners(merchantMap, 1.0, null, 0.2, true, 1)
     this.itemRotationTimer = new Timer()
     this.itemRotationTimer.start()
 
     this.openForBusiness = false 
     this.shopOpenTimer = new Timer()
     this.shopOpenTimer.start()
+
+    this.itemRadius = 0
   }
 
   openShop(){
@@ -35,6 +41,7 @@ class Merchant extends Character {
     // flag our goods as good for sale
     for(var i=0; i<this.items.length; i++){
       this.items[i].available = true
+      this.items[i].addMoneyLabel(this.items[i].moneyLabelColor)
     }
 
     console.log( 'shops open!')
@@ -50,16 +57,27 @@ class Merchant extends Character {
   }
 
   handleBuying(){
-    if(this.openForBusiness == false && this.shopOpenTimer.time() > 3000){
-      this.openShop()
-    }
+    if(this.openForBusiness == false){
 
+      // scroll those items out
+      if(this.itemRadius < 0.7){
+        this.itemRadius += 0.013
+      }
+
+      if(this.shopOpenTimer.time() > 3000){
+        this.openShop()
+
+        this.itemRadius = 0.7
+      }
+    }
+    
     let item
     for(var i=0; i<this.items.length; i++){
       item = this.items[i]
-      item.handleMoneyLabel()
 
       if(item.available){
+        item.handleMoneyLabel()
+        item.positionMoneyLabel()
 
         item.bbox.setFromObject( item.mesh )
 
@@ -74,7 +92,6 @@ class Merchant extends Character {
     if(this.directionTimer.time() > 800){
       this.directionTimer.reset()
       this.chooseDirection()
-      // console.log( 'FRIEND I CHOOSE DIREC', this.accx, this.accy )      
     }
     // wander
     let speed =  Math.random()*accChange
@@ -119,22 +136,30 @@ class Merchant extends Character {
   }
 
   customMovement(){
-    // ?
-    this.wander(0.81)
+    let px = player.mesh.position.x
+    let py = player.mesh.position.y
+    if( distance( px, py, this.mesh.position.x, this.mesh.position.y ) > 2 ){
+      // if we're far from player, move towards
+      this.moveTowardsPoint( px, py, 0.6 )
+    } else {
+      // otherwise just relax
+      this.wander(0.21)
+    }
   }
 
   moveItem(item){
     // rotate one degree
     item.mesh.rotation.z = item.mesh.rotation.z + 0.01
 
-    let radius = 0.7
+    // 0.7
+    let radius = this.itemRadius
     // position on sword circle lol
     let x = radius * Math.sin( item.mesh.rotation.z ) + this.mesh.position.x
     let y = radius * Math.cos( item.mesh.rotation.z ) + this.mesh.position.y
     item.mesh.position.set( x, y, 0 )
     
     if(item.moneyLabel){
-      item.moneyLabel.position.set( item.mesh.position.x+0.5, item.mesh.position.y+0.3, item.mesh.position.z )
+      item.positionMoneyLabel()
     }
   }
 
