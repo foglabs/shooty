@@ -37,8 +37,9 @@ class Merchant extends Character {
   addItem(itemType, degPosition){
     let item
     if(itemType == ITEMKNOW){
-      let know = 50 + Math.floor( Math.random() * 16) * 50
-      item = new Item("#784ec8", degPosition, ITEMKNOW, know, know)  
+      let know = 25 + Math.floor( Math.random() * 16) * 25
+      // 100 bux / 25 knowledge
+      item = new Item("#784ec8", degPosition, ITEMKNOW, know*4, know)  
     } else if(itemType == ITEMHEAL){
       item = new Item("#59e85b", degPosition, ITEMHEAL, 25, 100)  
     } else if(itemType == ITEMPOWR){

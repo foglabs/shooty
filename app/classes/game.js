@@ -29,7 +29,7 @@ class Game {
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
 
-    this.musicEnabled = false
+    this.musicEnabled = true
 
     this.stage = false
     this.stageTimer = new Timer()
