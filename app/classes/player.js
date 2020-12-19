@@ -113,8 +113,10 @@ class Player extends Character {
     this.power = incInRange( this.power, powChange, 0, game.powerMax )
   }
 
-  changeKnowledge(knowChange){
 
+
+
+  changeKnowledge(knowChange){
     // lock em in 
     this.knowledge = incInRange( this.knowledge, knowChange, 0, game.knowledgeMax )
     if(this.knowledge >= game.knowledgeMax){
@@ -439,15 +441,13 @@ class Player extends Character {
 
         if(this.speedItemTimer.time() < 20000){
 
-          if(this.lightness <= 0.24){
+          if(this.lightness <= 0.16){
             this.lightness += 0.02
           }
 
           if(this.color != this.tempColor){
-            console.log( 'fading from base to temop' )
             this.fadeColor(this.baseColor, this.tempColor, 60)
           }
-
         } else {
 
           this.lightness -= 0.02
@@ -457,11 +457,6 @@ class Player extends Character {
             //back to base color
             this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
           }
-
-          // if(this.color != this.baseColor){
-          //   console.log( 'fading from temp to base' )
-          //   this.fadeColor(this.tempColor, this.baseColor, 300)
-          // }
         }
       }
 
@@ -514,7 +509,7 @@ class Player extends Character {
 
   startSpeedItem(){
     // this.setColor(255,0,0)
-    this.tempColor = [255,0,0]
+    this.tempColor = [235,87,255]
 
     this.speedItem = true
     this.speedItemTimer.reset()

@@ -26,14 +26,36 @@ class Item {
 
       this.mesh.visible = false
       this.available = false
-      player.changeMoney(this.cost)
+      player.changeMoney(-1 *  this.cost)
       this.removeMoneyLabel()
       
       if(this.type == ITEMKNOW){
+
+        let remainingBonus = this.amount
+        let change, amountToNextLevel
+        while(remainingBonus > game.knowledgeMax){
+          // knowledge max changes each level, so we have to step through leveling to use full bonus
+
+          // make use of players partial level on first loop, is 0 thereafter
+          amountToNextLevel = game.knowledgeMax - player.knowledge
+          if(remainingBonus > amountToNextLevel){
+
+            remainingBonus -= amountToNextLevel
+            // levels up
+            player.changeKnowledge( amountToNextLevel )
+          } else {
+
+            // add in the last chunk of knowlege
+            player.changeKnowledge( remainingBonus )
+          }
+        }
+
         player.changeKnowledge( this.amount )
       } else if(this.type == ITEMHEAL){
+
         player.changeHealth( this.amount )
       } else if(this.type == ITEMCLER) {
+
         game.merchant.closeShop()  
 
         let eKey

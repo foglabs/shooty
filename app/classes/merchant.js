@@ -5,21 +5,17 @@ class Merchant extends Character {
     material = new THREE.MeshBasicMaterial( {color: 0xffff00} )
     super(geometry, new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()), [255,255,255])
 
-    let know = 50 + Math.floor( Math.random() * 15) * 50
-    let item1 = new Item("#784ec8", 0, ITEMKNOW, know, know)
-    let item2 = new Item("#59e85b", 60, ITEMHEAL, 25, 100)
-    let item3 = new Item("#ffffff", 120, ITEMCLER, 300)
-    let item4 = new Item("#ffff22", 180, ITEMPOWR, 25, 100)
-    let item5 = new Item("#38D5F2", 240, ITEMFRND, 500)
-    let item6 = new Item("#ff0000", 300, ITEMSPED, 100)
-    scene.add(item1.mesh)
-    scene.add(item2.mesh)
-    scene.add(item3.mesh)
-    scene.add(item4.mesh)
-    scene.add(item5.mesh)
-    scene.add(item6.mesh)
+    // roundcount will be a multiple of 5, more possible items each time
+    let numItems = 3 + Math.floor( Math.random() * game.roundCount/5 )
 
-    this.items = [item1,item2,item3,item4,item5,item6]
+    this.items = []
+
+    let item, rot
+    for(var i=0; i<numItems; i++){
+      rot = 360/numItems * i
+      item = this.addItem( i, rot )
+      this.items.push(item)
+    }
 
     this.directionTimer = new Timer()
     this.directionTimer.start()
@@ -36,6 +32,27 @@ class Merchant extends Character {
     this.shopOpenTimer.start()
 
     this.itemRadius = 0
+  }
+
+  addItem(itemType, degPosition){
+    let item
+    if(itemType == ITEMKNOW){
+      let know = 50 + Math.floor( Math.random() * 16) * 50
+      item = new Item("#784ec8", degPosition, ITEMKNOW, know, know)  
+    } else if(itemType == ITEMHEAL){
+      item = new Item("#59e85b", degPosition, ITEMHEAL, 25, 100)  
+    } else if(itemType == ITEMPOWR){
+      item = new Item("#ffff22", degPosition, ITEMPOWR, 25, 100)
+    } else if(itemType == ITEMSPED){
+      item = new Item("#EB57FF", degPosition, ITEMSPED, 100)  
+    } else if(itemType == ITEMCLER){
+      item = new Item("#ffffff", degPosition, ITEMCLER, 300)        
+    } else if(itemType == ITEMFRND){      
+      item = new Item("#38D5F2", degPosition, ITEMFRND, 500)  
+    }
+    
+    scene.add(item.mesh)
+    return item
   }
 
   openShop(){

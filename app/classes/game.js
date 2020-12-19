@@ -29,7 +29,7 @@ class Game {
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
 
-    this.musicEnabled = true
+    this.musicEnabled = false
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -609,7 +609,7 @@ class Game {
 
     if( ( game.nameEntry == NONAME) && checkSoundsLoaded() ){
 
-      if(this.attractTimer.time() > 12000){
+      if(this.attractTimer.time() > 16000){
         this.attractTimer.reset()
         this.attractStage += 1
 
@@ -1770,7 +1770,7 @@ class Game {
             // knowledge is for everyone
             if(enemy.moneyValue > 0){
               this.moneySound()
-              player.changeMoney( enemy.knowledgeValue )
+              player.changeMoney( enemy.moneyValue )
             }  
           }
         }
