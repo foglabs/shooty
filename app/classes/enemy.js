@@ -79,7 +79,7 @@ class Enemy extends Character {
       allowedToPattern = true
       intention = PATTERNMOVE
 
-      moneyValue = 5
+      moneyValue = 25
     } else if(enemyType == SPHERE){
       // console.log( '1 trime' )
       // sphere

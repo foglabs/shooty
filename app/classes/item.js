@@ -50,6 +50,9 @@ class Item {
 
         player.friendsAvailable = 1
         player.addFriend()
+      } else if(this.type == ITEMSPED){
+
+        player.startSpeedItem()
       }
     }   
   }

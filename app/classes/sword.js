@@ -1,5 +1,5 @@
 class Sword {
-  constructor(length, rotation, wielder=player){
+  constructor(length, rotation, wielder){
     this.length = length
     this.active = false
 
@@ -9,7 +9,6 @@ class Sword {
     this.powerTimer = new Timer()
     this.powerTimer.start()
 
-    // deafult player
     this.wielder = wielder
 
     let geo = new THREE.ConeGeometry( 0.01, this.length, 32 )
@@ -68,8 +67,8 @@ class Sword {
       rad = rotateToward(this.rotation, DEG315, this.wielder.swordSpeed) 
     }
 
-    if( isWithin(rad, this.rotation, DEG1) ){
-      // chill if we're close enough to destination alraedy 
+    if( !isWithin(rad, this.rotation, DEG1) ){
+      // if we're close enough to destination alraedy, DONT ROTATE
       this.rotateTo(rad)
     }
 
@@ -82,13 +81,7 @@ class Sword {
 
   rotateTo(rad){
     this.rotation = rad
-
     // this.mesh.rotation.z = -1 * this.rotation
     this.mesh.rotation.z = -1 * rad
   }
-
-
-
-
-
 }

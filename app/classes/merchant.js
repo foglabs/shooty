@@ -5,19 +5,21 @@ class Merchant extends Character {
     material = new THREE.MeshBasicMaterial( {color: 0xffff00} )
     super(geometry, new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()), [255,255,255])
 
-    let know = Math.floor( Math.random() * 10) * 50
+    let know = 50 + Math.floor( Math.random() * 15) * 50
     let item1 = new Item("#784ec8", 0, ITEMKNOW, know, know)
-    let item2 = new Item("#59e85b", 72, ITEMHEAL, 100, 100)
-    let item3 = new Item("#ff0000", 144, ITEMCLER, 300)
-    let item4 = new Item("#ffff22", 216, ITEMPOWR, 25, 100)
-    let item5 = new Item("#38D5F2", 288, ITEMFRND, 500)
+    let item2 = new Item("#59e85b", 60, ITEMHEAL, 25, 100)
+    let item3 = new Item("#ffffff", 120, ITEMCLER, 300)
+    let item4 = new Item("#ffff22", 180, ITEMPOWR, 25, 100)
+    let item5 = new Item("#38D5F2", 240, ITEMFRND, 500)
+    let item6 = new Item("#ff0000", 300, ITEMSPED, 100)
     scene.add(item1.mesh)
     scene.add(item2.mesh)
     scene.add(item3.mesh)
     scene.add(item4.mesh)
     scene.add(item5.mesh)
+    scene.add(item6.mesh)
 
-    this.items = [item1,item2,item3,item4,item5]
+    this.items = [item1,item2,item3,item4,item5,item6]
 
     this.directionTimer = new Timer()
     this.directionTimer.start()
@@ -45,7 +47,6 @@ class Merchant extends Character {
       this.items[i].addMoneyLabel(this.items[i].moneyLabelColor)
     }
 
-    console.log( 'shops open!')
   }
 
   closeShop(){

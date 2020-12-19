@@ -16,7 +16,7 @@ class Player extends Character {
     this.isPlayer = true
     
     // how heavy is da guy
-    this.lightness = 0.06
+    // this.lightness = 0.06
     this.dragCoefficient = 0.022
 
     this.moneyCircleEnabled = true
@@ -73,6 +73,12 @@ class Player extends Character {
     this.money = 0
     this.lastMoney = 0
     this.addMoneyLabel("#00ff00")
+
+    this.speedItemTimer = new Timer()
+    this.speedItemTimer.start()
+    this.speedItem = false
+    this.defaultLightness = 0.06
+    this.lightness = 0.06
   }
   
   rotation(){
@@ -321,7 +327,7 @@ class Player extends Character {
 
   // sword
   addSword(){
-    this.sword = new Sword( this.swordLength() )
+    this.sword = new Sword( this.swordLength(), 0, this )
     this.sword.mesh.visible = false
     scene.add( this.sword.mesh )
   }
@@ -346,7 +352,6 @@ class Player extends Character {
 
     if(this.sword.rotateTimer.time() > 2){
       this.sword.rotateTimer.reset()
-
       this.sword.bbox.setFromObject( this.sword.mesh )
     }
   }
@@ -428,6 +433,40 @@ class Player extends Character {
         }
 
       }
+
+
+      console.log( 'tlighty', this.lightness )
+      if(this.speedItem){
+        // if we buy the speed item, we charge up to speed until we fast
+
+        if(this.speedItemTimer.time() < 30000){
+
+          if(this.lightness <= 0.24){
+            this.lightness += 0.02
+          }
+
+          if(this.color != this.tempColor){
+            console.log( 'fading from base to temop' )
+            this.fadeColor(this.baseColor, this.tempColor, 60)
+          }
+
+        } else {
+
+          this.lightness -= 0.02
+          if(this.lightness <= this.defaultLightness){
+            this.lightness = this.defaultLightness
+            this.speedItem = false
+            //back to base color
+            this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
+          }
+
+          // if(this.color != this.baseColor){
+          //   console.log( 'fading from temp to base' )
+          //   this.fadeColor(this.tempColor, this.baseColor, 300)
+          // }
+        }
+      }
+
     } else if(this.lifecycle == DYING){
       this.deathAnimation()
 
@@ -438,6 +477,49 @@ class Player extends Character {
         this.addSprite(pbloodspriteMaterial.clone(), 0.3)
       }
     }
+  }
+
+  fadeColor(fromColor, toColor, time){
+    if(!this.colorTimer.running){
+      this.colorTimer.start()
+    }
+
+    // one step for each animinterval
+    let animinterval = 5
+    let numSteps = time / animinterval
+
+    // every 5 ms 
+    if(this.colorTimer.time() > 5){
+      this.colorTimer.reset()
+
+      let r,g,b
+      r = Math.floor( lerp( fromColor[0], toColor[0], this.u ) )
+      g = Math.floor( lerp( fromColor[1], toColor[1], this.u ) )
+      b = Math.floor( lerp( fromColor[2], toColor[2], this.u ) )
+
+      this.color = [r,g,b]
+      this.setColor(r,g,b)
+
+      let step = 1.0/numSteps
+      this.u += step
+
+      // done
+      if(this.u > 1.0){
+        this.u = 0
+      }
+    }
+
+    if(isWithin(this.color[0], toColor[0], 5) && isWithin(this.color[1], toColor[1], 5) && isWithin(this.color[2], toColor[2], 5)){
+      this.setColor( toColor[0], toColor[1], toColor[2] )
+    }
+  }
+
+  startSpeedItem(){
+    // this.setColor(255,0,0)
+    this.tempColor = [255,0,0]
+
+    this.speedItem = true
+    this.speedItemTimer.reset()
   }
 
   deathAnimation(){
@@ -470,60 +552,60 @@ class Player extends Character {
       }
     }
 
-    if(this.eating || this.scaleFactor > 1 || this.scaleFactor < 1){
-      // console.log( 'scaleFactor ' + this.scaleFactor )
-      if(!this.animTimer.running){
-        this.animTimer.start()
-      } 
+    // if(this.eating || this.scaleFactor > 1 || this.scaleFactor < 1){
+    //   // console.log( 'scaleFactor ' + this.scaleFactor )
+    //   if(!this.animTimer.running){
+    //     this.animTimer.start()
+    //   } 
 
-      // how often should we actually change mesh
-      if(this.animTimer.time() > 30){
-        // 20ms
-        this.animTimer.reset()
+    //   // how often should we actually change mesh
+    //   if(this.animTimer.time() > 30){
+    //     // 20ms
+    //     this.animTimer.reset()
         
-        if(this.eating){
-          // console.log( 'turn hit on' )
-          this.isHit = true
+    //     if(this.eating){
+    //       // console.log( 'turn hit on' )
+    //       this.isHit = true
 
-          // if we eatin, scale that badboy up
-          if(this.scaleFactor < 3){
+    //       // if we eatin, scale that badboy up
+    //       if(this.scaleFactor < 3){
 
-            this.scaleFactor += 0.05
-            // console.log( 'going up' )
-          }
+    //         this.scaleFactor += 0.05
+    //         // console.log( 'going up' )
+    //       }
 
-        } else {
+    //     } else {
 
-          // console.log( 'turn hit off' )
-          this.isHit = false
+    //       // console.log( 'turn hit off' )
+    //       this.isHit = false
 
-          if(this.scaleFactor > 1) {
+    //       if(this.scaleFactor > 1) {
 
-            // if we're full, but still big, shrink on down
-            this.scaleFactor -= 0.05
+    //         // if we're full, but still big, shrink on down
+    //         this.scaleFactor -= 0.05
 
-            // console.log( 'reduced to ' + this.scaleFactor )
+    //         // console.log( 'reduced to ' + this.scaleFactor )
 
-            if(this.scaleFactor < 1.0){
-              // console.log( 'reset going down' )
-              this.scaleFactor = 1.0
-            }
-          }
+    //         if(this.scaleFactor < 1.0){
+    //           // console.log( 'reset going down' )
+    //           this.scaleFactor = 1.0
+    //         }
+    //       }
         
-        }
-      }
+    //     }
+    //   }
 
-      // if we're in here, were doing somethin right
-      this.mesh.scale.x = this.scaleFactor
-      this.mesh.scale.y = this.scaleFactor
-      this.mesh.scale.z = this.scaleFactor
-    }
+    //   // if we're in here, were doing somethin right
+    //   this.mesh.scale.x = this.scaleFactor
+    //   this.mesh.scale.y = this.scaleFactor
+    //   this.mesh.scale.z = this.scaleFactor
+    // }
 
-    if(this.eatingTimer.time() > 200){
-      this.eating = false
-      this.eatingTimer.stop()
-      // console.log( 'stop eating' )
-    }
+    // if(this.eatingTimer.time() > 200){
+    //   this.eating = false
+    //   this.eatingTimer.stop()
+    //   // console.log( 'stop eating' )
+    // }
 
   }
 

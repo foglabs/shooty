@@ -338,7 +338,7 @@ class Character {
   }
   
   setColor(r,g,b){
-    // this.mesh.material.color.setRGB(r,g,b)
+    this.color = [r,g,b]
     let hex = rgbToHex(r,g,b)
     this.mesh.material.color.set( hex )
   }
@@ -352,14 +352,14 @@ class Character {
   slowDown(acc){
     if(acc > 0){
       // whichever way we're currently moving, accelerate towards the opposite direction
-      acc -= this.dragCoefficient;
-      if(acc < 0) {acc = 0};
+      acc -= this.dragCoefficient
+      if(acc < 0) {acc = 0}
     } else if(acc < 0){
-      acc += this.dragCoefficient;
-      if(acc > 0) {acc = 0};
+      acc += this.dragCoefficient
+      if(acc > 0) {acc = 0}
     }
 
-    return acc;
+    return acc
   }
 
   handleBombs(){
@@ -570,61 +570,61 @@ class Character {
 
   colorCycle(){
 
-    if(this.isHit){
-      this.fading = true
-    }
+    // if(this.isHit){
+    //   this.fading = true
+    // }
 
-    if(this.fading){
+    // if(this.fading){
 
-      if(!this.colorTimer.running){
-        this.colorTimer.start()
-      }
+    //   if(!this.colorTimer.running){
+    //     this.colorTimer.start()
+    //   }
 
-      let tocolor
-      let fromcolor
-      if(this.isHit){
-        tocolor = this.hitColor
-        fromcolor = this.baseColor
-      } else {
-        tocolor = this.baseColor
-        fromcolor = this.hitColor
-      }
+    //   let tocolor
+    //   let fromcolor
+    //   if(this.isHit){
+    //     tocolor = this.hitColor
+    //     fromcolor = this.baseColor
+    //   } else {
+    //     tocolor = this.baseColor
+    //     fromcolor = this.hitColor
+    //   }
 
-      if(this.colorTimer.time() > 2){
-        this.colorTimer.reset()
+    //   if(this.colorTimer.time() > 2){
+    //     this.colorTimer.reset()
 
-        var steps = 50
-        var step_u = 1.0 / steps
+    //     var steps = 50
+    //     var step_u = 1.0 / steps
 
-        let to_r = tocolor[0]
-        let to_g = tocolor[1]
-        let to_b = tocolor[2]
+    //     let to_r = tocolor[0]
+    //     let to_g = tocolor[1]
+    //     let to_b = tocolor[2]
 
-        let from_r = fromcolor[0]
-        let from_g = fromcolor[1]
-        let from_b = fromcolor[2]
+    //     let from_r = fromcolor[0]
+    //     let from_g = fromcolor[1]
+    //     let from_b = fromcolor[2]
 
-        let r = Math.round(lerp(from_r, to_r, this.u))
-        let g = Math.round(lerp(from_g, to_g, this.u))
-        let b = Math.round(lerp(from_b, to_b, this.u))
+    //     let r = Math.round(lerp(from_r, to_r, this.u))
+    //     let g = Math.round(lerp(from_g, to_g, this.u))
+    //     let b = Math.round(lerp(from_b, to_b, this.u))
 
-        this.u += step_u
-        if(this.u >= 1.0){
-          // done with this fade
-          this.u = 0.0
-          this.fading = false
-        }
+    //     this.u += step_u
+    //     if(this.u >= 1.0){
+    //       // done with this fade
+    //       this.u = 0.0
+    //       this.fading = false
+    //     }
 
-        // record this so we can compare above
-        this.color = [r,g,b]
-        // this.mesh.material.color.setRGB(r,g,b)
-        this.setColor(r,g,b)
-      }
-    }
+    //     // record this so we can compare above
+    //     this.color = [r,g,b]
+    //     // this.mesh.material.color.setRGB(r,g,b)
+    //     this.setColor(r,g,b)
+    //   }
+    // }
 
-    if(this.color == this.baseColor || this.color == this.hitColor){
-      this.fading = false
-    }
+    // if(this.color == this.baseColor || this.color == this.hitColor){
+    //   this.fading = false
+    // }
 
   }
 
@@ -710,11 +710,12 @@ class Character {
         this.moneyCircleArea.bbox = new THREE.Box3().setFromObject( this.moneyCircleArea.mesh )
       }
 
-      if(this.moneyCircleSpendTimer.time() > 5000){
-        this.moneyCircleSpendTimer.reset()
-        // spend racks to have money circle open
-        this.changeMoney(-1)
-      }
+      // this seems a bit mean
+      // if(this.moneyCircleSpendTimer.time() > 5000){
+      //   this.moneyCircleSpendTimer.reset()
+      //   // spend racks to have money circle open
+      //   this.changeMoney(-1)
+      // }
 
 
     }

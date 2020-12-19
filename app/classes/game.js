@@ -29,7 +29,7 @@ class Game {
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
 
-    this.musicEnabled = true
+    this.musicEnabled = false
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -300,10 +300,10 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<14; i++){
-      //   player.levelUp()
-      // }
-      // for(var i=0; i<50; i++){
+      for(var i=0; i<4; i++){
+        player.levelUp()
+      }
+      // for(var i=0; i<5; i++){
       //   game.nextRound()
       // }
     }
@@ -358,6 +358,12 @@ class Game {
       this.enemyHealthFactor = 1
     }
 
+    if(this.merchant){
+      // if theres a merchant out when the round ends, bye bye!
+      this.merchant.closeShop()
+      this.merchant = null
+    }
+
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b])
   }
 
@@ -396,17 +402,6 @@ class Game {
       this.announcement("VIEW MONEY (N)")
       this.addMerchant()
     }
-
-    // this sure does not work
-    // let numCandies = Math.ceil( Math.random() * this.roundCount/2 )
-    // let enemy
-    // for(var i=0; i<numCandies; i++){
-    //   // add a vew extre candies
-    //   enemy = this.addEnemy([0,0,0], KNOWLOCTA)
-    //   this.enemies[enemy.id] = enemy
-    //   scene.add(this.enemies[enemy.id].mesh)
-    //   this.enemies[enemy.id].inScene = true
-    // }
 
     if(this.nowRandomBombing && player.level < 2){
       // we won round during bombing, give em a little snac
@@ -614,7 +609,7 @@ class Game {
 
     if( ( game.nameEntry == NONAME) && checkSoundsLoaded() ){
 
-      if(this.attractTimer.time() > 16000){
+      if(this.attractTimer.time() > 12000){
         this.attractTimer.reset()
         this.attractStage += 1
 
@@ -1085,9 +1080,9 @@ class Game {
       }
 
       if(this.friends.length > 0){
-        for(var i=0; i<this.friends.length; i++){
-          if(this.friends[i].health <= 0){
-            this.friends[i].remove()
+        for(var x=0; x<this.friends.length; x++){
+          if(this.friends[x].health <= 0){
+            this.friends[x].remove()
           }
         }
 
@@ -1817,7 +1812,7 @@ class Game {
     this.merchant.handleBuying()
     this.merchant.animation()
 
-    if(this.merchantTimer.time() > 10000){
+    if(this.merchantTimer.time() > 16000){
       this.announcement("ITEM SHOP HAS CLOSED")
       this.merchant.closeShop()
       this.merchant = null
