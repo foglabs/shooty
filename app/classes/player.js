@@ -431,15 +431,13 @@ class Player extends Character {
         if(this.killingCircleArea && this.killingCircleArea.mesh){
           this.killingCircleArea.bbox = new THREE.Box3().setFromObject( this.killingCircleArea.mesh )
         }
-
       }
 
-
-      console.log( 'tlighty', this.lightness )
+      // console.log( 'tlighty', this.lightness )
       if(this.speedItem){
         // if we buy the speed item, we charge up to speed until we fast
 
-        if(this.speedItemTimer.time() < 30000){
+        if(this.speedItemTimer.time() < 20000){
 
           if(this.lightness <= 0.24){
             this.lightness += 0.02

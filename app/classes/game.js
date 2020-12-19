@@ -300,9 +300,9 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      for(var i=0; i<4; i++){
-        player.levelUp()
-      }
+      // for(var i=0; i<4; i++){
+        // player.levelUp()
+      // }
       // for(var i=0; i<5; i++){
       //   game.nextRound()
       // }
