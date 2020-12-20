@@ -6,7 +6,11 @@ class Merchant extends Character {
     super(geometry, new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()), [255,255,255])
 
     // roundcount will be a multiple of 5, more possible items each time
-    let numItems = 3 + Math.floor( Math.random() * game.roundCount/5 )
+
+    console.log( 'roundcount', game.roundCount )
+    let roll = Math.floor( Math.random() * game.roundCount/5 )
+    console.log( 'roll', roll )
+    let numItems = Math.min( 6, 3 + roll )
 
     this.items = []
 

@@ -300,16 +300,17 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<4; i++){
-        // player.levelUp()
+      // for(var i=0; i<10; i++){
+      //   player.levelUp()
       // }
-      // for(var i=0; i<5; i++){
-      //   game.nextRound()
+      // for(var i=0; i<39; i++){
+      //   // skip all but last round
+      //   game.nextRound( i != 38)
       // }
     }
   }
 
-  nextRound(){
+  nextRound(skip=false){
     // ramp up difficulty for next round
     // exponential, but dull it down so we get to about x20 base #enemies by round 12
 
@@ -358,16 +359,16 @@ class Game {
       this.enemyHealthFactor = 1
     }
 
-    if(this.merchant){
+    if(!skip && this.merchant){
       // if theres a merchant out when the round ends, bye bye!
       this.merchant.closeShop()
       this.merchant = null
     }
 
-    this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b])
+    this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b], skip)
   }
 
-  newRound(enemyMax, enemyInterval, corruptionMax, corruptingTime, roundColor){
+  newRound(enemyMax, enemyInterval, corruptionMax, corruptingTime, roundColor, skip=false){
     keyHandler.resetHeats()    
 
     this.enemyMax = enemyMax
@@ -395,7 +396,7 @@ class Game {
     let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
     this.generateEnemies( numEnemies )
 
-    if(this.roundCount % 5 == 0){
+    if(!skip && this.roundCount % 5 == 0){
       // LETS SHOP
 
       this.announcement("ITEM SHOP HAS OPENED")
@@ -460,19 +461,19 @@ class Game {
 
 
           if(this.merchant){
-            if(!fx_merchantamb.playing()){
+            if( !fx_merchantamb.playing() ){
               fx_merchantamb.play()
   
-              if(fx_song2.playing()){
+              if( fx_song2.playing() ){
                 fx_song2.stop()
               }
             }
 
           } else {
-            if(!fx_song2.playing()){
+            if( !fx_song2.playing() ){
               fx_song2.play()
 
-              if(fx_merchantamb.playing()){
+              if( fx_merchantamb.playing() ){
                 fx_merchantamb.stop()
               }
             }
