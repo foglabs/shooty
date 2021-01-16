@@ -424,38 +424,63 @@
             // there is gamepads!
             var gp = gamepads[0]
 
-            // left stick hor
-            if(!isWithin(gp.axes[0], 0, 0.01) ){
-              // player.accx += gp.axes[0]/6
-              player.accx = incInRange(player.accx, gp.axes[0]/10, -1.8, 1.8)
-            }
-            // left stick vert
-            if(!isWithin(gp.axes[1], 0, 0.01) ){
-              // player.accy += -(gp.axes[1]/6)
 
-              // opposite of what you would think according to gamepad api
-              player.accy = incInRange(player.accy, -1 * gp.axes[1]/10, -1.8, 1.8)
-            }
-            // rig stick hor
-            if(!isWithin(gp.axes[2], 0, 0.01) ){
-              player.mesh.scale.x += gp.axes[2]/100
-            }
-            // rig stick vert
-            if(!isWithin(gp.axes[3], 0, 0.01) ){
-              player.mesh.scale.y += gp.axes[3]/100
-            }
+            if(game.stage == PLAYING){
 
-            for(var i=0; i<game.gamepadKeyMap.length; i++){
-              if(buttonPressed(gp.buttons[i])){
-                // button is pressed now
-                game.gamepadState[i] = true
-                fireKeyDown(game.gamepadKeyMap[i])
-              } else if(game.gamepadState[i]){
-                // button is not pressed now, but was before
-                fireKeyUp(game.gamepadKeyMap[i])
-                game.gamepadState[i] = false
+              // left stick hor
+              if(!isWithin(gp.axes[0], 0, 0.01) ){
+                // player.accx += gp.axes[0]/6
+                player.accx = incInRange(player.accx, gp.axes[0]/10, -1.8, 1.8)
               }
+              // left stick vert
+              if(!isWithin(gp.axes[1], 0, 0.01) ){
+                // player.accy += -(gp.axes[1]/6)
+
+                // opposite of what you would think according to gamepad api
+                player.accy = incInRange(player.accy, -1 * gp.axes[1]/10, -1.8, 1.8)
+              }
+              // rig stick hor
+              if(!isWithin(gp.axes[2], 0, 0.01) ){
+                player.mesh.scale.x += gp.axes[2]/100
+              }
+              // rig stick vert
+              if(!isWithin(gp.axes[3], 0, 0.01) ){
+                player.mesh.scale.y += gp.axes[3]/100
+              }
+
+              for(var i=0; i<game.gamepadKeyMap.length; i++){
+                if(buttonPressed(gp.buttons[i])){
+                  // button is pressed now
+                  game.gamepadState[i] = true
+                  fireKeyDown(game.gamepadKeyMap[i])
+                } else if(game.gamepadState[i]){
+                  // button is not pressed now, but was before
+                  fireKeyUp(game.gamepadKeyMap[i])
+                  game.gamepadState[i] = false
+                }
+              }
+
+            } else if(game.stage == TITLE) {
+              // check if any button is hit, if yes, start game
+              let startgame = false
+              for(var i=0; i<gp.buttons.length; i++){
+                if( buttonPressed(gp.buttons[i]) ){
+                  startgame = true
+                }
+              }
+
+              if(startgame){
+                fireKeyDown("Spacebar")
+                fireKeyUp("Spacebar")
+                let name = "GamepadPlayer" + Math.floor(Math.random() * 100000)
+                document.getElementById("name").innerHTML = name
+
+                fireKeyDown("Enter")
+                fireKeyUp("Enter")  
+              }
+              
             }
+
 
           }
         }
