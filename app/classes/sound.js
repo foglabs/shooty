@@ -7,7 +7,7 @@ class Sound {
 
     this.loadSound(this.soundFile, this.volume, () => {
       this.loaded = true
-      console.log( 'oh boy im done' )
+      // console.log( 'oh boy im done' )
     })
 
     this.loaded = false

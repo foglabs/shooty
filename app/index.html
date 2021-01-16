@@ -416,6 +416,50 @@
       // run every frame
       function animate() {
 
+        if(game.gamepadConnected){
+
+          var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : [])
+          if(gamepads){
+
+            // there is gamepads!
+            var gp = gamepads[0]
+
+            // left stick hor
+            if(!isWithin(gp.axes[0], 0, 0.01) ){
+              // player.accx += gp.axes[0]/6
+              player.accx = incInRange(player.accx, gp.axes[0]/10, -1.8, 1.8)
+            }
+            // left stick vert
+            if(!isWithin(gp.axes[1], 0, 0.01) ){
+              // player.accy += -(gp.axes[1]/6)
+
+              // opposite of what you would think according to gamepad api
+              player.accy = incInRange(player.accy, -1 * gp.axes[1]/10, -1.8, 1.8)
+            }
+            // rig stick hor
+            if(!isWithin(gp.axes[2], 0, 0.01) ){
+              player.mesh.scale.x += gp.axes[2]/100
+            }
+            // rig stick vert
+            if(!isWithin(gp.axes[3], 0, 0.01) ){
+              player.mesh.scale.y += gp.axes[3]/100
+            }
+
+            for(var i=0; i<game.gamepadKeyMap.length; i++){
+              if(buttonPressed(gp.buttons[i])){
+                // button is pressed now
+                game.gamepadState[i] = true
+                fireKeyDown(game.gamepadKeyMap[i])
+              } else if(game.gamepadState[i]){
+                // button is not pressed now, but was before
+                fireKeyUp(game.gamepadKeyMap[i])
+                game.gamepadState[i] = false
+              }
+            }
+
+          }
+        }
+          
         game.handleGame()
 
         // DONT get hot when playing, you are not
@@ -754,6 +798,28 @@
       // set listeners
       document.addEventListener("keydown", onDocumentKeyDown, false);
       document.addEventListener("keyup", onDocumentKeyUp, false);
+      window.addEventListener("gamepadconnected", function(e) {
+        // console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length)
+        console.log( 'gamepad connect' )
+        game.gamepadConnected = true
+      })
+
+      function buttonPressed(b) {
+        if (typeof(b) == "object") {
+          return b.pressed;
+        }
+        return b == 1.0;
+      }
+      function fireKeyDown(keyName){
+        let evt = new KeyboardEvent("keydown", {"key": keyName} )
+        document.dispatchEvent(evt);
+      }
+      function fireKeyUp(keyName){
+        let evt = new KeyboardEvent("keyup", {"key": keyName} )
+        document.dispatchEvent(evt);
+      }
+
+
 
       animate();
 

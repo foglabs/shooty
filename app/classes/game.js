@@ -29,7 +29,7 @@ class Game {
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
 
-    this.musicEnabled = true
+    this.musicEnabled = false
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -60,6 +60,28 @@ class Game {
 
     this.demo = null
     this.demoCharacters = []
+
+    this.gamepadConnect = false
+    this.gamepadState = {}
+    this.gamepadKeyMap = [
+      "z", // 0
+      "Spacebar", // 1
+      "x", // 2
+      "c", // 3
+      "v", // 4
+      "b", // 5
+      "n", // 6
+      "m", // 7
+      "m", // 8
+      "m", // 9
+      "m", // 10
+      "m", // 11
+      "m", // 12
+      "ArrowUp", // 12
+      "ArrowDown", // 13
+      "ArrowLeft", // 14
+      "ArrowRight", // 15
+    ]
 
     this.startTime = null
     this.endTime = null

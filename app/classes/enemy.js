@@ -531,7 +531,7 @@ class Enemy extends Character {
   hitmanCorrupt(){
     this.hitmanCorrupted = true
 
-    console.log( 'corrupt your bitch ass' )
+    // console.log( 'corrupt your bitch ass' )
     // hes abig hitman motherfucker
     this.lightness = 0.01
     this.health = 180
