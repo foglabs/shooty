@@ -76,7 +76,6 @@ class Game {
       "m", // 9
       "m", // 10
       "m", // 11
-      "m", // 12
       "ArrowUp", // 12
       "ArrowDown", // 13
       "ArrowLeft", // 14

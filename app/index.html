@@ -419,12 +419,11 @@
         if(game.gamepadConnected){
 
           var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : [])
+
           if(gamepads){
 
             // there is gamepads!
             var gp = gamepads[0]
-
-
             if(game.stage == PLAYING){
 
               // left stick hor
@@ -466,6 +465,7 @@
               for(var i=0; i<gp.buttons.length; i++){
                 if( buttonPressed(gp.buttons[i]) ){
                   startgame = true
+                  console.log( 'time to start' )
                 }
               }
 
@@ -827,6 +827,13 @@
         // console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length)
         console.log( 'gamepad connect' )
         game.gamepadConnected = true
+      })
+
+      window.addEventListener("gamepaddisconnected", function(e) {
+        // console.log("Gamepad disconnected from index %d: %s",
+          // e.gamepad.index, e.gamepad.id)
+          // dis connect
+          game.gamepadConnected = false
       })
 
       function buttonPressed(b) {
