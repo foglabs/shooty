@@ -39,27 +39,28 @@ app.get('/score', function(req, res, next){
 
 app.post('/score', function(req, res, next) {
   console.log( 'HELLO', req.body )
-  if(!req.body.sex && !req.body.score && !req.body.level && !req.body.name){
+  if(!req.body.score && !req.body.level && !req.body.name){
     return res.send(400)
   }
 
-  let sexData = req.body.sex.split(":")
-  let keyActivity, pLevel, endTime, startTime
+  // let sexData = req.body.sex.split(":")
+  // let keyActivity, pLevel, endTime, startTime
   // wash your fucking ass
-  keyActivity = parseInt( sexData[0].replace(/\W/g, '') )
+  // keyActivity = parseInt( sexData[0].replace(/\W/g, '') )
   // pScore = 1000000000 - parseInt( sexData[1].replace(/\W/g, '') )
-  pLevel = parseInt( sexData[2].replace(/\W/g, '') )
-  endTime = parseInt( sexData[3].replace(/\W/g, '') )
-  startTime = parseInt( sexData[4].replace(/\W/g, '') )
+  // pLevel = parseInt( sexData[2].replace(/\W/g, '') )
+  // endTime = parseInt( sexData[3].replace(/\W/g, '') )
+  // startTime = parseInt( sexData[4].replace(/\W/g, '') )
 
   let score = req.body.score.replace(/\W/g, '')
   let level = req.body.level.replace(/\W/g, '')
   let name = req.body.name.replace(/\W/g, '')
   console.log( 'sanitized to', score, level, name )
 
-  if(!(keyActivity && pLevel && endTime && startTime) || startTime > endTime || keyActivity < 5 || pLevel != level || (endTime - startTime) < 5000 ){
-    return res.send(400)
-  }
+  // we overshot
+  // if(!(keyActivity && pLevel && endTime && startTime) || startTime > endTime || keyActivity < 5 || pLevel != level || (endTime - startTime) < 5000 ){
+  //   return res.send(400)
+  // }
 
   // console.log( 'hey stupid' )
   // console.log(validateKA(1496,1682,450678))

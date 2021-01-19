@@ -425,12 +425,17 @@
 
         if(game.gamepadConnected){
 
+          // for chrome, gotta poll! for ff should just get picked up first
           var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : [])
+          if(!controllers[0]){
+            console.log( 'i didnt have controollers!', controllers )
+            controllers[0] = gamepads[0]
+          }
 
-          if(gamepads){
+          if(controllers[0]){
 
             // there is gamepads!
-            var gp = gamepads[0]
+            var gp = controllers[0]
             if(game.stage == PLAYING){
 
               // left stick hor
@@ -609,6 +614,8 @@
       // scene contains objects
       var scene = new THREE.Scene();
 
+      var controllers = []
+
       // var light = new THREE.HemisphereLight( 0xffffff, 0x000000, 0.98 )
       // light.position.set( 0, 0, 5 )
       // scene.add( light )
@@ -761,30 +768,30 @@
 
 
             if(event.key == "ArrowUp"){
-              console.log( 'wowo ArrowUp' )
+              // console.log( 'wowo ArrowUp' )
 
               game.nameEntryIndex = incInRange(game.nameEntryIndex, 1, 0, ALPHABET.length-1)
               game.clearAnnouncements()
               game.announcement( ALPHABET[game.nameEntryIndex] )
             } else if(event.key == "ArrowDown"){
-              console.log( 'wowo ArrowDown' )
+              // console.log( 'wowo ArrowDown' )
 
               game.nameEntryIndex = incInRange(game.nameEntryIndex, -1, 0, ALPHABET.length-1)
               game.clearAnnouncements()
               game.announcement( ALPHABET[game.nameEntryIndex] )
             } else if(event.key == "ArrowLeft"){
-              console.log( 'wowo ArrowLeft' )
+              // console.log( 'wowo ArrowLeft' )
               fireKeyDown("Backspace")
               fireKeyUp("Backspace")
 
               let val = document.getElementById("name-entry").value
               document.getElementById("name-entry").value = val.slice(0,-1)
             } else if(event.key == "ArrowRight"){
-              console.log( 'wowo ArrowRight',  ALPHABET[game.nameEntryIndex])
+              // console.log( 'wowo ArrowRight',  ALPHABET[game.nameEntryIndex])
 
               let val = document.getElementById("name-entry").value
               document.getElementById("name-entry").value = val + ALPHABET[game.nameEntryIndex]
-              console.log( 'ne value',  document.getElementById("name-entry") )
+              // console.log( 'ne value',  document.getElementById("name-entry") )
             }
           }
         } else if(game.stage == PLAYING){
