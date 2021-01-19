@@ -469,17 +469,29 @@
             } else if(game.stage == TITLE) {
               // check if any button is hit, if yes, start game
 
-              let gotinput = false
-              for(var i=0; i<gp.buttons.length; i++){
-                if( i != 12 && i != 13 && i != 14 && i != 15 && buttonPressed(gp.buttons[i]) ){
-                  gotinput = true
-                  console.log( 'time to start' )
+              // let gotinput = false
+              for(var i=0; i<4; i++){
+                // hacky
+                if( buttonPressed(gp.buttons[i+12]) ){
+
+                  if(!game.gamepadState[i+12]){
+                    // new keydown
+                    fireKeyDown(game.gamepadKeyMap[i+12])
+                  }
+
+                  game.gamepadState[i+12] = true
+                } else if(game.gamepadState[i+12]){
+
+                  // new keuyp
+                  fireKeyUp(game.gamepadKeyMap[i+12])
+                  game.gamepadState[i+12] = false
                 }
               }
 
-              if(gotinput){
-
-
+              // bottom button
+              let buttonNow = buttonPressed(gp.buttons[0])
+              // button was pressed before, and is not now
+              if( !buttonNow && buttonNow != game.nameEntryConfirm ){
                 if(game.nameEntry == NONAME){
 
                   fireKeyDown("Spacebar")
@@ -494,7 +506,8 @@
                 // document.getElementById("name").innerHTML = name
 
               }
-              
+
+              game.nameEntryConfirm = buttonNow
             }
 
 

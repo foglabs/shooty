@@ -21,6 +21,7 @@ class Game {
     this.nameEntry = NONAME
     // what char ar we adding
     this.nameEntryIndex = 0
+    this.nameEntryConfirm = false
 
     this.setDefaultGameValues()
 
