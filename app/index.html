@@ -153,7 +153,9 @@
       function beginNameEntry(){
         console.log( 'focusing' )
         game.nameEntry = ENTERING
-        game.announcement("ENTER YOUR NAME")
+        game.announcement("ENTER YOUR NAME (←↑→↓)")
+        // dont blink around
+        document.getElementById("stage-info").classList.add("static")
 
         document.getElementById("name-entry").value = ""
         document.getElementById("name-entry").focus({preventScroll: true})
@@ -174,6 +176,9 @@
         // document.getElementById("name").innerHTML = name
         document.getElementById("player-name").classList.add("hidden")
         game.nameEntry = NAMEENTERED
+        
+        // let announcements go back to fadout
+        document.getElementById("stage-info").classList.remove("static")
         document.getElementById("name-entry").blur()
       }
 
@@ -384,6 +389,8 @@
       DEG315 = radian(315)
       DEG360 = radian(360)
 
+      ALPHABET = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9"]
+
       function checkSoundsLoaded(){
         let done = true
         !fx_ekill1.loaded ? done = false : null
@@ -461,22 +468,31 @@
 
             } else if(game.stage == TITLE) {
               // check if any button is hit, if yes, start game
-              let startgame = false
+
+              let gotinput = false
               for(var i=0; i<gp.buttons.length; i++){
-                if( buttonPressed(gp.buttons[i]) ){
-                  startgame = true
+                if( i != 12 && i != 13 && i != 14 && i != 15 && buttonPressed(gp.buttons[i]) ){
+                  gotinput = true
                   console.log( 'time to start' )
                 }
               }
 
-              if(startgame){
-                fireKeyDown("Spacebar")
-                fireKeyUp("Spacebar")
-                let name = "GamepadPlayer" + Math.floor(Math.random() * 100000)
-                document.getElementById("name").innerHTML = name
+              if(gotinput){
 
-                fireKeyDown("Enter")
-                fireKeyUp("Enter")  
+
+                if(game.nameEntry == NONAME){
+
+                  fireKeyDown("Spacebar")
+                  fireKeyUp("Spacebar")
+                } else if(game.nameEntry == ENTERING){
+                  // we're entering, soi 
+                  fireKeyDown("Enter")
+                  fireKeyUp("Enter")  
+                }
+
+                // let name = "GamepadPlayer" + Math.floor(Math.random() * 100000)
+                // document.getElementById("name").innerHTML = name
+
               }
               
             }
@@ -700,18 +716,48 @@
         // SPACE BAR
         if( (game.stage == TITLE || game.stage == GAMEOVER) && game.readyToStartGame){
           
-         if (event.key == " " || event.key == "Spacebar"){
+          if (event.key == " " || event.key == "Spacebar"){
 
             if( game.nameEntry == NONAME ){
               game.hideAttract()
               beginNameEntry()
+
             } else if(game.nameEntry == NAMEENTERED && nameIsSet()){
 
               // on gameover, use the same name
               game.newGame()
             }
-          }
+          } else if(game.nameEntry == ENTERING){
+            document.getElementById("name-entry").focus({preventScroll: true})
 
+
+            if(event.key == "ArrowUp"){
+              console.log( 'wowo ArrowUp' )
+
+              game.nameEntryIndex = incInRange(game.nameEntryIndex, 1, 0, ALPHABET.length-1)
+              game.clearAnnouncements()
+              game.announcement( ALPHABET[game.nameEntryIndex] )
+            } else if(event.key == "ArrowDown"){
+              console.log( 'wowo ArrowDown' )
+
+              game.nameEntryIndex = incInRange(game.nameEntryIndex, -1, 0, ALPHABET.length-1)
+              game.clearAnnouncements()
+              game.announcement( ALPHABET[game.nameEntryIndex] )
+            } else if(event.key == "ArrowLeft"){
+              console.log( 'wowo ArrowLeft' )
+              fireKeyDown("Backspace")
+              fireKeyUp("Backspace")
+
+              let val = document.getElementById("name-entry").value
+              document.getElementById("name-entry").value = val.slice(0,-1)
+            } else if(event.key == "ArrowRight"){
+              console.log( 'wowo ArrowRight',  ALPHABET[game.nameEntryIndex])
+
+              let val = document.getElementById("name-entry").value
+              document.getElementById("name-entry").value = val + ALPHABET[game.nameEntryIndex]
+              console.log( 'ne value',  document.getElementById("name-entry") )
+            }
+          }
         } else if(game.stage == PLAYING){
 
           if( !oldState && (event.key == "ArrowLeft" || event.key == "ArrowUp" || event.key == "ArrowRight" || event.key == "ArrowDown") ){

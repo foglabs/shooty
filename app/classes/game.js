@@ -19,6 +19,8 @@ class Game {
     this.roundColor = [140,180,255]
 
     this.nameEntry = NONAME
+    // what char ar we adding
+    this.nameEntryIndex = 0
 
     this.setDefaultGameValues()
 
