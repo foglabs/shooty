@@ -938,7 +938,7 @@ class Game {
       this.announcement("AVOID THE BOMBS")
       this.randomBombsTimer.reset()
 
-      let numBombs = Math.floor(Math.random() * 4 * this.roundCount)
+      let numBombs = Math.floor(Math.random() * 40 * this.roundCount)
       // minimum num of bombs is roundcount
       numBombs = Math.max(numBombs, this.roundCount)
       let x,y
@@ -1554,13 +1554,22 @@ class Game {
           // console.log( 'eneymy hit' )
           enemy.healthTimer.reset()
           enemy.takeDamage(4, EAT)
+
+          // // // did dmg, slow playe ra bit
+          // if(player.accx != 0){
+          //   player.accx = player.accx+( -0.4*Math.sign(player.accx) )
+          // }
+          // if(player.accy != 0){
+          //   player.accy = player.accy+( -0.4*Math.sign(player.accy) )
+          // }
         }
 
         // start eating animation, which shuts itself off after timer
         player.eating = true
+
       }
 
-      if(enemy.lifecycle == ALIVE && this.corruptionTimer.time() > 1000) {
+      if(this.roundCount > 2 && enemy.lifecycle == ALIVE && this.corruptionTimer.time() > 1000) {
         // only need to handleCorruption if we're not dying
         this.corruptionTimer.reset()
 
@@ -1852,6 +1861,9 @@ class Game {
     if(!this.corruptionTimer.running){
       this.corruptionTimer.start()
     }
+
+    // toggle this off because it'll get turned back on during loop if we're still eating
+    player.eating = false
 
     let enemiesKeys = k(this.enemies)
     let enemyId

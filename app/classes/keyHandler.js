@@ -5,8 +5,9 @@ class KeyHandler {
 
     this.heldKeys = {}
 
-    this.heatingElement = 0.015
-    this.coolingFactor = 2.2
+    this.heatingElement = 0.00646
+    // reduces heat
+    this.coolingElement = -0.076
     this.maxHeat = 0.1
 
     this.tempTimer = new Timer()
@@ -14,9 +15,8 @@ class KeyHandler {
 
     this.bumpTimer = new Timer()
     this.bumpTimer.start()
-    this.bumpValue = 0.22
+    this.bumpValue = 0.02
 
-    this.maxAcc = 1.8
     this.keyActivity = 0
   }
 
@@ -29,9 +29,7 @@ class KeyHandler {
 
   calcAccChange(heat){
     // us eheat to give dee acc
-    // return 0.5
-    // return 1/6 * Math.pow( heat, 2 )
-    return 5/16 * Math.log( 10 * (heat + 0.1) )
+    return 7/16 * Math.log(10 * (heat + 0.1) )
   }
 
   bumpKey(keyName){
@@ -46,7 +44,6 @@ class KeyHandler {
     } else if (keyName == "ArrowDown"){
       player.accy -= this.bumpValue
     }
-
   }
 
   heatKey(keyName){
@@ -55,22 +52,26 @@ class KeyHandler {
     this.keyHeats[ keyName ] = incInRange( this.keyHeats[ keyName ], this.heatingElement, 0, this.maxHeat )    
     // this.keyHeats[ keyName ] += 0.015
 
+
     // cool the opposing key so we keep our fake sense of momentum
     if (keyName == "ArrowLeft"){
-      this.coolKey("ArrowRight")
+      this.coolKey("ArrowRight", 2)
     } else if (keyName == "ArrowUp"){
-      this.coolKey("ArrowDown")
+      this.coolKey("ArrowDown", 2)
     } else if (keyName == "ArrowRight"){
-      this.coolKey("ArrowLeft")
+      this.coolKey("ArrowLeft", 2)
     } else if (keyName == "ArrowDown"){
-      this.coolKey("ArrowUp")
-    }        
+      this.coolKey("ArrowUp", 2)
+    }
+    // let coolers = ["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"]
+    // coolers = coolers.splice( 1, coolers.indexOf(keyName) )
+    // for(var i=0; i<coolers.length; i++){
+    //   this.coolKey(coolers[i], 0.005)
+    // }
   }
 
-  coolKey(keyName){
-    // this.keyHeats[ keyName ] -= 0.34
-    // this.keyHeats[ keyName ] -= this.heatingElement*this.coolingFactor
-    this.keyHeats[ keyName ] = incInRange( this.keyHeats[ keyName ], this.heatingElement*this.coolingFactor, 0, this.maxHeat )    
+  coolKey(keyName, mag=1){
+    this.keyHeats[ keyName ] = incInRange( this.keyHeats[ keyName ], this.coolingElement*mag, 0, this.maxHeat )    
 
     // this.keyHeats[ keyName ] -= 0.09
     if(this.keyHeats[ keyName ] < 0){
@@ -81,7 +82,6 @@ class KeyHandler {
   handleKeyTemp(){
 
     // 10 ms response time on heating cooling
-    if( this.tempTimer.time() > 40 ){
       this.tempTimer.reset()
       let keys = ["ArrowLeft","ArrowUp","ArrowRight","ArrowDown"]
 
@@ -100,19 +100,19 @@ class KeyHandler {
           if (keyName == "ArrowLeft"){
             // console.log("left")
             // player.accx -= accChange
-            player.accx = incInRange(player.accx, -1*accChange, -1*this.maxAcc, this.maxAcc)
+            player.accx = incInRange(player.accx, -1*accChange, -1*player.maxAcc, player.maxAcc)
           } else if (keyName == "ArrowUp"){
             // console.log("up")
             // player.accy += accChange
-            player.accy = incInRange(player.accy, accChange, -1*this.maxAcc, this.maxAcc)
+            player.accy = incInRange(player.accy, accChange, -1*player.maxAcc, player.maxAcc)
           } else if (keyName == "ArrowRight"){
             // console.log("right")
             // player.accx += accChange
-            player.accx = incInRange(player.accx, accChange, -1*this.maxAcc, this.maxAcc)
+            player.accx = incInRange(player.accx, accChange, -1*player.maxAcc, player.maxAcc)
           } else if (keyName == "ArrowDown"){
             // console.log("down")
             // player.accy -= accChange
-            player.accy = incInRange(player.accy, -1*accChange, -1*this.maxAcc, this.maxAcc)
+            player.accy = incInRange(player.accy, -1*accChange, -1*player.maxAcc, player.maxAcc)
           }
 
         } else {
@@ -125,5 +125,4 @@ class KeyHandler {
       }
 
     }
-  }
 }

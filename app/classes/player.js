@@ -16,15 +16,18 @@ class Player extends Character {
     this.isPlayer = true
     
     // how heavy is da guy
-    // this.lightness = 0.06
-    this.dragCoefficient = 0.022
+    this.dragCoefficient = 0.082
+    this.defaultLightness = 0.032
 
     this.moneyCircleEnabled = true
+
+    this.maxAcc = 2.6
 
     this.defaultPlayerValues()
   }
 
   defaultPlayerValues(){
+    this.dusterGoingUp = true
     
     // flag for animation etc
     this.eating = false
@@ -77,8 +80,10 @@ class Player extends Character {
     this.speedItemTimer = new Timer()
     this.speedItemTimer.start()
     this.speedItem = false
-    this.defaultLightness = 0.06
-    this.lightness = 0.06
+    this.lightness = this.defaultLightness
+
+    this.speedAnimationTimer = new Timer()
+    this.speedAnimationTimer.start()
   }
   
   rotation(){
@@ -207,6 +212,11 @@ class Player extends Character {
     }
 
     this.changeMoney( Math.ceil( this.level * 5 ) )
+
+    // if(this.level % 4 == 0){
+      game.announcement("TOP SPEED INCREASE")
+      player.maxAcc += 0.05
+    // }
 
     fx_levelupE2.play()
   }
@@ -387,11 +397,40 @@ class Player extends Character {
     return -1 * this.level
   }
 
+  // slowDown(acc){
+  //   // overload!
+  //   if(keyHandler.heldKeys["ArrowLeft"] || keyHandler.heldKeys["ArrowRight"] || keyHandler.heldKeys["ArrowUp"] || keyHandler.heldKeys["ArrowDown"]){
+  //     // something else
+
+  //     if(acc > 0){
+  //       // whichever way we're currently moving, accelerate towards the opposite direction
+  //       acc -= this.dragCoefficient/4
+  //       if(acc < 0) {acc = 0}
+  //     } else if(acc < 0){
+  //       acc += this.dragCoefficient/4
+  //       if(acc > 0) {acc = 0}
+  //     }
+
+  //   } else {
+  //     if(acc > 0){
+  //       // whichever way we're currently moving, accelerate towards the opposite direction
+  //       acc -= this.dragCoefficient
+  //       if(acc < 0) {acc = 0}
+  //     } else if(acc < 0){
+  //       acc += this.dragCoefficient
+  //       if(acc > 0) {acc = 0}
+  //     }
+  
+  //   }
+  //   return acc
+  // }
+
   customAnimation(){
     if(this.lifecycle == ALIVE){
       this.rotation()
 
-      // this.eatAnimation()
+      this.eatAnimation()
+      this.speedAnimation()
       if(this.sword){
 
         // move the shit around on cirlce around the player
@@ -516,7 +555,6 @@ class Player extends Character {
   }
 
   deathAnimation(){
-    // console.log( 'I try!' )
     if(!this.animTimer.running){
       this.animTimer.start()
     }
@@ -535,7 +573,6 @@ class Player extends Character {
 
       // this.mesh.material.opacity -= 0.01
     }
-
   }
 
   eatAnimation(){
@@ -543,63 +580,51 @@ class Player extends Character {
       if(!this.eatingTimer.running){
         this.eatingTimer.start()
       }
+
+      this.setColor(100,100,200)
+
+    } else {
+      this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
     }
+  }
 
-    // if(this.eating || this.scaleFactor > 1 || this.scaleFactor < 1){
-    //   // console.log( 'scaleFactor ' + this.scaleFactor )
-    //   if(!this.animTimer.running){
-    //     this.animTimer.start()
-    //   } 
+  speedAnimation(){
+    // if were within 0.2 of maxacc, show top speed anim
 
-    //   // how often should we actually change mesh
-    //   if(this.animTimer.time() > 30){
-    //     // 20ms
-    //     this.animTimer.reset()
-        
-    //     if(this.eating){
-    //       // console.log( 'turn hit on' )
-    //       this.isHit = true
 
-    //       // if we eatin, scale that badboy up
-    //       if(this.scaleFactor < 3){
+    // if(this.speedAnimationTimer.time() > 8){
+    //   this.speedAnimationTimer.reset()
+      if(isWithin( Math.abs(this.accx), this.maxAcc, 0.2) || isWithin( Math.abs(this.accy), this.maxAcc, 0.2) ){
 
-    //         this.scaleFactor += 0.05
-    //         // console.log( 'going up' )
-    //       }
+        if( !this.duster ){
+          this.duster = new Duster(glowMap, 0.8, 1, 0, this.mesh.position, 0.1, true)
+        } else {
+          // this.duster.particleSystem.rotation.x += 0.06
+          // this.duster.particleSystem.rotation.y += 0.06
 
-    //     } else {
+          if(this.dusterGoingUp){
+            this.duster.particleSystem.material.opacity += 0.002
+          } else {
+            this.duster.particleSystem.material.opacity -= 0.002
+          }
 
-    //       // console.log( 'turn hit off' )
-    //       this.isHit = false
+          if(this.duster.particleSystem.material.opacity == 0.1){
+            this.dusterGoingUp = false
+          } else if(this.duster.particleSystem.material.opacity == 0) {
+            this.dusterGoingUp = true
+          }
 
-    //       if(this.scaleFactor > 1) {
-
-    //         // if we're full, but still big, shrink on down
-    //         this.scaleFactor -= 0.05
-
-    //         // console.log( 'reduced to ' + this.scaleFactor )
-
-    //         if(this.scaleFactor < 1.0){
-    //           // console.log( 'reset going down' )
-    //           this.scaleFactor = 1.0
-    //         }
-    //       }
-        
-    //     }
-    //   }
-
-    //   // if we're in here, were doing somethin right
-    //   this.mesh.scale.x = this.scaleFactor
-    //   this.mesh.scale.y = this.scaleFactor
-    //   this.mesh.scale.z = this.scaleFactor
+          
+        }
+      } else {
+        if(this.duster) {
+          this.duster.remove()
+          this.duster = null
+        }
+      }  
     // }
-
-    // if(this.eatingTimer.time() > 200){
-    //   this.eating = false
-    //   this.eatingTimer.stop()
-    //   // console.log( 'stop eating' )
-    // }
-
+    
+    
   }
 
 }

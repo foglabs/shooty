@@ -772,7 +772,7 @@ class Enemy extends Character {
         
       }
 
-            // this.eatAnimation()
+
       if(this.sword){
 
         // move the shit around on cirlce around the player

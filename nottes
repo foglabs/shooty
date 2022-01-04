@@ -268,3 +268,12 @@ they complainin about these items
   *cheaper items only at lower rounds
 
 
+
+dragcoefficient is how much to slow down by
+lightness is scale on a movement amount (higher means lighter, more than 1 *adds* to movement amount)
+keyheat scales up acc change
+
+hit the wall, get dmg bonus
+full speed, get a dmg bons
+
+

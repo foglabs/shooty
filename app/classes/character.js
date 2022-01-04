@@ -350,15 +350,12 @@ class Character {
 
   // use this instead of inc in range, because we dont actually want to constrain between range of values, we jus twant to move towards 0
   slowDown(acc){
-    if(acc > 0){
-      // whichever way we're currently moving, accelerate towards the opposite direction
-      acc -= this.dragCoefficient
-      if(acc < 0) {acc = 0}
-    } else if(acc < 0){
-      acc += this.dragCoefficient
-      if(acc > 0) {acc = 0}
-    }
 
+    acc = acc - ( this.dragCoefficient * Math.sign(acc) )
+    if( isWithin(acc, 0, 0.02) ){
+      acc = 0
+    }
+    
     return acc
   }
 
@@ -367,7 +364,7 @@ class Character {
 
     if(this.isPlayer){
       // less damage for player
-      damageVal = 5
+      damageVal = 12
     }
 
     let bomb

@@ -699,6 +699,8 @@
       let merchantMap = loader.load( "sprites/merchant.png")
       merchantMaterial = new THREE.SpriteMaterial( { map: merchantMap } )
 
+      let glowMap = new THREE.TextureLoader().load("sprites/glow.png")
+
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
       camera.position.z = 5
@@ -796,21 +798,22 @@
           }
         } else if(game.stage == PLAYING){
 
+          // keys when playing!
+
           if( !oldState && (event.key == "ArrowLeft" || event.key == "ArrowUp" || event.key == "ArrowRight" || event.key == "ArrowDown") ){
 
             keyHandler.keyActivity += 1
 
-            // give em a push on first keydown
-          
-            if(keyHandler.bumpTimer.time() > 180){
-              // if its been a moment, bigger bump
-              keyHandler.bumpValue = 0.18
-            } else {
-              // keyHandler.bumpValue = 0.14
-              keyHandler.bumpValue = 0.06
-            }
-
-            keyHandler.bumpKey( event.key )
+            // // give em a push on first keydown
+            // if(keyHandler.bumpTimer.time() > 180){
+            //   // if its been a moment, bigger bump
+            //   keyHandler.bumpValue = 0.15
+            // } else {
+            //   // keyHandler.bumpValue = 0.14
+            //   keyHandler.bumpValue = 0.075
+            // }
+            // // add bump value once per keydown
+            // keyHandler.bumpKey( event.key )
           }
 
           if (event.key == " " || event.key == "Spacebar"){
@@ -857,7 +860,6 @@
 
           }
         }
-
       }
       function onDocumentKeyUp(event) {
         keyHandler.heldKeys[event.key] = false
