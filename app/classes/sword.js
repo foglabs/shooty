@@ -76,7 +76,12 @@ class Sword {
     // position on sword circle lol
     let x = radius * Math.sin( this.rotation ) + this.wielder.mesh.position.x
     let y = radius * Math.cos( this.rotation ) + this.wielder.mesh.position.y
-    this.mesh.position.set( x, y, 0 )
+    // sometimes it z like that
+    let z = radius * Math.cos( this.rotation ) + this.wielder.mesh.position.z
+    this.mesh.position.set( x, y, z )
+
+
+
   }
 
   rotateTo(rad){

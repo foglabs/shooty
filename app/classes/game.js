@@ -46,6 +46,22 @@ class Game {
     // this.epoGoingUp = true
     this.allEnemiesBehindEntryPlane = false
 
+    // a little something for you and yours
+    // this.backPlanes = []
+    // let backPlane
+    // for(var i=2; i<8; i++){
+    //   let geometry = new THREE.PlaneGeometry( 1, 1 )
+    //   console.log('colo! ', randomHexColor(255))
+    //   let material = new THREE.MeshStandardMaterial( {transparent: true, color: randomHexColor(255), side: THREE.DoubleSide, opacity: 0.2 } )
+    //   backPlane = new THREE.Mesh( geometry, material )
+    //   backPlane.position.z = -0.5 - i
+    //   backPlane.scale.x = 10/i
+    //   backPlane.scale.y = 10/i
+    //   backPlane.rotation.z = 0.785398
+    //   scene.add( backPlane )
+    //   this.backPlanes.push(backPlane)
+    // }
+      
     this.musicEnabled = false
 
     this.stage = false
@@ -72,8 +88,8 @@ class Game {
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
-    this.flickerTimer = new Timer()
-    this.flickerTimer.start()
+    // this.flickerTimer = new Timer()
+    // this.flickerTimer.start()
 
     this.enemyDriftInTimer = new Timer()
     this.enemyDriftInTimer.start()
@@ -476,12 +492,13 @@ class Game {
     }
 
     // change backplane color
-    let r,g,b
-    r = randomInRange(Math.round( 50*(this.roundCount/50)), 50)
-    g = randomInRange(Math.round( 50*(this.roundCount/50)), 50)
-    b = randomInRange(Math.round( 50*(this.roundCount/50)), 50)
-    this.entryPlane.material.color.set( rgbToHex( r,g,b ) )
-    console.log( 'duh', this.entryPlane.material.color )
+    if(this.roundCount > 1){
+      let r,g,b
+      r = Math.round( randomInRange(150*(this.roundCount/150), 150) )
+      g = Math.round( randomInRange(150*(this.roundCount/150), 150) )
+      b = Math.round( randomInRange(150*(this.roundCount/150), 255) )
+      this.entryPlane.material.color.set( rgbToHex( r,g,b ) )
+    }
   }
 
   endGame(){
@@ -618,6 +635,10 @@ class Game {
       // } else {
       //   this.entryPlane.material.opacity -= 0.03
       // }
+
+      // this.backPlanes.forEach((bp,i) => {
+      //   bp.rotation.z += 0.001*(i+1)
+      // })
     }
   }
 
@@ -674,7 +695,7 @@ class Game {
 
 
     // waver the actual bg color a bit
-    this.drawFlicker()
+    // this.drawFlicker()
 
     if( ( game.nameEntry == NONAME) && checkSoundsLoaded() ){
 
@@ -1943,31 +1964,29 @@ class Game {
         this.handleEnemy(enemy)
 
         // scroll in new enemies
-        // if(this.enemyDriftInTimer.time() > 5){
-        //   this.enemyDriftInTimer.reset()
         if(enemy.mesh.position.z < 0){
-          enemy.mesh.position.z += 0.036 + this.roundCount / 1000.0
+          // if enemy not in round yet, move em in
+          enemy.mesh.position.z += 0.016 + this.roundCount / 1000.0
 
           if(enemy.mesh.position.z > 0){
             enemy.mesh.position.z = 0
           }
         }
 
-        if(enemy.passedEntryPlane()){
-          // only rael ones
+        if(enemy.passedEntryPlane() && enemy.lifecycle == ALIVE){
+          // only rael alive ones
           numEnemies += 1
         }
-
 
         if( enemy.lifecycle == ALIVE && enemy.passedEntryPlane() ) {
           this.allEnemiesBehindEntryPlane = false
         }
-        // }
         
       }
     }
 
     if(this.allEnemiesBehindEntryPlane){
+
       for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
         // so no sprite
         if(this.enemies[ enemiesKeys[i] ]){
@@ -2010,7 +2029,9 @@ class Game {
     // record this after we've added new corrupts, and cleaned up dead enemies
     // because of flying in, we have to count num enemies manually
     this.percentCorrupted = this.numCorrupted/numEnemies
+
     if(this.percentCorrupted == 1){
+
       if(player.power <= 10 && this.bonusEnergyTimer.time() > 600){
         this.bonusEnergyTimer.reset()
         player.changePower(1)

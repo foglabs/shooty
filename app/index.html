@@ -113,6 +113,10 @@
         return rotateInc(sign*amount, current)
       }
 
+      function randomHexColor(maxBrightness){
+        return rgbToHex( Math.round( randomInRange(0, maxBrightness) ), Math.round( randomInRange(0, maxBrightness) ), Math.round( randomInRange(0, maxBrightness) ) )
+      }
+
       function isWithin(val, test, precision){
         // I dont give two fucks!
         precision = Math.abs(precision)
