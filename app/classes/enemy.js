@@ -728,6 +728,11 @@ class Enemy extends Character {
     this.patternMoveStage = MOVING
   }
 
+  passedEntryPlane(){
+    // if we made it into play were locked at 0
+    return this.mesh.position.z == 0
+  }
+
   customAnimation(){
     // dont do it, if yA DEAD
     if(this.lifecycle == ALIVE){
@@ -936,7 +941,7 @@ class Enemy extends Character {
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
 
       } else if(this.godCorrupted){
-
+        // if godcorrupted, always chase player
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y, 0.4)
       } else {
 

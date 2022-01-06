@@ -32,6 +32,20 @@ class Game {
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
 
+    // 
+    const geometry = new THREE.PlaneGeometry( 1, 1 )
+    const material = new THREE.MeshStandardMaterial( {transparent: true, color: "#000000", side: THREE.DoubleSide, opacity: 0.9} )
+    this.entryPlane = new THREE.Mesh( geometry, material )
+    this.entryPlane.position.z = -0.5
+    this.entryPlane.scale.x = 10
+    this.entryPlane.scale.y = 10
+    this.entryPlane.rotation.z = 0.785398
+    scene.add( this.entryPlane )
+    this.entryPlaneTimer = new Timer()
+    this.entryPlaneTimer.start()
+    // this.epoGoingUp = true
+    this.allEnemiesBehindEntryPlane = false
+
     this.musicEnabled = false
 
     this.stage = false
@@ -60,6 +74,9 @@ class Game {
 
     this.flickerTimer = new Timer()
     this.flickerTimer.start()
+
+    this.enemyDriftInTimer = new Timer()
+    this.enemyDriftInTimer.start()
 
     this.demo = null
     this.demoCharacters = []
@@ -419,6 +436,7 @@ class Game {
 
     let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
     this.generateEnemies( numEnemies )
+    this.generateEnemies( numEnemies, true )
 
     if(!skip && this.roundCount % 5 == 0){
       // LETS SHOP
@@ -456,6 +474,14 @@ class Game {
       // purple to the death of me
       spotlight2.color = new THREE.Color("#ff00ff")
     }
+
+    // change backplane color
+    let r,g,b
+    r = randomInRange(Math.round( 50*(this.roundCount/50)), 50)
+    g = randomInRange(Math.round( 50*(this.roundCount/50)), 50)
+    b = randomInRange(Math.round( 50*(this.roundCount/50)), 50)
+    this.entryPlane.material.color.set( rgbToHex( r,g,b ) )
+    console.log( 'duh', this.entryPlane.material.color )
   }
 
   endGame(){
@@ -575,6 +601,24 @@ class Game {
     duster.animation()
     pduster.animation()
     p2duster.animation()
+    this.entryPlaneAnimation()
+  }
+
+  entryPlaneAnimation(){
+    if(this.entryPlaneTimer.time() > 30){
+      this.entryPlaneTimer.reset()
+      this.entryPlane.rotation.z += 0.001
+      // if(this.entryPlane.material.opacity > 1){
+      //   this.epoGoingUp = false
+      // } else if(this.entryPlane.material.opacity <= 0) {
+      //   this.epoGoingUp = true
+      // }
+      // if(this.epoGoingUp){
+      //   this.entryPlane.material.opacity += 0.03
+      // } else {
+      //   this.entryPlane.material.opacity -= 0.03
+      // }
+    }
   }
 
   drawFlicker(){
@@ -1030,7 +1074,7 @@ class Game {
         let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
         // console.log( 'ene max is', this.enemyMax )
         // console.log( 'generating ene ', numEnemies )
-        this.generateEnemies( numEnemies )
+        this.generateEnemies( numEnemies, true )
 
         this.enemyTimer.reset()
       }
@@ -1321,12 +1365,18 @@ class Game {
     } else {
       killer.mesh.position.y = Math.random()*4*this.randomSign()
     }
+
     return killer
   }
 
-  generateEnemies(num){
+  generateEnemies(num, back=false){
     for(var i=0;i<num; i++){
       let enemy = this.addEnemy()
+      if(back){
+        // enemies start far away
+        enemy.mesh.position.z = -20
+      }
+      
       this.enemies[enemy.id] = enemy
     }
 
@@ -1506,7 +1556,7 @@ class Game {
 
   handleEnemy(enemy){
     // MOVEMENT
-    let enemyId = enemy.id
+    let enemyId = enemy.directionalLength                 
     
     // handle movement
     enemy.handleMovement()
@@ -1553,7 +1603,12 @@ class Game {
         if(enemy.healthTimer.time() > 60){
           // console.log( 'eneymy hit' )
           enemy.healthTimer.reset()
-          enemy.takeDamage(4, EAT)
+
+          if(player.topSpeed()){
+            enemy.takeDamage(4+player.bonusDamage, EAT)
+          } else {
+            enemy.takeDamage(4, EAT)
+          }
 
           // // // did dmg, slow playe ra bit
           // if(player.accx != 0){
@@ -1578,10 +1633,16 @@ class Game {
         if(this.percentCorrupted < this.corruptionMax && corruption_chance > 0.80 ){
           // console.log( 'i really *should* be corrupting ' )
           enemy.startCorrupting()
-          this.numCorrupted += 1
+
+          if( enemy.passedEntryPlane() ){
+            // only count if new corrupted is in play
+            this.numCorrupted += 1
+          }
         }
       }  
     } else if(enemy.corrupted) {
+
+      // already done corrupting
 
       if(player.killingCircle && player.killingCircle.visible){
         let hit = enemy.handleHit( player.killingCircleArea )
@@ -1597,7 +1658,6 @@ class Game {
           }  
         }
       }
-
 
       if(enemy.hitmanCorrupted && player.moneyCircle && player.moneyCircle.visible){
         // if a friend is in the killing circle, give a lil powe3r!
@@ -1761,7 +1821,10 @@ class Game {
         }
       }
 
-      this.numCorrupted += 1
+      if(enemy.passedEntryPlane()){
+        // only count if theyre in play
+        this.numCorrupted += 1
+      }
     }
 
     if(enemy.health <= 0){
@@ -1865,14 +1928,53 @@ class Game {
     // toggle this off because it'll get turned back on during loop if we're still eating
     player.eating = false
 
+
+    this.allEnemiesBehindEntryPlane = true
+
     let enemiesKeys = k(this.enemies)
+    var numEnemies = 0
     let enemyId
     for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
       enemyId = enemiesKeys[i]
       enemy = this.enemies[enemyId]
       if(enemy){
 
+
         this.handleEnemy(enemy)
+
+        // scroll in new enemies
+        // if(this.enemyDriftInTimer.time() > 5){
+        //   this.enemyDriftInTimer.reset()
+        if(enemy.mesh.position.z < 0){
+          enemy.mesh.position.z += 0.036 + this.roundCount / 1000.0
+
+          if(enemy.mesh.position.z > 0){
+            enemy.mesh.position.z = 0
+          }
+        }
+
+        if(enemy.passedEntryPlane()){
+          // only rael ones
+          numEnemies += 1
+        }
+
+
+        if( enemy.lifecycle == ALIVE && enemy.passedEntryPlane() ) {
+          this.allEnemiesBehindEntryPlane = false
+        }
+        // }
+        
+      }
+    }
+
+    if(this.allEnemiesBehindEntryPlane){
+      for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
+        // so no sprite
+        if(this.enemies[ enemiesKeys[i] ]){
+          this.enemies[ enemiesKeys[i] ].lifecycle = ALIVE
+          this.enemies[ enemiesKeys[i] ].removeNow()
+          delete this.enemies[ enemiesKeys[i] ]  
+        }
       }
     }
 
@@ -1906,7 +2008,8 @@ class Game {
     }
     
     // record this after we've added new corrupts, and cleaned up dead enemies
-    this.percentCorrupted = this.numCorrupted/enemiesKeys.length
+    // because of flying in, we have to count num enemies manually
+    this.percentCorrupted = this.numCorrupted/numEnemies
     if(this.percentCorrupted == 1){
       if(player.power <= 10 && this.bonusEnergyTimer.time() > 600){
         this.bonusEnergyTimer.reset()

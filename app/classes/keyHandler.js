@@ -7,7 +7,7 @@ class KeyHandler {
 
     this.heatingElement = 0.00646
     // reduces heat
-    this.coolingElement = -0.076
+    this.coolingElement = -0.276
     this.maxHeat = 0.1
 
     this.tempTimer = new Timer()
@@ -15,7 +15,7 @@ class KeyHandler {
 
     this.bumpTimer = new Timer()
     this.bumpTimer.start()
-    this.bumpValue = 0.02
+    this.bumpValue = 0.25
 
     this.keyActivity = 0
   }

@@ -713,7 +713,7 @@
       player = new Player([0,88,255])
       player.mesh.visible = false
       scene.add( player.mesh )
-      
+
       let game = new Game()
 
       game.setBackgroundColor(game.backgroundColor[0],game.backgroundColor[1],game.backgroundColor[2])
@@ -813,7 +813,7 @@
             //   keyHandler.bumpValue = 0.075
             // }
             // // add bump value once per keydown
-            // keyHandler.bumpKey( event.key )
+            keyHandler.bumpKey( event.key )
           }
 
           if (event.key == " " || event.key == "Spacebar"){

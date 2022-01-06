@@ -14,9 +14,11 @@ class Player extends Character {
     this.hitColor = [193,29,209]
     this.color = this.baseColor
     this.isPlayer = true
-    
+
+    this.bonusDamage = 2
+        
     // how heavy is da guy
-    this.dragCoefficient = 0.082
+    this.dragCoefficient = 0.064
     this.defaultLightness = 0.032
 
     this.moneyCircleEnabled = true
@@ -217,6 +219,8 @@ class Player extends Character {
       game.announcement("TOP SPEED INCREASE")
       player.maxAcc += 0.05
     // }
+
+    this.bonusDamage = 2*(this.level)
 
     fx_levelupE2.play()
   }
@@ -588,13 +592,18 @@ class Player extends Character {
     }
   }
 
+
+  topSpeed(){
+    return isWithin( Math.abs(this.accx), this.maxAcc, 0.2) || isWithin( Math.abs(this.accy), this.maxAcc, 0.2) 
+  }
+
   speedAnimation(){
     // if were within 0.2 of maxacc, show top speed anim
 
 
     // if(this.speedAnimationTimer.time() > 8){
     //   this.speedAnimationTimer.reset()
-      if(isWithin( Math.abs(this.accx), this.maxAcc, 0.2) || isWithin( Math.abs(this.accy), this.maxAcc, 0.2) ){
+      if( this.topSpeed() ){
 
         if( !this.duster ){
           this.duster = new Duster(glowMap, 0.8, 1, 0, this.mesh.position, 0.1, true)
@@ -613,8 +622,6 @@ class Player extends Character {
           } else if(this.duster.particleSystem.material.opacity == 0) {
             this.dusterGoingUp = true
           }
-
-          
         }
       } else {
         if(this.duster) {
