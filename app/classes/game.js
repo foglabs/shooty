@@ -1876,7 +1876,7 @@ class Game {
             }
           }
 
-          if(enemy.damagedBy == EAT || enemy.damagedBy == SWORD){ 
+          if(enemy.damagedBy == EAT || enemy.damagedBy == SWORD){
 
             // knowledge is for everyone
             if(enemy.knowledgeValue > 0){
@@ -1895,17 +1895,22 @@ class Game {
 
         game.changeScore(score)
         enemy.lifecycle = DYING
+        // remove banners etc for during fadeout
+        enemy.removeExtras()
 
         if(!gainedKnowledge){
           // block kill sound if we play the knowledge sound
           enemy.killSound()
         }
-        enemy.remove()
+        // og spot
+        // enemy.remove()
+        enemy.addDeadSprite()
       }
 
       if(enemy.lifecycle == DEAD){
         // WAIT to actually delete enemy until we have faded out the sprite
         enemy.removeSprite()
+        enemy.remove()
         delete this.enemies[enemyId]
       }
     }

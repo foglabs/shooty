@@ -220,7 +220,7 @@ class Player extends Character {
       player.maxAcc += 0.05
     // }
 
-    this.bonusDamage = 2*(this.level)
+    this.bonusDamage = 2*(this.level/2)
 
     fx_levelupE2.play()
   }

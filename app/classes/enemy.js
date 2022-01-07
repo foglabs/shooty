@@ -411,6 +411,7 @@ class Enemy extends Character {
     let hit = this.handleHit( player.sword )
     if(hit && this.healthTimer.time() > 200){
       this.healthTimer.reset()
+      console.log( 'helloooo ! damange', this.health )
       this.takeDamage( 12 * player.level, SWORD )
     }
   }
@@ -806,19 +807,20 @@ class Enemy extends Character {
         this.opacityTimer.start()
       }
 
-      if(this.opacityTimer.time() > 200){
+      if(this.opacityTimer.time() > 4){
         this.opacityTimer.reset()
 
-        let sx, sy, sz
-        sx = this.mesh.scale.x + 0.4
-        sy = this.mesh.scale.y + 0.4
-        sz = this.mesh.scale.z + 0.4
+        // let sx, sy, sz
+        // sx = this.mesh.scale.x + 0.4
+        // sy = this.mesh.scale.y + 0.4
+        // sz = this.mesh.scale.z + 0.4
+        // this.mesh.scale.set(sx,sy,sz)
 
-        this.mesh.scale.set(sx,sy,sz)
-
-        this.spriteOpacity = this.spriteOpacity - 0.1
+        this.spriteOpacity = this.spriteOpacity - 0.022
         // console.log( 'reduced spriteopac '+ this.spriteOpacity )
         this.deadSprite.material.opacity = this.spriteOpacity
+        // also fade out mesh
+        this.mesh.material.opacity = this.spriteOpacity
 
         if(this.spriteOpacity <= 0){
           // if we hit 0 opacity, remove sprite from scene
@@ -830,7 +832,6 @@ class Enemy extends Character {
         }
       }
     } else if(this.lifecycle == CORRUPTING){
-
       // fade corrupting sprite
       if(this.corrOpacityUpTimer.time() > 10){
         this.corrOpacityUpTimer.reset()

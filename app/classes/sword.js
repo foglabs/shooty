@@ -77,8 +77,13 @@ class Sword {
     let x = radius * Math.sin( this.rotation ) + this.wielder.mesh.position.x
     let y = radius * Math.cos( this.rotation ) + this.wielder.mesh.position.y
     // sometimes it z like that
-    let z = radius * Math.cos( this.rotation ) + this.wielder.mesh.position.z
-    this.mesh.position.set( x, y, z )
+
+    if(this.wielder.isPlayer){
+      this.mesh.position.set( x, y, 0 )
+    } else {
+      let z = radius * Math.cos( this.rotation ) + this.wielder.mesh.position.z
+      this.mesh.position.set( x, y, z )
+    }
 
 
 

@@ -7,10 +7,9 @@ class Character {
     if(!mat){
       // deefault
       mat = new THREE.MeshPhongMaterial( { color: basestr, reflectivity: 0.2, shininess: 40 })
-      // mat = new THREE.MeshLambertMaterial( { color: basestr })
-      // mat = new THREE.MeshPhysicalMaterial( { color: basestr, transparent: true, reflectivity: 1, roughness: 0, clearcoat: 1.0, clearcoatRoughness: 0.1 })
-      // mat = new THREE.MeshToonMaterial( { color: basestr })
     }
+
+    mat.transparent = true
 
     this.mesh = new THREE.Mesh(geo, mat)
 
@@ -70,6 +69,18 @@ class Character {
     this.moneyCircleSpendTimer = new Timer()
     this.moneyCircleSpendTimer.start()
     this.moneyCircleEnabled = false
+  }
+
+  fuckUpVertice(){
+    let vertIndex = Math.floor( Math.random() * this.mesh.geometry.vertices.length )
+    let xChange, yChange, zChange
+    xChange = Math.random() * 0.4 - 0.2
+    yChange = Math.random() * 0.4 - 0.2
+    zChange = Math.random() * 0.4 - 0.2
+    this.mesh.geometry.vertices[vertIndex].x = this.mesh.geometry.vertices[vertIndex].x + xChange
+    this.mesh.geometry.vertices[vertIndex].y = this.mesh.geometry.vertices[vertIndex].y + yChange
+    this.mesh.geometry.vertices[vertIndex].z = this.mesh.geometry.vertices[vertIndex].z + zChange
+    this.mesh.geometry.verticesNeedUpdate = true
   }
 
   drawMoney(){
@@ -220,17 +231,16 @@ class Character {
     }
   }
 
-  remove(){
-    // add sprite, then start fading it out - has to come before removing mesh to get position!
-    if(this.lifecycle == DYING){
-
-      if(this.corrupted){
-        // corrupted kill
-        this.addSprite(corruptorMaterial.clone(), 0.688)
-      } else {
-        this.addSprite(bloodspriteMaterial.clone(), 0.388)
-      }
+  addDeadSprite(){
+    if(this.corrupted){
+      // corrupted kill
+      this.addSprite(corruptorMaterial.clone(), 0.688)
+    } else {
+      this.addSprite(bloodspriteMaterial.clone(), 0.388)
     }
+  }
+
+  removeExtras(){
 
     if(this.moneyLabel){
       this.removeMoneyLabel()
@@ -277,6 +287,16 @@ class Character {
       // casino highlight
       this.removeSprite()
     }
+  }
+
+  remove(){
+    // add sprite, then start fading it out - has to come before removing mesh to get position!
+    // if(this.lifecycle == DYING){
+
+    //   this.addDeadSprite()
+    // }
+
+    this.removeExtras()
 
     this.mesh.geometry.dispose()
     this.mesh.material.dispose()
@@ -402,8 +422,15 @@ class Character {
     // decide accelaration
     this.customMovement()
 
-    let posx = this.mesh.position.x + this.calcMovement(this.lightness, this.accx)
-    let posy = this.mesh.position.y + this.calcMovement(this.lightness, this.accy)
+    let posx, posy
+    if(this.lifecycle == ALIVE){
+      // stop movement if not alive, but keep updating banners etcs
+      posx = this.mesh.position.x + this.calcMovement(this.lightness, this.accx)
+      posy = this.mesh.position.y + this.calcMovement(this.lightness, this.accy)
+    } else {
+      posx = this.mesh.position.x
+      posy = this.mesh.position.y
+    }
     
     if(Math.abs(posx) >= game.maxX){
       // stop it if it hits the edge
@@ -539,6 +566,10 @@ class Character {
   takeDamageSound(){}
 
   takeDamage(dmg, damageSource){
+    if(!this.isPlayer){
+      this.fuckUpVertice()
+    }
+
     this.takeDamageSound()
 
     // record the last thing we were damaged byd
@@ -637,7 +668,7 @@ class Character {
     // set bounding box from mesh baby
     this.bbox.setFromObject(this.mesh)
     if(this.isPlayer){
-      this.bbox.expandByScalar(0.25)     
+      this.bbox.expandByScalar(0.22)     
     }
 
     this.colorCycle()
