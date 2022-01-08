@@ -369,6 +369,7 @@ class Player extends Character {
     if(this.sword.rotateTimer.time() > 2){
       this.sword.rotateTimer.reset()
       this.sword.bbox.setFromObject( this.sword.mesh )
+      this.sword.bbox.expandByScalar(0.22)
     }
   }
 
@@ -612,14 +613,16 @@ class Player extends Character {
           // this.duster.particleSystem.rotation.y += 0.06
 
           if(this.dusterGoingUp){
-            this.duster.particleSystem.material.opacity += 0.002
+            this.duster.particleSystem.material.opacity += 0.005
+            this.duster.particleSystem.material.size += 0.005
           } else {
-            this.duster.particleSystem.material.opacity -= 0.002
+            this.duster.particleSystem.material.opacity -= 0.005
+            this.duster.particleSystem.material.size -= 0.005
           }
 
-          if(this.duster.particleSystem.material.opacity == 0.1){
+          if(this.duster.particleSystem.material.opacity > 0.15){
             this.dusterGoingUp = false
-          } else if(this.duster.particleSystem.material.opacity == 0) {
+          } else if(this.duster.particleSystem.material.opacity < 0.1) {
             this.dusterGoingUp = true
           }
         }

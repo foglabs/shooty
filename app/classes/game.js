@@ -41,10 +41,11 @@ class Game {
     this.entryPlane.scale.y = 10
     this.entryPlane.rotation.z = 0.785398
     scene.add( this.entryPlane )
+    // this.entryPlane.visible = false
     this.entryPlaneTimer = new Timer()
     this.entryPlaneTimer.start()
     // this.epoGoingUp = true
-    this.allEnemiesBehindEntryPlane = false
+    
 
     // a little something for you and yours
     // this.backPlanes = []
@@ -252,8 +253,8 @@ class Game {
     this.knowledgeMax = this.knowledgeMaxDefault
 
     // countdown to generate enemies every so often
-    this.defaultEnemyInterval = 36000
-    this.enemyInterval = 36000
+    this.defaultEnemyInterval = 18000
+    this.enemyInterval = 18000
     this.defaultEnemyMax = 5
     this.enemyMax = 5
     this.defaultEnemyHealthFactor = 1
@@ -289,6 +290,8 @@ class Game {
 
     this.merchant = null
     this.merchantTimer = new Timer()
+
+    this.allEnemiesBehindEntryPlane = false
   }
   
   calcChanceSlices(){
@@ -384,7 +387,7 @@ class Game {
 
     // make the enemy timer shorter
     // min 10s, decrease towards that until round 35
-    let newEnemyInterval = Math.max( 10000, Math.round(this.defaultEnemyInterval * -1 * Math.pow( this.roundCount, 2 )/1700 + 36000 ) )
+    let newEnemyInterval = Math.max( 5000, Math.round(-300 * this.roundCount ) + this.defaultEnemyInterval )
 
     // increase maximum % of corurpted by 8%
     // let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
@@ -422,6 +425,8 @@ class Game {
       this.merchant = null
     }
 
+
+    this.allEnemiesBehindEntryPlane = false
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b], skip)
   }
 
@@ -1954,12 +1959,25 @@ class Game {
     // toggle this off because it'll get turned back on during loop if we're still eating
     player.eating = false
 
-
-    this.allEnemiesBehindEntryPlane = true
-
     let enemiesKeys = k(this.enemies)
     var numEnemies = 0
     let enemyId
+
+    // if we determined last loop that all enemies were behind
+    if(this.allEnemiesBehindEntryPlane){
+
+      for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
+        // so no sprite
+        if(this.enemies[ enemiesKeys[i] ]){
+          this.enemies[ enemiesKeys[i] ].lifecycle = ALIVE
+          this.enemies[ enemiesKeys[i] ].removeNow()
+          delete this.enemies[ enemiesKeys[i] ]  
+        }
+      }
+    }
+
+    // reset to check this loop
+    this.allEnemiesBehindEntryPlane = true
     for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
       enemyId = enemiesKeys[i]
       enemy = this.enemies[enemyId]
@@ -1987,18 +2005,6 @@ class Game {
           this.allEnemiesBehindEntryPlane = false
         }
         
-      }
-    }
-
-    if(this.allEnemiesBehindEntryPlane){
-
-      for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
-        // so no sprite
-        if(this.enemies[ enemiesKeys[i] ]){
-          this.enemies[ enemiesKeys[i] ].lifecycle = ALIVE
-          this.enemies[ enemiesKeys[i] ].removeNow()
-          delete this.enemies[ enemiesKeys[i] ]  
-        }
       }
     }
 
@@ -2035,7 +2041,8 @@ class Game {
     // because of flying in, we have to count num enemies manually
     this.percentCorrupted = this.numCorrupted/numEnemies
 
-    if(this.percentCorrupted == 1){
+    if(this.roundCount >= 20 && this.percentCorrupted == 1){
+      // always chase the player on round 20+
 
       if(player.power <= 10 && this.bonusEnergyTimer.time() > 600){
         this.bonusEnergyTimer.reset()

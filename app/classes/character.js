@@ -568,6 +568,7 @@ class Character {
   takeDamage(dmg, damageSource){
     if(!this.isPlayer){
       this.fuckUpVertice()
+      this.fuckUpVertice()
     }
 
     this.takeDamageSound()
@@ -668,7 +669,7 @@ class Character {
     // set bounding box from mesh baby
     this.bbox.setFromObject(this.mesh)
     if(this.isPlayer){
-      this.bbox.expandByScalar(0.22)     
+      this.bbox.expandByScalar(0.22)
     }
 
     this.colorCycle()
