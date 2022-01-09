@@ -29,6 +29,14 @@ input#name-entry {
   display: none;
 }
 
+div#pause {
+  color: #00FF00;
+  font-size: 36px;
+  top: 80vh;
+  left: 50vw;
+  position: absolute;
+}
+
 div.info-bar {
   font-size: 36px; 
   height: 1.2vh;

@@ -6,10 +6,7 @@ class Merchant extends Character {
     super(geometry, new THREE.Box3(new THREE.Vector3(), new THREE.Vector3()), [255,255,255])
 
     // roundcount will be a multiple of 5, more possible items each time
-
-    console.log( 'roundcount', game.roundCount )
     let roll = Math.floor( Math.random() * game.roundCount/5 )
-    console.log( 'roll', roll )
     let numItems = Math.min( 6, 3 + roll )
 
     this.items = []
@@ -26,6 +23,7 @@ class Merchant extends Character {
 
     this.health = 10000
     this.lightness = 0.001
+    this.knowledgeValue = 10000
 
     this.addBanners(merchantMap, 1.0, null, 0.2, true, 1)
     this.itemRotationTimer = new Timer()
@@ -42,7 +40,7 @@ class Merchant extends Character {
     let item
     if(itemType == ITEMKNOW){
       let know = 25 + Math.floor( Math.random() * 16) * 25
-      // 100 bux / 25 knowledge
+      // 100 bux /25 knowledge
       item = new Item("#784ec8", degPosition, ITEMKNOW, know*4, know)  
     } else if(itemType == ITEMHEAL){
       item = new Item("#59e85b", degPosition, ITEMHEAL, 25, 100)  

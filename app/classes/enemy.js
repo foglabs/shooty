@@ -411,7 +411,6 @@ class Enemy extends Character {
     let hit = this.handleHit( player.sword )
     if(hit && this.healthTimer.time() > 200){
       this.healthTimer.reset()
-      console.log( 'helloooo ! damange', this.health )
       this.takeDamage( 12 * player.level, SWORD )
     }
   }
@@ -937,7 +936,7 @@ class Enemy extends Character {
     //STOP RIGHT THERE - its time to corrupt
     if(this.lifecycle != CORRUPTING){
 
-      if(game.percentCorrupted == 1){
+      if(this.corrupted && game.percentCorrupted == 1 || this.roundCount >= 20){
         // chase the player like a demon from hell if theres only corrupteds left
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
 

@@ -98,7 +98,7 @@ class Game {
     this.demo = null
     this.demoCharacters = []
 
-    this.gamepadConnect = false
+    this.gamepadConnected = false
     this.gamepadState = {}
     this.gamepadKeyMap = [
       "z", // 0
@@ -110,13 +110,14 @@ class Game {
       "n", // 6
       "m", // 7
       "m", // 8
-      "m", // 9
+      // pause
+      "Escape", // 9
       "m", // 10
       "m", // 11
-      "ArrowUp", // 12
-      "ArrowDown", // 13
-      "ArrowLeft", // 14
-      "ArrowRight", // 15
+      // "ArrowUp", // 12
+      // "ArrowDown", // 13
+      // "ArrowLeft", // 14
+      // "ArrowRight", // 15
     ]
 
     this.startTime = null
@@ -290,8 +291,6 @@ class Game {
 
     this.merchant = null
     this.merchantTimer = new Timer()
-
-    this.allEnemiesBehindEntryPlane = false
   }
   
   calcChanceSlices(){
@@ -425,8 +424,6 @@ class Game {
       this.merchant = null
     }
 
-
-    this.allEnemiesBehindEntryPlane = false
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b], skip)
   }
 
@@ -452,6 +449,7 @@ class Game {
     duster.animTimer.start()
     this.stageTimer.start()
 
+    // reset enemy timer with new
     this.enemyTimer = new Timer(this.enemyInterval)
     this.enemyTimer.start()
 
@@ -1171,7 +1169,7 @@ class Game {
 
       if(this.merchant){
         // bye bye!
-        this.removeMerchant()
+        this.merchant.closeShop()
       }
 
       if(this.friends.length > 0){
@@ -1656,7 +1654,9 @@ class Game {
 
         // multiply by this teeny tiny so we (mostly) get back something within the realm of 0-1
         let corruption_chance = Math.random() + ( 0.00002 * Math.pow(player.power, 2) )
-        if(this.percentCorrupted < this.corruptionMax && corruption_chance > 0.80 ){
+
+        // if(this.percentCorrupted < this.corruptionMax && corruption_chance >= 0.7 ){
+        if(this.percentCorrupted < this.corruptionMax && corruption_chance >= 0.5 ){
           // console.log( 'i really *should* be corrupting ' )
           enemy.startCorrupting()
 
@@ -1727,11 +1727,10 @@ class Game {
             }
 
           }
-
         }
       }
 
-      // is this enemy hitting the player
+      // this is enemy hitting the player
       let corrupthit = enemy.handleHit(player)
       if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
 
@@ -1745,7 +1744,6 @@ class Game {
             enemy.attackSound()
             player.takeDamage( game.godCorruptedDamage, ENEMY )
           } else if(enemy.greenCorrupted){
-            console.log( 'gree corr damg' )
 
             enemy.attackSound()
             player.takeDamage( game.greenCorruptedDamage, ENEMY )
@@ -1814,8 +1812,8 @@ class Game {
       }
 
       if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && !enemy.greenCorrupted && !enemy.hitmanCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 ){
-          // god killer corruption! more likely with higher power level
-          let god = ( 10/ (2*(player.level+7)) + 0.5 )
+          // god killer corruption! more likely with higher round
+          let god = ( 10/ (2*(this.roundCount+7)) + 0.5 )
           let ch = Math.random()
           this.godCorruptionTimer.reset()
 
@@ -1931,8 +1929,7 @@ class Game {
   }
 
   removeMerchant(){
-    this.merchant.remove()
-    scene.remove( this.merchant.mesh )
+    this.merchant.closeShop()
   }
 
   handleMerchant(){
@@ -1963,26 +1960,10 @@ class Game {
     var numEnemies = 0
     let enemyId
 
-    // if we determined last loop that all enemies were behind
-    if(this.allEnemiesBehindEntryPlane){
-
-      for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
-        // so no sprite
-        if(this.enemies[ enemiesKeys[i] ]){
-          this.enemies[ enemiesKeys[i] ].lifecycle = ALIVE
-          this.enemies[ enemiesKeys[i] ].removeNow()
-          delete this.enemies[ enemiesKeys[i] ]  
-        }
-      }
-    }
-
-    // reset to check this loop
-    this.allEnemiesBehindEntryPlane = true
     for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
       enemyId = enemiesKeys[i]
       enemy = this.enemies[enemyId]
       if(enemy){
-
 
         this.handleEnemy(enemy)
 
@@ -1990,19 +1971,14 @@ class Game {
         if(enemy.mesh.position.z < 0){
           // if enemy not in round yet, move em in
           enemy.mesh.position.z += 0.016 + this.roundCount / 1000.0
-
           if(enemy.mesh.position.z > 0){
             enemy.mesh.position.z = 0
           }
         }
 
-        if(enemy.passedEntryPlane() && enemy.lifecycle == ALIVE){
+        if(enemy.passedEntryPlane() && enemy.lifecycle == ALIVE || enemy.lifecycle == CORRUPTING){
           // only rael alive ones
           numEnemies += 1
-        }
-
-        if( enemy.lifecycle == ALIVE && enemy.passedEntryPlane() ) {
-          this.allEnemiesBehindEntryPlane = false
         }
         
       }
@@ -2036,13 +2012,26 @@ class Game {
 
       }
     }
+
+    if(numEnemies == 0){
+      // if we didnt have anyone in front of plane this loop, end round
+      this.cleanEnemies()
+      // for(var i=0, e_len=enemiesKeys.length; i<e_len; i++){
+      //   // so no sprite
+      //   if(this.enemies[ enemiesKeys[i] ]){
+      //     this.enemies[ enemiesKeys[i] ].lifecycle = ALIVE
+      //     this.enemies[ enemiesKeys[i] ].removeNow()
+      //     delete this.enemies[ enemiesKeys[i] ]  
+      //   }
+      // }
+    }
+
     
     // record this after we've added new corrupts, and cleaned up dead enemies
     // because of flying in, we have to count num enemies manually
     this.percentCorrupted = this.numCorrupted/numEnemies
 
-    if(this.roundCount >= 20 && this.percentCorrupted == 1){
-      // always chase the player on round 20+
+    if(this.percentCorrupted == 1){
 
       if(player.power <= 10 && this.bonusEnergyTimer.time() > 600){
         this.bonusEnergyTimer.reset()

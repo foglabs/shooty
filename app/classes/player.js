@@ -63,7 +63,7 @@ class Player extends Character {
     this.smokesInterval = 1000
 
     this.swordEnabled = false
-    this.defaultSwordSpeed = DEG1
+    this.defaultSwordSpeed = DEG3
     this.swordSpeed = DEG1
 
     this.friendsAvailable = 0
@@ -86,6 +86,10 @@ class Player extends Character {
 
     this.speedAnimationTimer = new Timer()
     this.speedAnimationTimer.start()
+
+    this.idle = false
+    this.idleTimer = new Timer()
+    this.idleTimer.start()
   }
   
   rotation(){
@@ -133,7 +137,7 @@ class Player extends Character {
   }
 
   swordLength(){
-    let calc = 0.5 * (1 + (this.level-1) / 5 )
+    let calc = 0.5 * (1 + (this.level-1) / 2 )
     return Math.min(1.8, calc)
   }
 
@@ -394,6 +398,12 @@ class Player extends Character {
       // console.log( 'move tha tcircle' )
       this.killingCircle.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
       this.killingCircleArea.mesh.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
+    }
+
+    if(game.stage == PLAYING && this.idleTimer.time() > 2000){
+      this.idleTimer.reset()
+      // if no inputs for 2s (tracked in keyhandler), idle
+      this.idle = true
     }
   }
 

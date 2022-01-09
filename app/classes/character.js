@@ -569,6 +569,7 @@ class Character {
     if(!this.isPlayer){
       this.fuckUpVertice()
       this.fuckUpVertice()
+      this.fuckUpVertice()
     }
 
     this.takeDamageSound()

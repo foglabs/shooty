@@ -54,6 +54,8 @@
 
     <div id="scores"></div>
 
+    <div id="pause" class="hidden">PAUSED</div>
+
     <div id="fog-logo" class="hidden"></div>
     <a href="https://foglabs.in"><div id="fog-logo2" class="hidden"></div></a>
 
@@ -308,6 +310,7 @@
       PLAYING = 2
       ENDING = 3
       GAMEOVER = 4
+      PAUSE = 5
 
       // enemy type
       SPHERE = 0
@@ -384,6 +387,7 @@
 
       // DEG0 = radian(0)
       DEG1 = radian(1)
+      DEG3 = radian(3)
       DEG45 = radian(45)
       DEG90 = radian(90)
       DEG135 = radian(135)
@@ -421,8 +425,8 @@
         return done
       }
 
-      // let heat= new Timer()
-      // heat.start()
+      let pauseTimer= new Timer()
+      pauseTimer.start()
 
       // run every frame
       function animate() {
@@ -430,38 +434,43 @@
         if(game.gamepadConnected){
 
           // for chrome, gotta poll! for ff should just get picked up first
-          var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads : [])
+          var gamepads = navigator.getGamepads ? navigator.getGamepads() : (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : [])
 
           if(gamepads[0]){
 
             // there is gamepads!
             var gp = gamepads[0]
             if(game.stage == PLAYING){
-
+              // if(dbug.time() > 1000){
+              //   dbug.reset()
+              //   console.log( 'axes', gp )
+              //   console.log( 'axis 0', gp.axes[0] )
+              //   console.log( 'axis 1', gp.axes[1] )
+              //   console.log( 'axis 2', gp.axes[2] )
+              //   console.log( 'axis 3', gp.axes[3] )
+              // }
               // left stick hor
-              if(!isWithin(gp.axes[0], 0, 0.01) ){
+
                 // player.accx += gp.axes[0]/6
-                player.accx = incInRange(player.accx, gp.axes[0]/10, -1.8, 1.8)
-              }
+                player.accx = incInRange(player.accx, gp.axes[0]/6, -1*player.maxAcc, player.maxAcc)
               // left stick vert
-              if(!isWithin(gp.axes[1], 0, 0.01) ){
                 // player.accy += -(gp.axes[1]/6)
 
                 // opposite of what you would think according to gamepad api
-                player.accy = incInRange(player.accy, -1 * gp.axes[1]/10, -1.8, 1.8)
-              }
-              // rig stick hor
-              if(!isWithin(gp.axes[2], 0, 0.01) ){
-                player.mesh.scale.x += gp.axes[2]/100
-              }
-              // rig stick vert
-              if(!isWithin(gp.axes[3], 0, 0.01) ){
-                player.mesh.scale.y += gp.axes[3]/100
-              }
+                player.accy = incInRange(player.accy, -1 * gp.axes[1]/6, -1*player.maxAcc, player.maxAcc)
+              // // rig stick hor
+              // if(!isWithin(gp.axes[2], 0, 0.01) ){
+              //   player.mesh.scale.x += gp.axes[2]/100
+              // }
+              // // rig stick vert
+              // if(!isWithin(gp.axes[3], 0, 0.01) ){
+              //   player.mesh.scale.y += gp.axes[3]/100
+              // }
 
-              for(var i=0; i<game.gamepadKeyMap.length; i++){
+              for(var i=0; i<gp.buttons.length; i++){
                 if(buttonPressed(gp.buttons[i])){
                   // button is pressed now
+                  console.log( 'button now pressed', i, gp.buttons[i] )
                   game.gamepadState[i] = true
                   fireKeyDown(game.gamepadKeyMap[i])
                 } else if(game.gamepadState[i]){
@@ -480,6 +489,8 @@
               //   }
               // }
               // let gotinput = false
+
+
               for(var i=0; i<4; i++){
                 // hacky
                 if( buttonPressed(gp.buttons[i+12]) ){
@@ -503,8 +514,15 @@
               if( !buttonNow && buttonNow != game.nameEntryConfirm ){
                 if(game.nameEntry == NONAME){
 
-                  fireKeyDown("Spacebar")
-                  fireKeyUp("Spacebar")
+                  if( game.nameEntry == NONAME ){
+                    game.hideAttract()
+                    beginNameEntry()
+
+                  } else if(game.nameEntry == NAMEENTERED && nameIsSet()){
+
+                    // on gameover, use the same name
+                    game.newGame()
+                  }
                 } else if(game.nameEntry == ENTERING){
                   // we're entering, soi 
                   fireKeyDown("Enter")
@@ -517,6 +535,21 @@
               }
 
               game.nameEntryConfirm = buttonNow
+            } else if(game.stage == PAUSE){
+              if(pauseTimer.time() > 400){
+                pauseTimer.reset()
+
+                for(var i=0; i<gp.buttons.length; i++){
+                  if(buttonPressed(gp.buttons[i])){
+                    // button is pressed now
+                    // console.log( 'button now pressed', i, gp.buttons[i] )
+                    game.stage = PLAYING
+                    document.getElementById("pause").classList.add("hidden")
+                    break
+                  }
+                }  
+              }
+
             }
 
 
@@ -538,8 +571,11 @@
 
           }
         }
-          
-        game.handleGame()
+        
+
+        if(game.stage != PAUSE){
+          game.handleGame()
+        }
 
         // DONT get hot when playing, you are not
         if(game.stage == PLAYING){
@@ -818,6 +854,8 @@
             // }
             // // add bump value once per keydown
             keyHandler.bumpKey( event.key )
+            player.idle = false
+            player.idleTimer.reset()
           }
 
           if (event.key == " " || event.key == "Spacebar"){
@@ -825,18 +863,40 @@
               player.startKillingCircle()
             }
 
+            player.idle = false
+            player.idleTimer.reset()
+
+          } else if(event.key == "Escape"){
+            if(pauseTimer.time() > 400){
+              pauseTimer.reset()
+
+              // pause the game
+              game.stage = PAUSE
+              document.getElementById("pause").classList.remove("hidden")
+            }
           } else if(event.key == "c"){
             player.dropBomb()
+            player.idle = false
+            player.idleTimer.reset()
           } else if(event.key == "z"){
             if(player.swordEnabled && player.power > 0){
               player.startSword()
+              player.idle = false
+              player.idleTimer.reset()
             }
+
           } else if(event.key == "v"){
             if(player.friendsAvailable > 0){
               player.addFriend()
+              player.idle = false
+              player.idleTimer.reset()
             }
           } else if(event.key == "b"){
+
             if(player.casinoEnabled){
+              player.idle = false
+              player.idleTimer.reset()
+
               if(!game.casino){
                 game.startCasino()
 
@@ -854,6 +914,8 @@
             if(player.smokeEnabled){
               console.log( 'drop smoke' )
               player.dropSmoke()
+              player.idle = false
+              player.idleTimer.reset()
             }
           } else if(event.key == "n"){
 
@@ -863,6 +925,12 @@
             }
 
           }
+        } else if(game.stage == PAUSE){
+          if(event.key == "Escape"){
+            document.getElementById("pause").classList.add("hidden")
+            game.stage = PLAYING
+          }
+
         }
       }
       function onDocumentKeyUp(event) {
@@ -913,7 +981,7 @@
       document.addEventListener("keyup", onDocumentKeyUp, false);
       window.addEventListener("gamepadconnected", function(e) {
         // console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.", e.gamepad.index, e.gamepad.id, e.gamepad.buttons.length, e.gamepad.axes.length)
-        console.log( 'gamepad connect' )
+        console.log( 'gamepad connect', e )
         game.gamepadConnected = true
       })
 
