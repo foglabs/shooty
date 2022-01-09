@@ -1,7 +1,7 @@
 class Item {
   constructor(color, rotation, type, cost, amount=null){
     let geometry = new THREE.BoxGeometry(0.1,0.1,0.1)
-    let material = new THREE.MeshBasicMaterial( {color: color} )
+    let material = new THREE.MeshBasicMaterial( {color: color, opacity: 0, transparent: true} )
     this.mesh = new THREE.Mesh(geometry, material)
     this.mesh.rotation.z = radian(rotation)
     scene.add(this.mesh)

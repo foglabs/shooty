@@ -32,20 +32,7 @@ class Game {
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
 
-    // 
-    const geometry = new THREE.PlaneGeometry( 1, 1 )
-    const material = new THREE.MeshStandardMaterial( {transparent: true, color: "#000000", side: THREE.DoubleSide, opacity: 0.9} )
-    this.entryPlane = new THREE.Mesh( geometry, material )
-    this.entryPlane.position.z = -0.5
-    this.entryPlane.scale.x = 10
-    this.entryPlane.scale.y = 10
-    this.entryPlane.rotation.z = 0.785398
-    scene.add( this.entryPlane )
-    // this.entryPlane.visible = false
-    this.entryPlaneTimer = new Timer()
-    this.entryPlaneTimer.start()
-    // this.epoGoingUp = true
-    
+    this.entryPlane = new EntryPlane(-0.5, 10, 0.785398)
 
     // a little something for you and yours
     // this.backPlanes = []
@@ -362,10 +349,10 @@ class Game {
       // for(var i=0; i<10; i++){
       //   player.levelUp()
       // }
-      // for(var i=0; i<39; i++){
-      //   // skip all but last round
-      //   game.nextRound( i != 38)
-      // }
+      for(var i=0; i<39; i++){
+        // skip all but last round
+        game.nextRound( i != 38)
+      }
     }
   }
 
@@ -496,15 +483,12 @@ class Game {
 
     // change backplane color
     if(this.roundCount > 1){
-      let r,g,b
-      r = Math.round( randomInRange(150*(this.roundCount/150), 150) )
-      g = Math.round( randomInRange(150*(this.roundCount/150), 150) )
-      b = Math.round( randomInRange(150*(this.roundCount/150), 255) )
-      this.entryPlane.material.color.set( rgbToHex( r,g,b ) )
+      this.entryPlane.randomColor()
     }
   }
 
   endGame(){
+
     this.endTime = performance.now()
 
     this.stageTimer.start()
@@ -621,28 +605,9 @@ class Game {
     duster.animation()
     pduster.animation()
     p2duster.animation()
-    this.entryPlaneAnimation()
-  }
 
-  entryPlaneAnimation(){
-    if(this.entryPlaneTimer.time() > 30){
-      this.entryPlaneTimer.reset()
-      this.entryPlane.rotation.z += 0.001
-      // if(this.entryPlane.material.opacity > 1){
-      //   this.epoGoingUp = false
-      // } else if(this.entryPlane.material.opacity <= 0) {
-      //   this.epoGoingUp = true
-      // }
-      // if(this.epoGoingUp){
-      //   this.entryPlane.material.opacity += 0.03
-      // } else {
-      //   this.entryPlane.material.opacity -= 0.03
-      // }
-
-      // this.backPlanes.forEach((bp,i) => {
-      //   bp.rotation.z += 0.001*(i+1)
-      // })
-    }
+    // spin that plane baby
+    this.entryPlane.animation()
   }
 
   drawFlicker(){
@@ -1187,7 +1152,6 @@ class Game {
     for(var i=0; i<this.bombs.length; i++){
       if(this.bombs[i]){
         // do this so we dont make a sprite
-        this.bombs[i].lifecycle = ALIVE
         this.bombs[i].remove()
         delete this.bombs[i]
       }
@@ -1780,6 +1744,7 @@ class Game {
       // if we're dead for any old reason, die 
       if(this.stage != TITLE && player.lifecycle == ALIVE && player.health <= 0){
         player.lifecycle = DYING
+        this.cleanBombs()
       }
 
       let friend

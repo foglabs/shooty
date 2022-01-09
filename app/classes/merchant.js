@@ -193,6 +193,10 @@ class Merchant extends Character {
       this.itemRotationTimer.reset()
       for(var i=0; i<this.items.length; i++){
         this.moveItem( this.items[i] )
+
+        if(this.items[i].mesh.material.opacity < 1){
+          this.items[i].mesh.material.opacity += 0.03
+        }
       }  
     }
   }

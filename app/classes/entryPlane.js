@@ -1,0 +1,79 @@
+class EntryPlane {
+  constructor(zPos, scale, startRotation){
+    // haha!
+    const geometry = new THREE.PlaneGeometry( 1, 1 )
+    const material = new THREE.MeshStandardMaterial( {transparent: true, color: "#000000", side: THREE.DoubleSide, opacity: 0.9} )
+    this.mesh = new THREE.Mesh( geometry, material )
+    this.mesh.position.z = zPos
+    this.mesh.scale.x = scale
+    this.mesh.scale.y = scale
+    this.mesh.rotation.z = startRotation
+    scene.add( this.mesh )
+    // this.entryPlane.visible = false
+    this.entryPlaneTimer = new Timer()
+    this.entryPlaneTimer.start()
+    this.goingUp = true
+    
+  }
+
+  randomColor(){
+    let r,g,b
+    r = Math.round( randomInRange(150*(game.roundCount/150), 150) )
+    g = Math.round( randomInRange(150*(game.roundCount/150), 150) )
+    b = Math.round( randomInRange(150*(game.roundCount/150), 255) )
+    this.setColor( rgbToHex( r,g,b ) )
+  }
+
+  setColor(newColor){
+    this.mesh.material.color.set( newColor )
+  }
+
+  animation(){
+
+    if(game.roundCount >= 10){
+      let vertIndex = Math.floor( Math.random() * this.mesh.geometry.vertices.length )
+      if(this.goingUp){
+        this.mesh.geometry.vertices[vertIndex].z += (0.001*game.roundCount/2)
+      } else {
+        this.mesh.geometry.vertices[vertIndex].z -= (0.001*game.roundCount/2)
+      }
+      if(this.mesh.geometry.vertices[vertIndex].z < -1){
+        this.mesh.geometry.vertices[vertIndex].z = -1
+        this.goingUp = true
+      }
+      if(this.mesh.geometry.vertices[vertIndex].z > 0){
+        this.mesh.geometry.vertices[vertIndex].z = 0
+        this.goingUp = false
+      }
+      this.mesh.geometry.verticesNeedUpdate = true
+
+    }
+      
+
+    if(this.entryPlaneTimer.time() > 30){
+      this.entryPlaneTimer.reset()
+      this.mesh.rotation.z += 0.001
+
+      // let xChange, yChange, zChange
+      // // xChange = Math.random() * 0.04 - 0.02
+      // // yChange = Math.random() * 0.04 - 0.02
+      // zChange = Math.random() * 0.004 - 0.002
+      // // this.mesh.geometry.vertices[vertIndex].x = this.mesh.geometry.vertices[vertIndex].x + xChange
+      // // this.mesh.geometry.vertices[vertIndex].y = this.mesh.geometry.vertices[vertIndex].y + yChange
+      // if(this.mesh.material.opacity > 1){
+      //   this.epoGoingUp = false
+      // } else if(this.mesh.material.opacity <= 0) {
+      //   this.epoGoingUp = true
+      // }
+      // if(this.epoGoingUp){
+      //   this.mesh.material.opacity += 0.03
+      // } else {
+      //   this.mesh.material.opacity -= 0.03
+      // }
+
+      // this.backPlanes.forEach((bp,i) => {
+      //   bp.rotation.z += 0.001*(i+1)
+      // })
+    }
+  }
+}

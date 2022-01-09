@@ -71,7 +71,7 @@ class Character {
     this.moneyCircleEnabled = false
   }
 
-  fuckUpVertice(){
+  fuckUpVertex(){
     let vertIndex = Math.floor( Math.random() * this.mesh.geometry.vertices.length )
     let xChange, yChange, zChange
     xChange = Math.random() * 0.4 - 0.2
@@ -567,9 +567,9 @@ class Character {
 
   takeDamage(dmg, damageSource){
     if(!this.isPlayer){
-      this.fuckUpVertice()
-      this.fuckUpVertice()
-      this.fuckUpVertice()
+      this.fuckUpVertex()
+      this.fuckUpVertex()
+      this.fuckUpVertex()
     }
 
     this.takeDamageSound()
@@ -670,7 +670,8 @@ class Character {
     // set bounding box from mesh baby
     this.bbox.setFromObject(this.mesh)
     if(this.isPlayer){
-      this.bbox.expandByScalar(0.22)
+      let sizeBonus = this.topSpeed() ? 0.33 : 0.22
+      this.bbox.expandByScalar(sizeBonus)
     }
 
     this.colorCycle()
