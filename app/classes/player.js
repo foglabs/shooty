@@ -137,7 +137,7 @@ class Player extends Character {
   }
 
   swordLength(){
-    let calc = 0.5 * (1 + (this.level-1) / 2 )
+    let calc = 0.3 * (1 + (this.level-1) / 2 )
     return Math.min(1.8, calc)
   }
 

@@ -25,6 +25,15 @@ class Smoke {
     }
   }
 
+  remove() {
+    // one smoke is made of multiple smokebubbles
+    for(var i=0; i<this.bubbles.length; i++){
+      if(this.bubbles[i]){
+        this.bubbles[i].remove()
+      }
+    }
+  }
+
   animation(){
     let thisGrowTime = 400
     if(this.growTimer.time() > thisGrowTime){

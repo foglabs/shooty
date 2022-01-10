@@ -346,12 +346,12 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<10; i++){
-      //   player.levelUp()
-      // }
-      for(var i=0; i<39; i++){
+      for(var i=0; i<40; i++){
+        player.levelUp()
+      }
+      for(var i=0; i<21; i++){
         // skip all but last round
-        game.nextRound( i != 38)
+        game.nextRound( i != 20)
       }
     }
   }
@@ -415,6 +415,8 @@ class Game {
   }
 
   newRound(enemyMax, enemyInterval, corruptionMax, corruptingTime, roundColor, skip=false){
+    this.entryPlane.flip()
+    
     keyHandler.resetHeats()    
 
     this.enemyMax = enemyMax
@@ -429,6 +431,7 @@ class Game {
 
     this.cleanEnemies()
     this.cleanBombs()
+    this.cleanSmokes()
 
     this.stage = LOADING
     this.announcement("ROUND " + this.roundCount +  " LOADING...")
@@ -1111,6 +1114,7 @@ class Game {
     console.log( 'cleaning game' )
     this.cleanEnemies()
     this.cleanBombs()
+    this.cleanSmokes()
     this.setDefaultGameValues()
 
     player.deadSprite.remove()
@@ -1154,6 +1158,16 @@ class Game {
         // do this so we dont make a sprite
         this.bombs[i].remove()
         delete this.bombs[i]
+      }
+    }
+  }
+
+  cleanSmokes(){
+    for(var i=0; i<this.smokes.length; i++){
+      if(this.smokes[i]){
+        // do this so we dont make a sprite
+        this.smokes[i].remove()
+        delete this.smokes[i]
       }
     }
   }
@@ -1745,6 +1759,7 @@ class Game {
       if(this.stage != TITLE && player.lifecycle == ALIVE && player.health <= 0){
         player.lifecycle = DYING
         this.cleanBombs()
+        this.cleanSmokes()
       }
 
       let friend

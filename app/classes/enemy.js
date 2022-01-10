@@ -936,7 +936,7 @@ class Enemy extends Character {
     //STOP RIGHT THERE - its time to corrupt
     if(this.lifecycle != CORRUPTING){
 
-      if(this.corrupted && game.percentCorrupted == 1 || this.roundCount >= 20){
+      if(this.corrupted && (game.percentCorrupted == 1 || game.roundCount >= 20)){
         // chase the player like a demon from hell if theres only corrupteds left
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
 

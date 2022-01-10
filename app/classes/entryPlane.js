@@ -1,5 +1,6 @@
 class EntryPlane {
   constructor(zPos, scale, startRotation){
+
     // haha!
     const geometry = new THREE.PlaneGeometry( 1, 1 )
     const material = new THREE.MeshStandardMaterial( {transparent: true, color: "#000000", side: THREE.DoubleSide, opacity: 0.9} )
@@ -14,7 +15,11 @@ class EntryPlane {
     this.entryPlaneTimer.start()
     this.goingUp = true
     
+    this.roundAnim = DONE
   }
+
+
+
 
   randomColor(){
     let r,g,b
@@ -28,31 +33,54 @@ class EntryPlane {
     this.mesh.material.color.set( newColor )
   }
 
+  flip(){
+    this.roundAnim = 0
+  }
+
+
   animation(){
-
-    if(game.roundCount >= 10){
-      let vertIndex = Math.floor( Math.random() * this.mesh.geometry.vertices.length )
-      if(this.goingUp){
-        this.mesh.geometry.vertices[vertIndex].z += (0.001*game.roundCount/2)
-      } else {
-        this.mesh.geometry.vertices[vertIndex].z -= (0.001*game.roundCount/2)
-      }
-      if(this.mesh.geometry.vertices[vertIndex].z < -1){
-        this.mesh.geometry.vertices[vertIndex].z = -1
-        this.goingUp = true
-      }
-      if(this.mesh.geometry.vertices[vertIndex].z > 0){
-        this.mesh.geometry.vertices[vertIndex].z = 0
-        this.goingUp = false
-      }
-      this.mesh.geometry.verticesNeedUpdate = true
-
-    }
-      
 
     if(this.entryPlaneTimer.time() > 30){
       this.entryPlaneTimer.reset()
       this.mesh.rotation.z += 0.001
+
+      if(this.roundAnim == 0){
+        if(this.mesh.position.z > -0.4 ){
+          this.mesh.position.z -= 0.01 * game.roundCount/5
+        } else {
+          // 
+          this.roundAnim = 1
+        }
+      } else if(this.roundAnim == 1){
+        if(this.mesh.position.z < 0 ){
+          this.mesh.position.z += 0.01 * game.roundCount/5
+        } else {
+          this.mesh.position.z = 0
+          this.roundAnim = 2
+        }
+      }
+      
+
+      if(game.roundCount >= 10){
+        let vertIndex = Math.floor( Math.random() * this.mesh.geometry.vertices.length )
+        if(this.goingUp){
+          this.mesh.geometry.vertices[vertIndex].z += (0.001)
+        } else {
+          this.mesh.geometry.vertices[vertIndex].z -= (0.001)
+        }
+        if(this.mesh.geometry.vertices[vertIndex].z < -1){
+          this.mesh.geometry.vertices[vertIndex].z = -1
+          this.goingUp = true
+        }
+        if(this.mesh.geometry.vertices[vertIndex].z > 0){
+          this.mesh.geometry.vertices[vertIndex].z = 0
+          this.goingUp = false
+        }
+        this.mesh.geometry.verticesNeedUpdate = true
+      }
+        
+
+
 
       // let xChange, yChange, zChange
       // // xChange = Math.random() * 0.04 - 0.02
