@@ -37,6 +37,10 @@ div#pause {
   position: absolute;
 }
 
+div#pause.active {
+  color: #a0a;
+}
+
 div.info-bar {
   font-size: 36px; 
   height: 1.2vh;

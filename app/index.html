@@ -253,6 +253,32 @@
         xhr.send(JSON.stringify( { sex: game.haveSex(), score: score, level: level, name: name } ))
       }
 
+      function killCookie() {
+        document.cookie.split(";").forEach(function(c) { document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); });
+      }
+
+      // cookie thang
+      function getCookie(name){
+        // console.log( 'looking for cookie ', name, document.cookie )
+        let key = name + "="
+        // split cookies to array of strings with key=
+        let fullCookie = document.cookie.length > 0 ? document.cookie.split('; ') : null;
+        // find correct cookie in array
+        // console.log( 'fullCookie' ,fullCookie )
+        let matchingCookie = fullCookie.find( (cookie) => { return cookie.startsWith(key) })
+        // return cookie without key=
+        // console.log( 'found matching cookie ', matchingCookie )
+        return matchingCookie ? matchingCookie.substring( key.length ) : null
+      }
+
+      function setCookie(keyname, val){
+        // console.log( 'setting cookie ', keyname, ' with value ', val )
+        let fuck = keyname + '=' + val + '; expires=Thu, 2 Aug 3001 20:47:11 UTC; path=/'
+        // console.log('setcookie is fuckn' + fuck)
+        document.cookie = fuck;
+      }
+
+
     </script>
 
     <script src="three.js"></script>
@@ -465,50 +491,49 @@
                 }
               } else if(game.remapButtons) {
 
-                console.log( 'hi!', game.allGameKeys[0] )
-
                 game.stage = PAUSE
 
                 if(game.allGameKeys[0]){
+                  document.getElementById("pause").innerHTML = "HOLD GAMEPAD BUTTON FOR " + game.allGameKeyLabels[0]
                   document.getElementById("pause").classList.remove("hidden")
-
-
 
                   let buttonsReleased = true 
                   for(var i=0; i<gp.buttons.length; i++){
                     if( buttonPressed(gp.buttons[i]) ){
                       // if button pressed, assign current key to it in new keymap
+
+                      document.getElementById("pause").classList.add("active")
+
                       if(game.remapTimer.time() > 800){
                         game.remapTimer.reset()
 
                         if(game.allButtonsReleased){
                           buttonsReleased = false
-                          console.log( 'now map BITCH', game.allGameKeys[0], i )
+                          // console.log( 'now map PLEASE', game.allGameKeys[0], i )
                           game.newGamepadKeyMap[i] = game.allGameKeys[0]
                           game.allGameKeys.shift()
-                          document.getElementById("pause").innerHTML = game.allGameKeys[0]
+                          game.allGameKeyLabels.shift()
+                          break
                         }
-                        
-                       // if theres any left to map
                       }
-
-
                     }
                   }
 
                   game.allButtonsReleased = buttonsReleased
 
                 } else {
-
                   console.log( 'done, stop remap' )
                   // done, go back to game
                   game.gamepadKeyMap = game.newGamepadKeyMap
+
+                  setCookie("remap", JSON.stringify(game.gamepadKeyMap) )
+
                   game.stage = PAUSE
                   game.remapButtons = false
                   game.allButtonsReleased = false
+                  document.getElementById("pause").classList.remove("active")
                   document.getElementById("pause").innerHTML = "PAUSED"
                 }                    
-
 
               } else {
 
@@ -836,7 +861,12 @@
       player.mesh.visible = false
       scene.add( player.mesh )
 
+      let remapFromCookie = getCookie("remap")
       let game = new Game()
+      if(remapFromCookie){
+        console.log( 'picked up gamepad remap from our cookie!' )
+        game.gamepadKeyMap = JSON.parse(remapFromCookie)
+      }
 
       game.setBackgroundColor(game.backgroundColor[0],game.backgroundColor[1],game.backgroundColor[2])
       

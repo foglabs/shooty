@@ -112,6 +112,7 @@ class Game {
     // ho boy
     this.remapButtons = false
     this.allGameKeys = ["z","Spacebar","x","c","v","b","n","m","Escape"]
+    this.allGameKeyLabels = ["SWORD","KILLING CIRCLE","SMOKE","BOMB","ADD NEW FRIEND","CASINO","SHOW MONEY","MUTE MUSIC","PAUSE"]
     this.newGamepadKeyMap = []
     this.allButtonsReleased = false
     this.remapTimer = new Timer()
