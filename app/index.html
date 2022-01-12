@@ -428,6 +428,8 @@
 
       let pauseTimer= new Timer()
       pauseTimer.start()
+      let dbug= new Timer()
+      dbug.start()
 
       // run every frame
       function animate() {
@@ -444,42 +446,121 @@
             if(game.stage == PLAYING){
               // if(dbug.time() > 1000){
               //   dbug.reset()
-              //   console.log( 'axes', gp )
-              //   console.log( 'axis 0', gp.axes[0] )
-              //   console.log( 'axis 1', gp.axes[1] )
-              //   console.log( 'axis 2', gp.axes[2] )
-              //   console.log( 'axis 3', gp.axes[3] )
-              // }
-              // left stick hor
-
-                // player.accx += gp.axes[0]/6
-                player.accx = incInRange(player.accx, gp.axes[0]/6, -1*player.maxAcc, player.maxAcc)
-              // left stick vert
-                // player.accy += -(gp.axes[1]/6)
-
-                // opposite of what you would think according to gamepad api
-                player.accy = incInRange(player.accy, -1 * gp.axes[1]/6, -1*player.maxAcc, player.maxAcc)
-              // // rig stick hor
-              // if(!isWithin(gp.axes[2], 0, 0.01) ){
-              //   player.mesh.scale.x += gp.axes[2]/100
-              // }
-              // // rig stick vert
-              // if(!isWithin(gp.axes[3], 0, 0.01) ){
-              //   player.mesh.scale.y += gp.axes[3]/100
+              //   console.log( 'player acc ', player.accx, player.accy )
+              //   console.log( 'player pos ', player.mesh.position.x, player.mesh.position.y )
+              //   console.log( 'axis ', gp.axes[game.gamepadXAxis], gp.axes[game.gamepadYAxis] )
               // }
 
-              for(var i=0; i<gp.buttons.length; i++){
-                if(buttonPressed(gp.buttons[i])){
-                  // button is pressed now
-                  console.log( 'button now pressed', i, gp.buttons[i] )
-                  game.gamepadState[i] = true
-                  fireKeyDown(game.gamepadKeyMap[i])
-                } else if(game.gamepadState[i]){
-                  // button is not pressed now, but was before
-                  fireKeyUp(game.gamepadKeyMap[i])
-                  game.gamepadState[i] = false
+
+              if(game.gamepadXAxis == null){
+                // first time we move axis, select lowest as x, next one as y
+                for(var i=0; i<gp.axes.length; i++){
+                  if( i % 2 == 0 && !isWithin(gp.axes[i], 0, 0.05) ){
+                    // pick an even numbered axis as x, because its first in a pair, if its got significant input
+                    game.gamepadXAxis = i
+                    game.gamepadYAxis = i+1
+                    console.log( 'selected axis ', i, i+1 )
+                    break
+                  }
+                }
+              } else if(game.remapButtons) {
+
+                console.log( 'hi!', game.allGameKeys[0] )
+
+                game.stage = PAUSE
+
+                if(game.allGameKeys[0]){
+                  document.getElementById("pause").classList.remove("hidden")
+
+
+
+                  let buttonsReleased = true 
+                  for(var i=0; i<gp.buttons.length; i++){
+                    if( buttonPressed(gp.buttons[i]) ){
+                      // if button pressed, assign current key to it in new keymap
+                      if(game.remapTimer.time() > 800){
+                        game.remapTimer.reset()
+
+                        if(game.allButtonsReleased){
+                          buttonsReleased = false
+                          console.log( 'now map BITCH', game.allGameKeys[0], i )
+                          game.newGamepadKeyMap[i] = game.allGameKeys[0]
+                          game.allGameKeys.shift()
+                          document.getElementById("pause").innerHTML = game.allGameKeys[0]
+                        }
+                        
+                       // if theres any left to map
+                      }
+
+
+                    }
+                  }
+
+                  game.allButtonsReleased = buttonsReleased
+
+                } else {
+
+                  console.log( 'done, stop remap' )
+                  // done, go back to game
+                  game.gamepadKeyMap = game.newGamepadKeyMap
+                  game.stage = PAUSE
+                  game.remapButtons = false
+                  game.allButtonsReleased = false
+                  document.getElementById("pause").innerHTML = "PAUSED"
+                }                    
+
+
+              } else {
+
+                // regular controller play
+
+                // left stick hor
+                let xchange = gp.axes[game.gamepadXAxis]/4
+                if(!xchange){
+                  xchange = 0
+                }
+                let ychange = (gp.axes[game.gamepadYAxis]*-1)/4
+                if(!ychange){
+                  ychange = 0
+                }              
+                  // player.accx += gp.axes[0]/6
+                  player.accx = incInRange(player.accx, xchange, -1*player.maxAcc, player.maxAcc)
+                // left stick vert
+                  // player.accy += -(gp.axes[1]/6)
+
+                  // opposite of what you would think according to gamepad api
+                  player.accy = incInRange(player.accy, ychange, -1*player.maxAcc, player.maxAcc)
+                // // rig stick hor
+                // if(!isWithin(gp.axes[2], 0, 0.01) ){
+                //   player.mesh.scale.x += gp.axes[2]/100
+                // }
+                // // rig stick vert
+                // if(!isWithin(gp.axes[3], 0, 0.01) ){
+                //   player.mesh.scale.y += gp.axes[3]/100
+                // }
+
+                let numPushed = 0
+                for(var i=0; i<gp.buttons.length; i++){
+                  if(buttonPressed(gp.buttons[i])){
+                    numPushed++
+                    if(numPushed == 5){
+                      console.log( 'start remap' )
+                      game.remapButtons = true
+                      game.remapTimer.reset()
+                    }
+
+                    // button is pressed now
+                    // console.log( 'button now pressed', i, gp.buttons[i] )
+                    game.gamepadState[i] = true
+                    fireKeyDown(game.gamepadKeyMap[i])
+                  } else if(game.gamepadState[i]){
+                    // button is not pressed now, but was before
+                    fireKeyUp(game.gamepadKeyMap[i])
+                    game.gamepadState[i] = false
+                  }
                 }
               }
+
 
             } else if(game.stage == TITLE) {
               // check if any button is hit, if yes, start game

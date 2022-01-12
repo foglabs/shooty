@@ -326,7 +326,7 @@ progress#knowledge::-webkit-progress-value { background: #5A1196; }
 
 #stage-info.announcement {
   opacity: 0.6;
-  transition: opacity 0.6s ease-out;
+  transition: opacity 0.4s ease-out;
 }
 
 

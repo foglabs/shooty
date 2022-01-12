@@ -86,6 +86,8 @@ class Game {
     this.demoCharacters = []
 
     this.gamepadConnected = false
+    this.gamepadXAxis = null
+    this.gamepadYAxis = null
     this.gamepadState = {}
     this.gamepadKeyMap = [
       "z", // 0
@@ -106,6 +108,15 @@ class Game {
       // "ArrowLeft", // 14
       // "ArrowRight", // 15
     ]
+
+    // ho boy
+    this.remapButtons = false
+    this.allGameKeys = ["z","Spacebar","x","c","v","b","n","m","Escape"]
+    this.newGamepadKeyMap = []
+    this.allButtonsReleased = false
+    this.remapTimer = new Timer()
+    this.remapTimer.start()
+
 
     this.startTime = null
     this.endTime = null
@@ -141,7 +152,7 @@ class Game {
 
   drawAnnouncement(){
     if(this.announcementFadeTimer.running){
-      if(this.announcementFadeTimer.time() < 1000){
+      if(this.announcementFadeTimer.time() < 800){
       // pause between announcments to wait for css animation, plus a little bit
         return
       } else {
@@ -221,8 +232,8 @@ class Game {
     this.corruptedDamageDefault = 4
     this.corruptedDamage = 4
 
-    this.godCorruptedDamageDefault = 16
-    this.godCorruptedDamage = 16
+    this.godCorruptedDamageDefault = 8
+    this.godCorruptedDamage = 8
 
     this.greenCorruptedDamageDefault = 32
     this.greenCorruptedDamage = 32
@@ -346,13 +357,13 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      for(var i=0; i<40; i++){
-        player.levelUp()
-      }
-      for(var i=0; i<21; i++){
-        // skip all but last round
-        game.nextRound( i != 20)
-      }
+      // for(var i=0; i<40; i++){
+      //   player.levelUp()
+      // }
+      // for(var i=0; i<21; i++){
+      //   // skip all but last round
+      //   game.nextRound( i != 20)
+      // }
     }
   }
 
