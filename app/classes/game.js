@@ -230,11 +230,11 @@ class Game {
     this.godCorruptionTimer = new Timer()
     this.godCorruptionTimer.start()
 
-    this.corruptedDamageDefault = 4
-    this.corruptedDamage = 4
+    this.corruptedDamageDefault = 8
+    this.corruptedDamage = 8
 
-    this.godCorruptedDamageDefault = 8
-    this.godCorruptedDamage = 8
+    this.godCorruptedDamageDefault = 16
+    this.godCorruptedDamage = 16
 
     this.greenCorruptedDamageDefault = 32
     this.greenCorruptedDamage = 32
@@ -358,9 +358,9 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<40; i++){
-      //   player.levelUp()
-      // }
+      for(var i=0; i<40; i++){
+        player.levelUp()
+      }
       // for(var i=0; i<21; i++){
       //   // skip all but last round
       //   game.nextRound( i != 20)
@@ -983,7 +983,7 @@ class Game {
       // flag so we know when we won round during atb
       this.randomBombing = true
 
-      this.announcement("AVOID THE BOMBS")
+      this.announcement("ENJOY THE BOMBS")
       this.randomBombsTimer.reset()
 
       let numBombs = Math.floor(Math.random() * 40 * this.roundCount)
@@ -993,7 +993,7 @@ class Game {
       let bomb
       for(var i=0; i<numBombs; i++){
         // hurts player too
-        bomb = new Bomb([100,150,50], 3, true)
+        bomb = new Bomb([randomHexColor(255),randomHexColor(255),randomHexColor(255)], 3, true)
         x = Math.random() * 6 - 3
         y = Math.random() * 6 - 3
 
@@ -1725,7 +1725,7 @@ class Game {
       if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
 
 
-        if(player.healthTimer.time() > 100){
+        if(player.healthTimer.time() > 500 ){
           // how often can the player *take* damage
           player.healthTimer.reset()
           // need to gate this so 10 corrupteds dont just saw your head off before you can react
@@ -1791,6 +1791,7 @@ class Game {
                 if(friend.health <= 0){
                   // might as well do this here since its the moment health went to death
                   friend.lifecycle = DYING
+                  friend.addDeadSprite()
                   friend.killSound()
                   friend.remove()
                 }
