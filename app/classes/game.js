@@ -230,11 +230,11 @@ class Game {
     this.godCorruptionTimer = new Timer()
     this.godCorruptionTimer.start()
 
-    this.corruptedDamageDefault = 8
-    this.corruptedDamage = 8
+    this.corruptedDamageDefault = 4
+    this.corruptedDamage = 4
 
-    this.godCorruptedDamageDefault = 16
-    this.godCorruptedDamage = 16
+    this.godCorruptedDamageDefault = 6
+    this.godCorruptedDamage = 6
 
     this.greenCorruptedDamageDefault = 32
     this.greenCorruptedDamage = 32
@@ -292,33 +292,53 @@ class Game {
     this.merchantTimer = new Timer()
   }
   
-  calcChanceSlices(){
-    let chanceSlices
-    if(this.roundCount<20){
-      chanceSlices = [0.2,0.4,0.6,0.75]
-      for(var i=0; i<4; i++){
-        // bend the base chances based on round number, kinda weighted by index
-        chanceSlices[i] = chanceSlices[i] * i + Math.pow( this.roundCount, 2 )/3000
-      }
+  // calcChanceSlices(){
+  //   let chanceSlices
+  //   if(this.roundCount<20){
+  //     chanceSlices = [0.2,0.4,0.6,0.75]
+  //     for(var i=0; i<4; i++){
+  //       // bend the base chances based on round number, kinda weighted by index
+  //       chanceSlices[i] = chanceSlices[i] * i + Math.pow( this.roundCount, 2 )/3000
+  //     }
 
-      // adding these constants puts these shits on the right place for x==1 (level 1)
-      chanceSlices[0] = chanceSlices[0] + 0.2
-      chanceSlices[1] = chanceSlices[1]
-      chanceSlices[2] = chanceSlices[2] - 0.6
-      // chanceSlices[3] = chanceSlices[3] - 1.6
-      chanceSlices[3] = chanceSlices[3] - 1.5
+  //     // adding these constants puts these shits on the right place for x==1 (level 1)
+  //     chanceSlices[0] = chanceSlices[0] + 0.2
+  //     chanceSlices[1] = chanceSlices[1]
+  //     chanceSlices[2] = chanceSlices[2] - 0.6
+  //     // chanceSlices[3] = chanceSlices[3] - 1.6
+  //     chanceSlices[3] = chanceSlices[3] - 1.5
   
-    } else {
-      // after round 20, get buck
-      chanceSlices = [0.2,0.4,0.6,0.75]
+  //   } else {
+  //     // after round 20, get buck
+  //     chanceSlices = [0.2,0.4,0.6,0.75]
 
-      for(var i=0; i<4; i++){
-        chanceSlices[i] = chanceSlices[i] * ( Math.pow(this.roundCount, 2) / 4500 ) + chanceSlices[i]
-      }
-    }
+  //     for(var i=0; i<4; i++){
+  //       chanceSlices[i] = chanceSlices[i] * ( Math.pow(this.roundCount, 2) / 4500 ) + chanceSlices[i]
+  //     }
+  //   }
     
+  //   return chanceSlices
+  // }
+
+  calcChanceSlices(){
+    let chanceSlices = [0.2,0.4,0.6,0.75]
+
+    // STICK
+    chanceSlices[0] = 1/400*this.roundCount + 0.2
+
+    // SPHERE
+    chanceSlices[1] = 1/500*this.roundCount + 0.4
+
+    // CIRCLE
+    chanceSlices[2] = 1/600*this.roundCount + 0.6
+    
+    // HEALCUBE
+    chanceSlices[3] = 1/200*this.roundCount + 0.75
+    
+    // KNOWLOCTA (above the last one)
     return chanceSlices
   }
+
   newPlayer(){
     player = new Player([0,88,255])
     player.mesh.visible = false
@@ -358,9 +378,9 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      for(var i=0; i<40; i++){
-        player.levelUp()
-      }
+      // for(var i=0; i<1; i++){
+      //   player.levelUp()
+      // }
       // for(var i=0; i<21; i++){
       //   // skip all but last round
       //   game.nextRound( i != 20)
@@ -385,7 +405,7 @@ class Game {
 
     // make the enemy timer shorter
     // min 10s, decrease towards that until round 35
-    let newEnemyInterval = Math.max( 5000, Math.round(-300 * this.roundCount ) + this.defaultEnemyInterval )
+    let newEnemyInterval = Math.max( 5000, Math.round(-200 * this.roundCount ) + this.defaultEnemyInterval )
 
     // increase maximum % of corurpted by 8%
     // let newCorruptionMax = (this.corruptionMax * 1.08).toFixed(2)
@@ -405,7 +425,7 @@ class Game {
 
     this.corruptionTimer.reset()
     this.corruptedDamage = Math.round( this.corruptedDamageDefault + Math.pow( (this.roundCount/5), 2 ) )
-    this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
+    this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + 2 * Math.pow(this.roundCount/6, 2) )
 
     this.greenCorruptedDamage = Math.round( this.greenCorruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
 

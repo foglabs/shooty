@@ -63,8 +63,8 @@ class Player extends Character {
     this.smokesInterval = 1000
 
     this.swordEnabled = false
-    this.defaultSwordSpeed = DEG3
-    this.swordSpeed = DEG1
+    this.defaultSwordSpeed = DEG4
+    this.swordSpeed = DEG4
 
     this.friendsAvailable = 0
 
@@ -163,7 +163,8 @@ class Player extends Character {
         this.sword.remove()
         this.addSword( this.swordLength() )
       }
-      this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/6)
+      // this.swordSpeed = this.defaultSwordSpeed * (1.1 + this.level/6)
+      this.swordSpeed = this.defaultSwordSpeed
       
       if(this.level != 2){
         game.announcement("SWORD LENGTH INCREASE")
@@ -187,7 +188,7 @@ class Player extends Character {
     }
 
     // bombs recharge faster with higher level
-    this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
+    // this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
 
     // start smokes at level 6
     this.numSmokesMax = Math.max(0, Math.floor(-2 + this.level/2))
@@ -605,7 +606,7 @@ class Player extends Character {
 
 
   topSpeed(){
-    return isWithin( Math.abs(this.accx), this.maxAcc, 0.2) || isWithin( Math.abs(this.accy), this.maxAcc, 0.2) 
+    return isWithin( Math.abs(this.accx), this.maxAcc, 0.4) || isWithin( Math.abs(this.accy), this.maxAcc, 0.4) 
   }
 
   speedAnimation(){
