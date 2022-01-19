@@ -141,10 +141,10 @@ class Player extends Character {
     return Math.min(1.8, calc)
   }
 
-  levelUp(){
+  levelUp(quiet=false){
     this.knowledge = 0
     this.level += 1
-    game.announcement("LEVEL UP (" + this.level + ")" )
+    !quiet ? game.announcement("LEVEL UP (" + this.level + ")" ) : null
     game.changeScore(200 * this.level)
 
     // game.knowledgeMax = Math.round(game.knowledgeMax * 1.25)
@@ -154,7 +154,7 @@ class Player extends Character {
     
     if(this.level == 2){
       this.swordEnabled = true
-      game.announcement("SWORD UNLOCKED (Z)")
+      !quiet ? game.announcement("SWORD UNLOCKED (Z)") : null
     }
 
     if(this.swordEnabled){
@@ -167,12 +167,12 @@ class Player extends Character {
       this.swordSpeed = this.defaultSwordSpeed
       
       if(this.level != 2){
-        game.announcement("SWORD LENGTH INCREASE")
+        !quiet ? game.announcement("SWORD LENGTH INCREASE") : null
       }
     }
 
     if(this.level == 4){
-      game.announcement("KILLING CIRCLE UNLOCKED (SPACEBAR)")
+      !quiet ? game.announcement("KILLING CIRCLE UNLOCKED (SPACEBAR)") : null
       this.killingCircleEnabled = true
     }
 
@@ -182,9 +182,9 @@ class Player extends Character {
     // start bombs at level 8
     this.numBombsMax = Math.max(0, Math.floor(-3 + this.level/2))
     if(this.level == 8){
-      game.announcement("BOMBS UNLOCKED (C)")
+      !quiet ? game.announcement("BOMBS UNLOCKED (C)") : null
     } else if(this.numBombsMax > 1) {
-      game.announcement("EXTRA BOMB UNLOCKED (C)")
+      !quiet ? game.announcement("EXTRA BOMB UNLOCKED (C)") : null
     }
 
     // bombs recharge faster with higher level
@@ -193,15 +193,15 @@ class Player extends Character {
     // start smokes at level 6
     this.numSmokesMax = Math.max(0, Math.floor(-2 + this.level/2))
     if(this.level == 6){
-      game.announcement("SMOKE UNLOCKED (X)")
+      !quiet ? game.announcement("SMOKE UNLOCKED (X)") : null
     } else if(this.numSmokesMax > 1) {
-      game.announcement("EXTRA SMOKE UNLOCKED (X)")
+      !quiet ? game.announcement("EXTRA SMOKE UNLOCKED (X)") : null
     }
 
     // start at level 10, and every even lvl after
     if(this.level >= 10 && this.level % 2 == 0){
       this.friendsAvailable += 1
-      game.announcement("NEW FRIEND UNLOCKED (V)")
+      !quiet ? game.announcement("NEW FRIEND UNLOCKED (V)") : null
     }
 
     if(game.friends.length > 0){
@@ -214,20 +214,22 @@ class Player extends Character {
 
     if(this.level == 12){
       // you now can bet
-      game.announcement("CASINO UNLOCKED (B)")
+      !quiet ? game.announcement("CASINO UNLOCKED (B)") : null
       this.casinoEnabled = true
     }
 
     this.changeMoney( Math.ceil( this.level * 5 ) )
 
     // if(this.level % 4 == 0){
-      game.announcement("TOP SPEED INCREASE")
+      !quiet ? game.announcement("TOP SPEED INCREASE") : null
       player.maxAcc += 0.05
     // }
 
     this.bonusDamage = 2*(this.level/2)
 
-    fx_levelupE2.play()
+    if(!quiet){
+      fx_levelupE2.play()
+    }
   }
 
   bombSmokeCost(){

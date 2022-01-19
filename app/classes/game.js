@@ -740,7 +740,7 @@ class Game {
 
         if(!this.demo){
           let selectedDemo = Math.floor( Math.random() * 8 )
-          // selectedDemo = 7
+          selectedDemo = 8
           let characters = []
           player.mesh.visible = true
 
@@ -1059,7 +1059,7 @@ class Game {
             let event01 = new Event(2, 4000, -3, -2)
             let event02 = new Event(2, 8000, -3, 2, "EAT BLUE CUBES TO REFILL HEALTH")
 
-            this.demo = new Demo(characters, 12000, [event00,event01,event02])
+            this.demo = new Demo(characters, 10000, [event00,event01,event02])
             this.enemies = [enemy1,enemy2] 
           } else if(selectedDemo == 7){
             // eating DEMO
@@ -1118,8 +1118,50 @@ class Game {
 
             this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04])
             this.enemies = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8,] 
+          }else if(selectedDemo == 8){
+            // sword DEMO
+            this.roundColor = [255,255,255]
+
+            // temp set this so we can just instantly do our shit
+            this.corruptingTime = 100
+
+            let enemy1 = this.addEnemy(HEALCUBE, -3, 0)
+            scene.add(enemy1.mesh)
+            enemy1.inScene = true
+            characters.push(enemy1)
+            let enemy2 = this.addEnemy(HEALCUBE, -1, 0)
+            scene.add(enemy2.mesh)
+            enemy2.inScene = true
+            characters.push(enemy2)
+            let enemy3 = this.addEnemy(HEALCUBE, 1, 0)
+            scene.add(enemy3.mesh)
+            enemy3.inScene = true
+            characters.push(enemy3)
+            
+            enemy2.startCorrupting()
+            enemy1.startCorrupting()
+            enemy1.corrupted = true
+            enemy1.godCorrupt()
+
+            player.mesh.position.set(0,3,0)
+            characters.push(player)
+            player.mesh.visible = true
+            player.energy = 100
+
+            // quiet
+            player.levelUp(true)
+            player.levelUp(true)
+
+            let event00 = new Event(3, 0, 3, 0, "AVOID CORRUPTED SHAPES TO SURVIVE")
+            let event01 = new Event(3, 2000, 1, 0)
+            let event02 = new Event(3, 4000, -1, 0, false, DEMOSWORD, true)
+
+            let event03 = new Event(3, 6000, -3, 0, "USE POWERS TO KILL CORRUPTED SHAPES")
+            let event04 = new Event(3, 8000, 0, 0, false, DEMOSWORD, false)
+
+            this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04])
+            this.enemies = [enemy1,enemy2,enemy3] 
           }
-          
         }
 
         this.demo.handleDemo()

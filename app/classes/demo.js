@@ -26,12 +26,24 @@ class Demo {
           if(this.lengthTimer.time() > event.startTime){
 
 
-            if(!event.running && event.announcementText){
-              game.announcement(event.announcementText)
+            if(!event.running){
+
+              if( isVal(event.announcementText) ){
+                game.announcement(event.announcementText)
+              }
+
+              if( isVal(event.power) ){
+
+                // if we specced a power, toggle it
+                if(event.turnOnPower){
+                  event.activatePower(event.power)
+                } else {
+                  event.deactivatePower(event.power)
+                }
+              }
             }
 
             event.running = true
-
           }
 
           if(event.running){
