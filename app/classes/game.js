@@ -72,7 +72,8 @@ class Game {
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = SCORES
+    // this.attractStage = SCORES
+    this.attractStage = DEMO
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
@@ -89,7 +90,7 @@ class Game {
     this.gamepadXAxis = null
     this.gamepadYAxis = null
     this.gamepadState = {}
-    this.gamepadKeyMap = [
+    this.defaultGamepadKeyMap = [
       "z", // 0
       "Spacebar", // 1
       "x", // 2
@@ -108,6 +109,8 @@ class Game {
       // "ArrowLeft", // 14
       // "ArrowRight", // 15
     ]
+
+    this.gamepadKeyMap = this.defaultGamepadKeyMap
 
     // ho boy
     this.remapButtons = false
@@ -736,8 +739,8 @@ class Game {
       } else if(this.attractStage == DEMO){
 
         if(!this.demo){
-          let selectedDemo = Math.floor( Math.random() * 3 )
-          selectedDemo = 3
+          let selectedDemo = Math.floor( Math.random() * 8 )
+          // selectedDemo = 7
           let characters = []
           player.mesh.visible = true
 
@@ -766,7 +769,6 @@ class Game {
             this.demo = new Demo(characters, 15000, [event, event2, event3, event4, event5, event6, event7, event8])
             this.enemies = [enemy1, enemy2]
           } else if(selectedDemo == 1){
-            console.log( 'picked 1s' )
             characters.push(player)
             let enemy1 = this.addEnemy(STICK)
             scene.add(enemy1.mesh)
@@ -962,6 +964,160 @@ class Game {
 
             this.demo = new Demo(characters, 15000, [event00,event01,event02,event03, event0,event1,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15,event16,event17])
             this.enemies = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8,enemy9]
+          } else if(selectedDemo == 4){
+            // STICK DEMO
+
+            this.roundColor = [255,255,255]
+
+            // temp set this so we can just instantly do our shit
+            this.corruptingTime = 100
+
+            let enemy1 = this.addEnemy(STICK, -3, 0)
+            scene.add(enemy1.mesh)
+            enemy1.inScene = true
+            characters.push(enemy1)
+            
+            player.mesh.position.set(3,0,0)
+            characters.push(player)
+            player.mesh.visible = true
+
+            let event00 = new Event(1, 0, 0, 0, "EAT STICKS TO INCREASE MONEY")
+            let event02 = new Event(1, 4000, -3, 0)
+
+            this.demo = new Demo(characters, 15000, [event00,event02])
+            this.enemies = [enemy1] 
+          } else if(selectedDemo == 5){
+            // knowlocta DEMO
+            this.roundColor = [255,255,255]
+
+            // temp set this so we can just instantly do our shit
+            // this.corruptingTime = 100
+
+            let enemy1 = this.addEnemy(KNOWLOCTA, -3, 0)
+            scene.add(enemy1.mesh)
+            enemy1.inScene = true
+            characters.push(enemy1)
+
+            let enemy2 = this.addEnemy(KNOWLOCTA, -3, 0)
+            scene.add(enemy2.mesh)
+            enemy2.inScene = true
+            characters.push(enemy2)
+            
+            let enemy3 = this.addEnemy(KNOWLOCTA, -3, 0)
+            scene.add(enemy3.mesh)
+            enemy3.inScene = true
+            characters.push(enemy3)
+            
+            let enemy4 = this.addEnemy(KNOWLOCTA, -3, 0)
+            scene.add(enemy4.mesh)
+            enemy4.inScene = true
+            characters.push(enemy4)
+            
+            let enemy5 = this.addEnemy(KNOWLOCTA, -3, 0)
+            scene.add(enemy5.mesh)
+            enemy5.inScene = true
+            characters.push(enemy5)
+
+            player.mesh.position.set(3,0,0)
+            characters.push(player)
+            player.mesh.visible = true
+
+            let event00 = new Event(1, 0, 0, 0, "EAT PURPLES TO GAIN KNOWLEDGE")
+            let event01 = new Event(0, 4000, 3, 0, "KNOWLEDGE INCREASES LEVEL")
+            let event02 = new Event(1, 5000, 3, 0)
+            let event03 = new Event(2, 5000, 3, 0)
+            let event04 = new Event(3, 6000, 3, 0)
+            let event05 = new Event(4, 6000, 3, 0)
+            // player
+            let event06 = new Event(5, 3000, 2, 0)
+
+            this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04,event05,event06])
+            this.enemies = [enemy1,enemy2,enemy3,enemy4,enemy5] 
+          } else if(selectedDemo == 6){
+            // healing DEMO
+            this.roundColor = [255,255,255]
+
+            // temp set this so we can just instantly do our shit
+            // this.corruptingTime = 100
+
+            let enemy1 = this.addEnemy(HEALCUBE, -3, 2)
+            scene.add(enemy1.mesh)
+            enemy1.inScene = true
+            characters.push(enemy1)
+
+            let enemy2 = this.addEnemy(SPHERE, -3, -2)
+            scene.add(enemy2.mesh)
+            enemy2.inScene = true
+            characters.push(enemy2)
+
+            player.mesh.position.set(3,0,0)
+            characters.push(player)
+            player.mesh.visible = true
+            player.health = 20
+
+            let event00 = new Event(2, 0, 2, 0, "EAT SPHERES TO GAIN HEALTH")
+            let event01 = new Event(2, 4000, -3, -2)
+            let event02 = new Event(2, 8000, -3, 2, "EAT BLUE CUBES TO REFILL HEALTH")
+
+            this.demo = new Demo(characters, 12000, [event00,event01,event02])
+            this.enemies = [enemy1,enemy2] 
+          } else if(selectedDemo == 7){
+            // eating DEMO
+            this.roundColor = [255,255,255]
+
+            // temp set this so we can just instantly do our shit
+            // this.corruptingTime = 100
+
+            let enemy1 = this.addEnemy(STICK, -4, 2)
+            scene.add(enemy1.mesh)
+            enemy1.inScene = true
+            characters.push(enemy1)
+            let enemy2 = this.addEnemy(CIRCLE, -4, 1)
+            scene.add(enemy2.mesh)
+            enemy2.inScene = true
+            characters.push(enemy2)
+            let enemy3 = this.addEnemy(HEALCUBE, -4, 0)
+            scene.add(enemy3.mesh)
+            enemy3.inScene = true
+            characters.push(enemy3)
+            let enemy4 = this.addEnemy(SPHERE, -4, -1)
+            scene.add(enemy4.mesh)
+            enemy4.inScene = true
+            characters.push(enemy4)
+
+
+            let enemy5 = this.addEnemy(STICK, 4, 2)
+            scene.add(enemy5.mesh)
+            enemy5.inScene = true
+            characters.push(enemy5)
+            let enemy6 = this.addEnemy(CIRCLE, 4, 1)
+            scene.add(enemy6.mesh)
+            enemy6.inScene = true
+            characters.push(enemy6)
+            let enemy7 = this.addEnemy(HEALCUBE, 4, 0)
+            scene.add(enemy7.mesh)
+            enemy7.inScene = true
+            characters.push(enemy7)
+            let enemy8 = this.addEnemy(SPHERE, 4, -1)
+            scene.add(enemy8.mesh)
+            enemy8.inScene = true
+            characters.push(enemy8)
+
+
+            player.mesh.position.set(0,0,0)
+            characters.push(player)
+            player.mesh.visible = true
+            player.energy = 0
+
+            let event00 = new Event(8, 0, 0, 0, "EAT SHAPES TO GAIN ENERGY")
+            let event01 = new Event(8, 2000, -4, 2)
+            let event02 = new Event(8, 4000, -4, -2)
+
+            let event03 = new Event(8, 6000, 4, -2, "USE ENERGY TO ACTIVATE POWERS")
+            let event04 = new Event(8, 8000, 4, 2)
+
+            this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04])
+            this.enemies = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8,] 
           }
           
         }
@@ -1006,14 +1162,14 @@ class Game {
       this.announcement("ENJOY THE BOMBS")
       this.randomBombsTimer.reset()
 
-      let numBombs = Math.floor(Math.random() * 40 * this.roundCount)
+      let numBombs = Math.floor(Math.random() * 8 * this.roundCount)
       // minimum num of bombs is roundcount
       numBombs = Math.max(numBombs, this.roundCount)
       let x,y
       let bomb
       for(var i=0; i<numBombs; i++){
         // hurts player too
-        bomb = new Bomb([randomHexColor(255),randomHexColor(255),randomHexColor(255)], 3, true)
+        bomb = new Bomb([randomInRange(0,255),randomInRange(0,255),randomInRange(0,255)], 3, true)
         x = Math.random() * 6 - 3
         y = Math.random() * 6 - 3
 
@@ -1388,13 +1544,13 @@ class Game {
   addEnemy(type=null, posx=null, posy=null){
     let killer = new Enemy([0,88,255*Math.round(Math.random())], type);
 
-    if(posx){
+    if( isVal(posx) ){
       killer.mesh.position.x = posx
     } else {
       killer.mesh.position.x = Math.random()*4*this.randomSign()
     }
 
-    if(posy){
+    if( isVal(posy) ){
       killer.mesh.position.y = posy
     } else {
       killer.mesh.position.y = Math.random()*4*this.randomSign()

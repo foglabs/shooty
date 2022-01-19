@@ -497,7 +497,7 @@ class Player extends Character {
         if(this.speedItemTimer.time() < 20000){
 
           if(this.lightness <= 0.16){
-            this.lightness += 0.02
+            this.lightness += 0.0002
           }
 
           if(this.color != this.tempColor){

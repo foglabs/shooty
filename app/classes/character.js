@@ -101,7 +101,12 @@ class Character {
     // shoutout to pythagoras
     // let dist = Math.sqrt(ydiff * ydiff + xdiff * xdiff)
 
-    let speed = 0.04 * speedFactor
+    let speed
+    if(this.isPlayer){
+      speed = 0.12 * speedFactor
+    } else {
+      speed = 0.04 * speedFactor
+    }
 
     if(startx < destx){
       this.accx += speed

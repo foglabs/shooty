@@ -156,6 +156,10 @@
         return Math.sqrt( Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2) )
       }
 
+      function isVal(val){
+        return (val || val === 0)
+      }
+
       function beginNameEntry(){
         console.log( 'focusing' )
         game.nameEntry = ENTERING
@@ -573,6 +577,8 @@
                       console.log( 'start remap' )
                       game.remapButtons = true
                       game.remapTimer.reset()
+                    } else if(numPushed == 4){
+                      game.gamepadKeyMap = game.defaultGamepadKeyMap
                     }
 
                     // button is pressed now

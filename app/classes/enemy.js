@@ -26,7 +26,9 @@ class Enemy extends Character {
 
     // console.log( 'dna is ', dna )
     // console.log( 'slices are', stickChance,sphereChance,circleChance,octaChance )
-    if(enemyType){
+      console.log( 'hey hey hey!!!', enemyType )
+
+    if( isVal(enemyType) ){
       // this is kind of stupid, but if we want dna to be used elsewhere, per enemy, necessary
       
       // make a suitable random dna in the range for an enemytype
@@ -115,7 +117,8 @@ class Enemy extends Character {
       // console.log( '4 trime' )
       // knowledge octa
       health = Math.ceil(6 * game.enemyHealthFactor)
-      nutritionalValue = 26
+      // no energy from knowlocta
+      nutritionalValue = 0
       geometry = new THREE.OctahedronGeometry( 0.08 )
       base_color = [120,78,200]
       knowledgeValue = 25
