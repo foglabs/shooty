@@ -82,6 +82,8 @@ class Demo {
     }
 
     player.removeNow()
+    game.newPlayer()
+    game.setDefaultGameValues()
 
     this.running = false
     this.characters = []

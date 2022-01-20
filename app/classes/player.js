@@ -345,7 +345,9 @@ class Player extends Character {
   }
 
   killingCircleDamage(){
-    return 8 + 7 * Math.pow(this.level / 4, 2)
+    return this.level
+    // too powerful?
+    // return 8 + 7 * Math.pow(this.level / 4, 2)
   }
 
   // sword
@@ -506,14 +508,10 @@ class Player extends Character {
             this.fadeColor(this.baseColor, this.tempColor, 60)
           }
         } else {
-
-          this.lightness -= 0.02
-          if(this.lightness <= this.defaultLightness){
-            this.lightness = this.defaultLightness
-            this.speedItem = false
-            //back to base color
-            this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
-          }
+          this.lightness = this.defaultLightness
+          this.speedItem = false
+          //back to base color
+          this.setColor(this.baseColor[0],this.baseColor[1],this.baseColor[2])
         }
       }
 

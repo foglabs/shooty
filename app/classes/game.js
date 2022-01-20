@@ -342,6 +342,10 @@ class Game {
     return chanceSlices
   }
 
+  calcEnemyHealthFactor(){
+    return Math.max( 0.01, Math.log(this.roundCount/-3 + 12) )
+  }
+
   newPlayer(){
     player = new Player([0,88,255])
     player.mesh.visible = false
@@ -434,8 +438,8 @@ class Game {
 
     this.changeScore(this.roundCount * 10)
 
-    if(this.roundCount >= 20){
-      this.enemyHealthFactor = Math.max( 0.01, Math.log(this.roundCount/-3 + 12) )
+    if(this.roundCount >= 10){
+      this.enemyHealthFactor = this.calcEnemyHealthFactor()
     } else {
       this.enemyHealthFactor = 1
     }
@@ -740,7 +744,7 @@ class Game {
 
         if(!this.demo){
           let selectedDemo = Math.floor( Math.random() * 8 )
-          selectedDemo = 8
+          selectedDemo = 9
           let characters = []
           player.mesh.visible = true
 
@@ -1107,7 +1111,7 @@ class Game {
             player.mesh.position.set(0,0,0)
             characters.push(player)
             player.mesh.visible = true
-            player.energy = 0
+            player.power = 0
 
             let event00 = new Event(8, 0, 0, 0, "EAT SHAPES TO GAIN ENERGY")
             let event01 = new Event(8, 2000, -4, 2)
@@ -1118,7 +1122,7 @@ class Game {
 
             this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04])
             this.enemies = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8,] 
-          }else if(selectedDemo == 8){
+          } else if(selectedDemo == 8){
             // sword DEMO
             this.roundColor = [255,255,255]
 
@@ -1146,10 +1150,9 @@ class Game {
             player.mesh.position.set(0,3,0)
             characters.push(player)
             player.mesh.visible = true
-            player.energy = 100
+            player.power = 100
 
             // quiet
-            player.levelUp(true)
             player.levelUp(true)
 
             let event00 = new Event(3, 0, 3, 0, "AVOID CORRUPTED SHAPES TO SURVIVE")
@@ -1161,6 +1164,59 @@ class Game {
 
             this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04])
             this.enemies = [enemy1,enemy2,enemy3] 
+          } else if(selectedDemo == 9){
+            // circle DEMO
+            this.roundColor = [255,255,255]
+
+            // temp set this so we can just instantly do our shit
+            // this.corruptingTime = 100
+            
+            // so enemies are strong enough
+            // game.roundCount = 100
+            // game.enemyHealthFactor = game.calcEnemyHealthFactor()
+
+
+            let enemy1 = this.addEnemy(CIRCLE, -3, 3)
+            scene.add(enemy1.mesh)
+            enemy1.inScene = true
+            characters.push(enemy1)
+            let enemy2 = this.addEnemy(STICK, -3, -3)
+            scene.add(enemy2.mesh)
+            enemy2.inScene = true
+            characters.push(enemy2)
+            let enemy3 = this.addEnemy(HEALCUBE, 3, 3)
+            scene.add(enemy3.mesh)
+            enemy3.inScene = true
+            characters.push(enemy3)
+            let enemy4 = this.addEnemy(KNOWLOCTA, 3, -3)
+            scene.add(enemy4.mesh)
+            enemy4.inScene = true
+            characters.push(enemy4)
+            
+            enemy1.startCorrupting()
+            enemy2.startCorrupting()
+            enemy3.startCorrupting()
+            enemy4.startCorrupting()
+
+            player.mesh.position.set(0,0,0)
+            characters.push(player)
+            player.mesh.visible = true
+            player.power = 100
+
+            // quiet
+            player.levelUp(true)
+            player.levelUp(true)
+            player.levelUp(true)
+
+            let event00 = new Event(4, 0, 0, 0, "ACTIVATE KILLING CIRCLE TO PROTECT")
+            let event01 = new Event(4, 2000, -3, 0, false, DEMOCIRCLE, true)
+            let event02 = new Event(4, 3000, -3, 0, false, DEMOCIRCLE, false)
+            let event03 = new Event(4, 4000, 3, 0)
+            let event04 = new Event(4, 6000, 2, 0)
+            let event05 = new Event(4, 8000, 0, 0, false, DEMOCIRCLE, true)
+
+            this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04,event05])
+            this.enemies = [enemy1,enemy2,enemy3,enemy4] 
           }
         }
 
@@ -1583,6 +1639,7 @@ class Game {
     fx_money.play()
   }
 
+  // faddenemy
   addEnemy(type=null, posx=null, posy=null){
     let killer = new Enemy([0,88,255*Math.round(Math.random())], type);
 

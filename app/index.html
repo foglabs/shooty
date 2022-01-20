@@ -410,6 +410,7 @@
 
       // demo powers
       DEMOSWORD = 0
+      DEMOCIRCLE = 1
 
       // item types
       ITEMKNOW = 0
@@ -866,6 +867,7 @@
       let width = window.innerWidth
       let height = window.innerHeight
 
+      // player needs to exist before game but otherwise can be overwritten
       let player
       player = new Player([0,88,255])
       player.mesh.visible = false

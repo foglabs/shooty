@@ -20,13 +20,8 @@ class Enemy extends Character {
     let sphereChance = chanceSlices[1]
     let circleChance = chanceSlices[2]
     let healcubeChance = chanceSlices[3]
-    // this is just above the highest traunch, so no need
+    // this is just above the highest traunch, so no need to specify
     // let octaChance = chanceSlices[]
-    // console.log( 'high chance', octaChance )
-
-    // console.log( 'dna is ', dna )
-    // console.log( 'slices are', stickChance,sphereChance,circleChance,octaChance )
-      console.log( 'hey hey hey!!!', enemyType )
 
     if( isVal(enemyType) ){
       // this is kind of stupid, but if we want dna to be used elsewhere, per enemy, necessary

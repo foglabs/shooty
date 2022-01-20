@@ -15,8 +15,9 @@ class Event {
   activatePower(power){
     if(power == DEMOSWORD){
       // sword
-      player.addSword( player.swordLength() )
       player.startSword()
+    } else if(power == DEMOCIRCLE){
+      player.startKillingCircle()
     }
   }
 
@@ -24,6 +25,8 @@ class Event {
     if(power == DEMOSWORD){
       // sword
       player.stopSword()
-    } 
+    } else if(power == DEMOCIRCLE){
+      player.stopKillingCircle()
+    }
   }
 }
