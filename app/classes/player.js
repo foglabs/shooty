@@ -345,7 +345,7 @@ class Player extends Character {
   }
 
   killingCircleDamage(){
-    return this.level
+    return 2+this.level
     // too powerful?
     // return 8 + 7 * Math.pow(this.level / 4, 2)
   }
