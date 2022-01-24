@@ -269,6 +269,10 @@
         let fullCookie = document.cookie.length > 0 ? document.cookie.split('; ') : null;
         // find correct cookie in array
         // console.log( 'fullCookie' ,fullCookie )
+
+        if(!fullCookie){
+          return null
+        }
         let matchingCookie = fullCookie.find( (cookie) => { return cookie.startsWith(key) })
         // return cookie without key=
         // console.log( 'found matching cookie ', matchingCookie )
@@ -342,6 +346,7 @@
       ENDING = 3
       GAMEOVER = 4
       PAUSE = 5
+      REMAP = 6
 
       // enemy type
       SPHERE = 0
@@ -498,62 +503,19 @@
                     break
                   }
                 }
-              } else if(game.remapButtons) {
-
-                game.stage = PAUSE
-
-                if(game.allGameKeys[0]){
-                  document.getElementById("pause").innerHTML = "HOLD GAMEPAD BUTTON FOR " + game.allGameKeyLabels[0]
-                  document.getElementById("pause").classList.remove("hidden")
-
-                  let buttonsReleased = true 
-                  for(var i=0; i<gp.buttons.length; i++){
-                    if( buttonPressed(gp.buttons[i]) ){
-                      // if button pressed, assign current key to it in new keymap
-
-                      document.getElementById("pause").classList.add("active")
-
-                      if(game.remapTimer.time() > 800){
-                        game.remapTimer.reset()
-
-                        if(game.allButtonsReleased){
-                          buttonsReleased = false
-                          // console.log( 'now map PLEASE', game.allGameKeys[0], i )
-                          game.newGamepadKeyMap[i] = game.allGameKeys[0]
-                          game.allGameKeys.shift()
-                          game.allGameKeyLabels.shift()
-                          break
-                        }
-                      }
-                    }
-                  }
-
-                  game.allButtonsReleased = buttonsReleased
-
-                } else {
-                  console.log( 'done, stop remap' )
-                  // done, go back to game
-                  game.gamepadKeyMap = game.newGamepadKeyMap
-
-                  setCookie("remap", JSON.stringify(game.gamepadKeyMap) )
-
-                  game.stage = PAUSE
-                  game.remapButtons = false
-                  game.allButtonsReleased = false
-                  document.getElementById("pause").classList.remove("active")
-                  document.getElementById("pause").innerHTML = "PAUSED"
-                }                    
 
               } else {
 
                 // regular controller play
 
                 // left stick hor
-                let xchange = gp.axes[game.gamepadXAxis]/4
+                // let xchange = gp.axes[game.gamepadXAxis]/4
+                let xchange = gp.axes[ game.gamepadXAxis ] / game.gamepadAxisXMax / 5
                 if(!xchange){
                   xchange = 0
                 }
-                let ychange = (gp.axes[game.gamepadYAxis]*-1)/4
+                // let ychange = (gp.axes[game.gamepadYAxis]*-1)/4
+                let ychange = (gp.axes[game.gamepadYAxis]*-1) / game.gamepadAxisYMax / 5
                 if(!ychange){
                   ychange = 0
                 }              
@@ -579,9 +541,19 @@
                     numPushed++
                     if(numPushed == 5){
                       console.log( 'start remap' )
+
+                      game.stage = REMAP
                       game.remapButtons = true
+
+                      // reset these                      
+                      game.calibrateAxis = false
+                      game.gamepadAxisXMax = null
+                      game.gamepadAxisYMax = null
+
                       game.remapTimer.reset()
                     } else if(numPushed == 4){
+                      console.log( 'clearing gp config..' )
+                      killCookie("remap")
                       game.gamepadKeyMap = game.defaultGamepadKeyMap
                     }
 
@@ -649,7 +621,6 @@
 
                 // let name = "GamepadPlayer" + Math.floor(Math.random() * 100000)
                 // document.getElementById("name").innerHTML = name
-
               }
 
               game.nameEntryConfirm = buttonNow
@@ -668,6 +639,80 @@
                 }  
               }
 
+            } else if(game.stage == REMAP){
+
+              if(game.remapButtons){
+                document.getElementById("pause").innerHTML = "HOLD GAMEPAD BUTTON FOR " + game.allGameKeyLabels[0]
+                document.getElementById("pause").classList.remove("hidden")
+
+                let buttonsReleased = true
+                for(var i=0; i<gp.buttons.length; i++){
+                  if( buttonPressed(gp.buttons[i]) ){
+                    // if button pressed, assign current key to it in new keymap
+
+                    document.getElementById("pause").classList.add("active")
+
+                    if(game.remapTimer.time() > 800){
+                      game.remapTimer.reset()
+
+                      if(game.allButtonsReleased){
+                        buttonsReleased = false
+                        // console.log( 'now map PLEASE', game.allGameKeys[0], i )
+                        game.newGamepadKeyMap[i] = game.allGameKeys[0]
+                        game.allGameKeys.shift()
+                        game.allGameKeyLabels.shift()
+                        break
+                      }
+                    }
+                  }
+                }
+
+                game.allButtonsReleased = buttonsReleased
+
+                if(!game.allGameKeys[0]){
+                  game.remapButtons = false
+                  game.calibrateAxis = true
+                }
+
+              } else if(game.calibrateAxis) {
+                document.getElementById("pause").innerHTML = "MOVE STICK TO TOP LEFT BEFORE PRESSING ANY BUTTON TO CALIBRATE"
+                for(var i=0; i<gp.buttons.length; i++){
+
+                  if(game.remapTimer.time() > 800){
+                    game.remapTimer.reset()
+
+                    if( buttonPressed(gp.buttons[i]) ){
+                      // any button pressed
+
+                      // store maximums
+                      game.gamepadAxisXMax = Math.abs(gp.axes[ game.gamepadXAxis ])
+                      game.gamepadAxisYMax = Math.abs(gp.axes[ game.gamepadYAxis ])
+                      // done! lets go!
+                      game.calibrateAxis = false
+                    }
+                  }
+                }
+
+              } else {
+                console.log( 'done, stop remap' )
+                // done, go back to game
+                game.gamepadKeyMap = game.newGamepadKeyMap
+                // add to cookie!!!!
+                // setCookie("remap", JSON.stringify(game.gamepadKeyMap) )
+                let settings = {
+                  xmax: game.gamepadAxisXMax,
+                  ymax: game.gamepadAxisYMax,
+                  keyMap: game.gamepadKeyMap
+                }
+                setCookie("remap", JSON.stringify(settings) )
+
+                game.stage = PAUSE
+                game.remapButtons = false
+                game.calibrateAxis = false
+                game.allButtonsReleased = false
+                document.getElementById("pause").classList.remove("active")
+                document.getElementById("pause").innerHTML = "PAUSED"
+              }
             }
 
 
@@ -858,6 +903,8 @@
       merchantMaterial = new THREE.SpriteMaterial( { map: merchantMap } )
 
       let glowMap = new THREE.TextureLoader().load("sprites/glow.png")
+      let speedBurnMap = new THREE.TextureLoader().load("sprites/speedburn.png")
+      let speedSplatMap = new THREE.TextureLoader().load("sprites/speedsplat.png")
 
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )
@@ -877,7 +924,14 @@
       let game = new Game()
       if(remapFromCookie){
         console.log( 'picked up gamepad remap from our cookie!' )
-        game.gamepadKeyMap = JSON.parse(remapFromCookie)
+
+        // game.gamepadKeyMap = JSON.parse(remapFromCookie)
+
+        let settings = JSON.parse(remapFromCookie)
+        console.log( 'detetcted settings ', settings )
+        game.gamepadKeyMap = settings.keyMap
+        game.gamepadAxisXMax = settings.xmax
+        game.gamepadAxisYMax = settings.ymax
       }
 
       game.setBackgroundColor(game.backgroundColor[0],game.backgroundColor[1],game.backgroundColor[2])

@@ -121,6 +121,10 @@ class Game {
     this.remapTimer = new Timer()
     this.remapTimer.start()
 
+    this.calibrateAxis = false
+    this.gamepadAxisXMax = null
+    this.gamepadAxisYMax = null
+
 
     this.startTime = null
     this.endTime = null

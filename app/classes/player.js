@@ -500,7 +500,7 @@ class Player extends Character {
 
         if(this.speedItemTimer.time() < 20000){
 
-          if(this.lightness <= 0.16){
+          if(this.lightness <= player.defaultLightness*2){
             this.lightness += 0.0002
           }
 

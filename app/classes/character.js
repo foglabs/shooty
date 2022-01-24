@@ -54,6 +54,10 @@ class Character {
     this.bloodDuster = null
     this.bloodDusterTimer = new Timer()
 
+    this.speedBurnParticles = null
+    this.speedBurnParticlesTimer = new Timer()
+    this.speedBurnParticlesTimer.start()
+
     this.damagedBy = null
 
     this.dragCoefficient = 0.009
@@ -74,9 +78,9 @@ class Character {
   fuckUpVertex(){
     let vertIndex = Math.floor( Math.random() * this.mesh.geometry.vertices.length )
     let xChange, yChange, zChange
-    xChange = Math.random() * 0.4 - 0.2
-    yChange = Math.random() * 0.4 - 0.2
-    zChange = Math.random() * 0.4 - 0.2
+    xChange = Math.random() * 0.2 - 0.1
+    yChange = Math.random() * 0.2 - 0.1
+    zChange = Math.random() * 0.2 - 0.1
     this.mesh.geometry.vertices[vertIndex].x = this.mesh.geometry.vertices[vertIndex].x + xChange
     this.mesh.geometry.vertices[vertIndex].y = this.mesh.geometry.vertices[vertIndex].y + yChange
     this.mesh.geometry.vertices[vertIndex].z = this.mesh.geometry.vertices[vertIndex].z + zChange
@@ -240,6 +244,9 @@ class Character {
     if(this.corrupted){
       // corrupted kill
       this.addSprite(corruptorMaterial.clone(), 0.688)
+
+    } else if(this.damagedBy == EAT && player.topSpeed()){
+      this.addSprite(new THREE.SpriteMaterial( { map: speedSplatMap } ), 0.388)
     } else {
       this.addSprite(bloodspriteMaterial.clone(), 0.388)
     }
@@ -276,6 +283,11 @@ class Character {
       this.bloodDuster.remove()
     }
 
+    // clean that speed up
+    if(this.speedBurnParticles){
+      this.speedBurnParticles.remove()
+    }
+
     // if we're doing some extra-casino kiling
     if(game.casino && game.casino.highlights[this.id]){
       game.casino.removeHighlight(this.id)
@@ -291,6 +303,10 @@ class Character {
     if(this.casinoHighlight && this.deadSprite){
       // casino highlight
       this.removeSprite()
+    }
+
+    if(this.killingCircle){
+      this.removeKillingCircle()
     }
   }
 
@@ -461,6 +477,11 @@ class Character {
       this.bloodDuster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
 
+
+    if(this.lifecycle == ALIVE && this.speedBurnParticles){
+      this.speedBurnParticles.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
+    }
+
     if(this.lifecycle == ALIVE && this.moneyCircle && this.moneyCircle.visible){
       // console.log( 'move tha tcircle' )
       this.moneyCircle.position.set(this.mesh.position.x, this.mesh.position.y, this.mesh.position.z)
@@ -517,6 +538,10 @@ class Character {
     } else {
       this.duster = new Duster(map, 0.0422, 28, 0.32, this.mesh.position, 1)
     }
+  }
+
+  addSpeedBurn(){
+    this.speedBurnParticles = new Duster(speedBurnMap, 0.3, 10, 0.12, this.mesh.position, 0.8)
   }
 
   addBanners(map, size, num, dist, badge=false, opacity=1){
@@ -588,6 +613,14 @@ class Character {
     if(!this.bloodDuster){
       this.addParticles( this.dmgSpriteMap(), true )
       this.bloodDusterTimer.start()
+    }
+
+    if(damageSource == EAT && player.topSpeed()){
+
+      if(!player.speedBurnParticles){
+        /// visualize top speed kill on player
+        player.addSpeedBurn()
+      }
     }
   }
 
@@ -723,6 +756,21 @@ class Character {
 
           this.bloodDuster.remove()
           this.bloodDuster = null
+        }
+      }
+    }
+
+    if(this.speedBurnParticles){
+      // run dis
+      this.speedBurnParticles.animation()
+      if(this.speedBurnParticlesTimer.time() > 20){
+        this.speedBurnParticlesTimer.reset()
+
+         this.speedBurnParticles.particleSystem.material.opacity -= 0.03
+
+        if(this.speedBurnParticles.particleSystem.material.opacity <= 0){
+          this.speedBurnParticles.remove()
+          this.speedBurnParticles = null
         }
       }
     }

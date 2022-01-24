@@ -503,9 +503,9 @@ class Enemy extends Character {
     this.greenCorrupted = true
 
     // up to ?x scale
-    this.mesh.scale.x = this.mesh.scale.x * ( 1 + Math.random() * 1.1 )
-    this.mesh.scale.y = this.mesh.scale.y * ( 1 + Math.random() * 1.1 )
-    this.mesh.scale.z = this.mesh.scale.z * ( 1 + Math.random() * 1.1 )
+    this.mesh.scale.x = this.mesh.scale.x * ( 1 + Math.random() * 1.1)
+    this.mesh.scale.y = this.mesh.scale.y * ( 1 + Math.random() * 1.1)
+    this.mesh.scale.z = this.mesh.scale.z * ( 1 + Math.random() * 1.1)
 
     // douse the flames
     if(this.banners){
