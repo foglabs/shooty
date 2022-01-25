@@ -488,7 +488,7 @@ class Enemy extends Character {
   greenCorrupt(){
 
     if(!this.greenCorrupted){
-      this.health = 500
+      this.health = 200
     } else {
       this.health = Math.ceil( this.health * 1.3 )
     }

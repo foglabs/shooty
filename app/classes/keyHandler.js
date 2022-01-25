@@ -46,10 +46,26 @@ class KeyHandler {
     }
   }
 
+  heldDiagonal(keyName){
+    // we know the passed in key is held, so check the adjacent ones
+
+    if(keyName == "ArrowLeft" || keyName == "ArrowRight"){
+      return (this.heldKeys["ArrowUp"] || this.heldKeys["ArrowDown"])
+    } else if(keyName == "ArrowDown" || keyName == "ArrowUp"){
+      return (this.heldKeys["ArrowLeft"] || this.heldKeys["ArrowRight"])
+    }
+  }
+
   heatKey(keyName){
 
     // this.keyHeats[ keyName ] += this.heatingElement
-    this.keyHeats[ keyName ] = incInRange( this.keyHeats[ keyName ], this.heatingElement, 0, this.maxHeat )    
+
+    // are we hold two adj  keys down
+    if( this.heldDiagonal(keyName) ){
+      this.keyHeats[ keyName ] = incInRange( this.keyHeats[ keyName ], this.heatingElement/1.3, 0, this.maxHeat )    
+    } else {
+      this.keyHeats[ keyName ] = incInRange( this.keyHeats[ keyName ], this.heatingElement, 0, this.maxHeat )    
+    }
     // this.keyHeats[ keyName ] += 0.015
 
 

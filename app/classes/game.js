@@ -234,6 +234,9 @@ class Game {
     this.corruptionMax = this.corruptionMaxDefault
     this.corruptionTimer = new Timer()
 
+    // above this means you corruptin
+    this.corruptionBaseChance = 0.8
+
     this.godCorruptionTimer = new Timer()
     this.godCorruptionTimer.start()
 
@@ -457,6 +460,11 @@ class Game {
     this.newRound(newEnemyMax, newEnemyInterval, newCorruptionMax, newCorruptingTime, [r,g,b], skip)
   }
 
+  numEnemies(){
+    // add a random # of enemies, ensure at least 50% of max
+    return Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
+  }
+
   newRound(enemyMax, enemyInterval, corruptionMax, corruptingTime, roundColor, skip=false){
     this.entryPlane.flip()
     
@@ -486,7 +494,7 @@ class Game {
     this.enemyTimer = new Timer(this.enemyInterval)
     this.enemyTimer.start()
 
-    let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
+    let numEnemies = this.numEnemies()
     this.generateEnemies( numEnemies )
     this.generateEnemies( numEnemies, true )
 
@@ -1349,16 +1357,17 @@ class Game {
 
       this.drawRound(this.roundCount)
 
-      // if enemy timer finishesa, add more enemies
+      // if enemy timer finishesa, add-a more-a enemies, wa-haaaa!
       if(remaining == 0 ){
+        this.enemyTimer.reset()
 
-        // add a random # of enemies, ensure at least 50% of max
-        let numEnemies = Math.round( this.enemyMax/2 + Math.random() * this.enemyMax/2 )
         // console.log( 'ene max is', this.enemyMax )
         // console.log( 'generating ene ', numEnemies )
-        this.generateEnemies( numEnemies, true )
+        if(this.enemies.length < this.enemyMax*4){
+          // dont add more enemies if we have 4x the roundmax already out
+          this.generateEnemies( this.numEnemies(), true )
+        }
 
-        this.enemyTimer.reset()
       }
 
 
@@ -1922,10 +1931,12 @@ class Game {
         this.corruptionTimer.reset()
 
         // multiply by this teeny tiny so we (mostly) get back something within the realm of 0-1
-        let corruption_chance = Math.random() + ( 0.00002 * Math.pow(player.power, 2) )
+        // let corruption_chance = Math.random() + ( 0.00002 * Math.pow(player.power, 2) )
+        let corruption_chance = Math.random()
 
         // if(this.percentCorrupted < this.corruptionMax && corruption_chance >= 0.7 ){
-        if(this.percentCorrupted < this.corruptionMax && corruption_chance >= 0.5 ){
+        // if(this.percentCorrupted < this.corruptionMax && corruption_chance >= 0.5 ){
+        if(this.percentCorrupted < this.corruptionMax && corruption_chance >= this.corruptionThreshold() ){
           // console.log( 'i really *should* be corrupting ' )
           enemy.startCorrupting()
 
@@ -2189,6 +2200,10 @@ class Game {
         delete this.enemies[enemyId]
       }
     }
+  }
+
+  corruptionThreshold(){
+    return Math.pow(this.roundCount, 1.2)/-75 + this.corruptionBaseChance
   }
 
   addMerchant(){
