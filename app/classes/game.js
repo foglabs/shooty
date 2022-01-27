@@ -264,9 +264,9 @@ class Game {
 
     // countdown to generate enemies every so often
     this.defaultEnemyInterval = 18000
-    this.enemyInterval = 18000
+    this.enemyInterval = this.defaultEnemyInterval
     this.defaultEnemyMax = 5
-    this.enemyMax = 5
+    this.enemyMax = this.defaultEnemyMax
     this.defaultEnemyHealthFactor = 1
     this.enemyHealthFactor = 1
 
@@ -411,7 +411,7 @@ class Game {
       // steeper enemy max curve until r10
       maxBump = 1 + Math.pow(this.roundCount, 2)/25
     } else {
-      maxBump = 4 + Math.pow(this.roundCount, 2)/100
+      maxBump = 5 + Math.pow(this.roundCount, 2)/600
     }
 
     // make the max # of enemeis per gen bigger, floor it with 5 so we dont have 3 rounds of 2 enemies
@@ -755,8 +755,8 @@ class Game {
       } else if(this.attractStage == DEMO){
 
         if(!this.demo){
-          let selectedDemo = Math.floor( Math.random() * 8 )
-          selectedDemo = 9
+          let selectedDemo = Math.floor( Math.random() * 10 )
+          // selectedDemo = 9
           let characters = []
           player.mesh.visible = true
 
@@ -1363,13 +1363,16 @@ class Game {
 
         // console.log( 'ene max is', this.enemyMax )
         // console.log( 'generating ene ', numEnemies )
-        if(this.enemies.length < this.enemyMax*4){
+
+        // console.log( 'wowww', this.actualNumEnemies(), this.enemies[0] )
+        if(this.actualNumEnemies() < this.enemyMax*4){
           // dont add more enemies if we have 4x the roundmax already out
           this.generateEnemies( this.numEnemies(), true )
+          document.getElementById("timer").classList.remove("invis")
+        } else {
+          document.getElementById("timer").classList.add("invis")
         }
-
       }
-
 
       if(game.stage == PLAYING && player.lifecycle == ALIVE){
         // stop moving if we DEAD
@@ -2128,7 +2131,7 @@ class Game {
         }
       }
 
-      if(enemy.passedEntryPlane()){
+      if(enemy.passedEntryPlane() && enemy.lifecycle == ALIVE){
         // only count if theyre in play
         this.numCorrupted += 1
       }
@@ -2229,6 +2232,16 @@ class Game {
       this.merchant.closeShop()
       this.merchant = null
     }
+  }
+
+  actualNumEnemies(){
+    let count = 0
+    k(this.enemies).forEach((key) => {
+      if(this.enemies[key].lifecycle == ALIVE){
+        count++
+      }
+    })
+    return count
   }
 
   handleEnemies(){

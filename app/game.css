@@ -29,6 +29,17 @@ input#name-entry {
   display: none;
 }
 
+div#timer.invis {
+  color: #f00;
+  opacity: 0.1;
+}
+
+div#timer {
+  color: #fff;
+  transition: opacity 0.8s;
+  opacity: 1;
+}
+
 div#pause {
   color: #00FF00;
   font-size: 36px;

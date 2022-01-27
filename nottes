@@ -329,10 +329,17 @@ controllers have different scales of inputs
 *visual confirmation of topspeed damage
 
 
-greencorrupt health regen is too much? very hard to kill with kc now
+*greencorrupt health regen is too much? very hard to kill with kc now
 
-'only corrupteds in front of entryplane' doenst always work, seems to stop after killing one corrupted also
-add 'max num simultaneous enemies' for each round so you cant sit there to beef up
+  test!
+
+*add 'max num simultaneous enemies' for each round so you cant sit there to beef up
+
+
+
+*'only corrupteds in front of entryplane' doenst always work, seems to stop after killing one corrupted also
+  2 corrupts, % == 1
+  kill 1 % == 2
 
 
 
