@@ -451,8 +451,8 @@
         !fx_edmg1.loaded ? done = false : null
         !fx_edmg2.loaded ? done = false : null
         !fx_edmg3.loaded ? done = false : null
-        !fx_edmg4.loaded ? done = false : null
-        !fx_edmg5.loaded ? done = false : null
+        // !fx_edmg4.loaded ? done = false : null
+        // !fx_edmg5.loaded ? done = false : null
         !fx_ckill1.loaded ? done = false : null
         !fx_ckill2.loaded ? done = false : null
         !fx_ckill3.loaded ? done = false : null
@@ -463,6 +463,11 @@
         !fx_levelupE2.loaded ? done = false : null
         !fx_startgameE.loaded ? done = false : null
         !fx_song2.loaded ? done = false : null
+        !fx_eat1.loaded ? done = false : null
+        !fx_eat2.loaded ? done = false : null
+        !fx_eat3.loaded ? done = false : null
+
+
         return done
       }
 
@@ -759,17 +764,17 @@
       let fx_ekill4 = new Sound("sounds/ekill4.mp3")
       let fx_ekill5 = new Sound("sounds/ekill5.mp3")
       let fx_ekill6 = new Sound("sounds/ekill6.mp3")
-      let fx_edmg1 = new Sound("sounds/edmg1.mp3")
-      let fx_edmg2 = new Sound("sounds/edmg2.mp3")
-      let fx_edmg3 = new Sound("sounds/edmg3.mp3")
-      let fx_edmg4 = new Sound("sounds/edmg4.mp3")
-      let fx_edmg5 = new Sound("sounds/edmg5.mp3")
+      // let fx_edmg1 = new Sound("sounds/edmg1.mp3")
+      // let fx_edmg2 = new Sound("sounds/edmg2.mp3")
+      // let fx_edmg3 = new Sound("sounds/edmg3.mp3")
+      // let fx_edmg4 = new Sound("sounds/edmg4.mp3")
+      // let fx_edmg5 = new Sound("sounds/edmg5.mp3")
       let fx_ckill1 = new Sound("sounds/ckill1.mp3")
       let fx_ckill2 = new Sound("sounds/ckill2.mp3")
       let fx_ckill3 = new Sound("sounds/ckill3.mp3")
-      let fx_phealth1 = new Sound("sounds/phealth1.mp3")
-      let fx_phealth2 = new Sound("sounds/phealth2.mp3")
-      let fx_phealth3 = new Sound("sounds/phealth3.mp3")
+      let fx_phealth1 = new Sound("sounds/phealth1.mp3", 0.7)
+      let fx_phealth2 = new Sound("sounds/phealth2.mp3", 0.7)
+      let fx_phealth3 = new Sound("sounds/phealth3.mp3", 0.7)
       let fx_youredeadE = new Sound("sounds/youredeadE.mp3", 0.8)
       let fx_levelupE2 = new Sound("sounds/levelupE2.mp3", 0.8)
       let fx_startgameE = new Sound("sounds/startgameE.mp3", 0.8)
@@ -813,6 +818,14 @@
       let fx_buysomething = new Sound("sounds/buysomething.mp3", 0.6)
       let fx_merchantamb = new Sound("sounds/merchantamb.mp3", 0.6)
       let fx_money = new Sound("sounds/money.mp3", 0.3)
+
+      let fx_eat1 = new Sound("sounds/eat1.mp3", 0.15)
+      let fx_eat2 = new Sound("sounds/eat2.mp3", 0.15)
+      let fx_eat3 = new Sound("sounds/eat3.mp3", 0.15)
+
+      let fx_edmg1 = new Sound("sounds/newedmg1.mp3", 0.25)
+      let fx_edmg2 = new Sound("sounds/newedmg2.mp3", 0.25)
+      let fx_edmg3 = new Sound("sounds/newedmg3.mp3", 0.25)
 
       // scene contains objects
       var scene = new THREE.Scene();

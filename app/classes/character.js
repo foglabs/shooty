@@ -638,62 +638,50 @@ class Character {
 
   colorCycle(){
 
-    // if(this.isHit){
-    //   this.fading = true
-    // }
+    if(!this.colorTimer.running){
+      this.colorTimer.start()
+    }
 
-    // if(this.fading){
+    let tocolor
+    let fromcolor
+    if(this.isHit){
+      tocolor = this.hitColor
+      fromcolor = this.baseColor
+    } else {
+      tocolor = this.baseColor
+      fromcolor = this.hitColor
+    }
 
-    //   if(!this.colorTimer.running){
-    //     this.colorTimer.start()
-    //   }
+    if(this.colorTimer.time() > 2){
+      this.colorTimer.reset()
 
-    //   let tocolor
-    //   let fromcolor
-    //   if(this.isHit){
-    //     tocolor = this.hitColor
-    //     fromcolor = this.baseColor
-    //   } else {
-    //     tocolor = this.baseColor
-    //     fromcolor = this.hitColor
-    //   }
+      var steps = 50
+      var step_u = 1.0 / steps
 
-    //   if(this.colorTimer.time() > 2){
-    //     this.colorTimer.reset()
+      let to_r = tocolor[0]
+      let to_g = tocolor[1]
+      let to_b = tocolor[2]
 
-    //     var steps = 50
-    //     var step_u = 1.0 / steps
+      let from_r = fromcolor[0]
+      let from_g = fromcolor[1]
+      let from_b = fromcolor[2]
 
-    //     let to_r = tocolor[0]
-    //     let to_g = tocolor[1]
-    //     let to_b = tocolor[2]
+      let r = Math.round(lerp(from_r, to_r, this.u))
+      let g = Math.round(lerp(from_g, to_g, this.u))
+      let b = Math.round(lerp(from_b, to_b, this.u))
 
-    //     let from_r = fromcolor[0]
-    //     let from_g = fromcolor[1]
-    //     let from_b = fromcolor[2]
+      this.u += step_u
+      if(this.u >= 1.0){
+        // done with this fade
+        this.u = 0.0
+        this.fading = false
+      }
 
-    //     let r = Math.round(lerp(from_r, to_r, this.u))
-    //     let g = Math.round(lerp(from_g, to_g, this.u))
-    //     let b = Math.round(lerp(from_b, to_b, this.u))
-
-    //     this.u += step_u
-    //     if(this.u >= 1.0){
-    //       // done with this fade
-    //       this.u = 0.0
-    //       this.fading = false
-    //     }
-
-    //     // record this so we can compare above
-    //     this.color = [r,g,b]
-    //     // this.mesh.material.color.setRGB(r,g,b)
-    //     this.setColor(r,g,b)
-    //   }
-    // }
-
-    // if(this.color == this.baseColor || this.color == this.hitColor){
-    //   this.fading = false
-    // }
-
+      // record this so we can compare above
+      this.color = [r,g,b]
+      // this.mesh.material.color.setRGB(r,g,b)
+      this.setColor(r,g,b)
+    }
   }
 
   position(){

@@ -241,16 +241,16 @@ class Game {
     this.godCorruptionTimer.start()
 
     this.corruptedDamageDefault = 4
-    this.corruptedDamage = 4
+    this.corruptedDamage = this.corruptedDamageDefault
 
     this.godCorruptedDamageDefault = 6
-    this.godCorruptedDamage = 6
+    this.godCorruptedDamage = this.godCorruptedDamageDefault
 
-    this.greenCorruptedDamageDefault = 32
-    this.greenCorruptedDamage = 32
+    this.greenCorruptedDamageDefault = 16
+    this.greenCorruptedDamage = this.greenCorruptedDamageDefault
 
     this.hitmanCorruptedDamageDefault = 64
-    this.hitmanCorruptedDamage = 64
+    this.hitmanCorruptedDamage = this.hitmanCorruptedDamageDefault
 
     this.corruptingTimeDefault = 1800
     this.corruptingTime = this.corruptingTimeDefault
@@ -392,12 +392,14 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<1; i++){
+      // for(var i=0; i<5; i++){
       //   player.levelUp()
       // }
-      // for(var i=0; i<21; i++){
+
+      // let round = 20
+      // for(var i=0; i<=round; i++){
       //   // skip all but last round
-      //   game.nextRound( i != 20)
+      //   game.nextRound( i != round)
       // }
     }
   }
@@ -441,7 +443,7 @@ class Game {
     this.corruptedDamage = Math.round( this.corruptedDamageDefault + Math.pow( (this.roundCount/5), 2 ) )
     this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + 2 * Math.pow(this.roundCount/6, 2) )
 
-    this.greenCorruptedDamage = Math.round( this.greenCorruptedDamageDefault + 2 * Math.pow(this.roundCount/2, 2) )
+    this.greenCorruptedDamage = Math.round( this.greenCorruptedDamageDefault + 2 * Math.pow(this.roundCount/4, 2) )
 
     this.changeScore(this.roundCount * 10)
 
@@ -649,6 +651,7 @@ class Game {
       if(this.stageTimer.time() > this.loadTime && !this.readyToStartGame ){
 
         // use readyTo to flag this so it only happens once
+        this.clearAnnouncements()
         this.cleanGame()
       }
     } else if(this.stage == DEMO){
@@ -1655,6 +1658,10 @@ class Game {
     fx_money.play()
   }
 
+  eatSound(){
+    [fx_eat1, fx_eat2, fx_eat3][ Math.floor( Math.random() * 3 ) ].play()
+  }
+
   // faddenemy
   addEnemy(type=null, posx=null, posy=null){
     let killer = new Enemy([0,88,255*Math.round(Math.random())], type);
@@ -1963,7 +1970,7 @@ class Game {
             enemy.healthTimer.reset()
 
             enemy.takeDamage( player.killingCircleDamage(), KILLINGCIRCLE )
-            enemy.setColor(0,0,255)
+            // enemy.setColor(0,0,255)
           }  
         }
       }
@@ -2027,9 +2034,13 @@ class Game {
             enemy.attackSound()
             player.takeDamage( game.godCorruptedDamage, ENEMY )
           } else if(enemy.greenCorrupted){
-
-            enemy.attackSound()
-            player.takeDamage( game.greenCorruptedDamage, ENEMY )
+            if(enemy.birthTimer.time() > 3000){
+              console.log( 'done!!  setting opac' )
+              enemy.mesh.material.opacity = 1
+              enemy.attackSound()
+              player.takeDamage( game.greenCorruptedDamage, ENEMY )  
+            }
+            
           } else if(enemy.hitmanCorrupted){
 
             if(enemy.contract && enemy.contract.type == ONPLAYER){
@@ -2172,13 +2183,12 @@ class Game {
               this.knowledgeSound()
               gainedKnowledge = true
               player.changeKnowledge( enemy.knowledgeValue )
-            }  
-
-            // knowledge is for everyone
-            if(enemy.moneyValue > 0){
+            } else if(enemy.moneyValue > 0){
               this.moneySound()
               player.changeMoney( enemy.moneyValue )
-            }  
+            } else {
+              this.eatSound()
+            }
           }
         }
 
@@ -2187,10 +2197,11 @@ class Game {
         // remove banners etc for during fadeout
         enemy.removeExtras()
 
-        if(!gainedKnowledge){
-          // block kill sound if we play the knowledge sound
-          enemy.killSound()
-        }
+        // if(!gainedKnowledge){
+        //   // block kill sound if we play the knowledge sound
+        //   enemy.killSound()
+        // }
+
         // og spot
         // enemy.remove()
         enemy.addDeadSprite()

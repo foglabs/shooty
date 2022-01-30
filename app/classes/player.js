@@ -11,7 +11,7 @@ class Player extends Character {
 
     this.mesh.material.needsUpdate = true
     this.playerHealthSounds = [fx_phealth1, fx_phealth2, fx_phealth3]
-    this.hitColor = [193,29,209]
+    this.hitColor = [120,29,209]
     this.color = this.baseColor
     this.isPlayer = true
 
@@ -345,7 +345,8 @@ class Player extends Character {
   }
 
   killingCircleDamage(){
-    return 2+this.level
+    return Math.pow(this.level, 2)/4 + 2
+    // return 2+this.level
     // too powerful?
     // return 8 + 7 * Math.pow(this.level / 4, 2)
   }

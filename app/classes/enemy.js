@@ -245,6 +245,8 @@ class Enemy extends Character {
     this.money = 0
     this.lastMoney = 0
     this.addMoneyLabel("#00ff00")
+
+    this.birthTimer = new Timer()
   }
 
   // sword
@@ -524,6 +526,12 @@ class Enemy extends Character {
     this.killSounds = [fx_greenkill1, fx_greenkill2, fx_greenkill3]
     // when I maim
     this.attackSounds = [fx_green1, fx_green2, fx_green3]
+
+    // withhold damage for a bit
+    this.birthTimer.start()
+    if(this.mesh){
+      this.mesh.material.opacity = 0.2
+    }
   }
 
   hitmanCorrupt(){
@@ -738,6 +746,12 @@ class Enemy extends Character {
 
       if(this.casinoHighlight){
         this.deadSprite.material.rotation += 0.033
+      }
+
+      if(this.greenCorrupted && this.mesh){
+        if(this.mesh.material.opacity < 1){
+          this.mesh.material.opacity += 0.004
+        }
       }
 
 
