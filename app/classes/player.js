@@ -105,12 +105,12 @@ class Player extends Character {
     if(this.damageSoundTimer.time() > 30){
       this.damageSoundTimer.reset()
 
-      if(this.health >= 66){
+      if(this.health >= 80){
         fx_phealth1.play()
-      } else if(this.health >= 33){
+      } else if(this.health >= 40){
         fx_phealth2.play()
       } else if(this.health > 0){
-        fx_phealth2.play()
+        fx_phealth3.play()
       }  
     }
     
@@ -612,7 +612,6 @@ class Player extends Character {
 
   speedAnimation(){
     // if were within 0.2 of maxacc, show top speed anim
-
 
     // if(this.speedAnimationTimer.time() > 8){
     //   this.speedAnimationTimer.reset()

@@ -392,11 +392,11 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<5; i++){
+      // for(var i=0; i<20; i++){
       //   player.levelUp()
       // }
 
-      // let round = 20
+      // let round = 10
       // for(var i=0; i<=round; i++){
       //   // skip all but last round
       //   game.nextRound( i != round)
@@ -1420,11 +1420,17 @@ class Game {
     this.cleanEnemies()
     this.cleanBombs()
     this.cleanSmokes()
+    this.cleanFriends()
     this.setDefaultGameValues()
 
-    player.deadSprite.remove()
-    player.lifecyle = ALIVE
-    player.defaultPlayerValues()
+    player.removeNow()
+    player = new Player([0,88,255])
+
+
+    // player.deadSprite.remove()
+    // player.lifecyle = ALIVE
+    // player.defaultPlayerValues()
+
   }
 
   cleanEnemies(){
@@ -1465,6 +1471,8 @@ class Game {
         delete this.bombs[i]
       }
     }
+    
+    this.bombs = []
   }
 
   cleanSmokes(){
@@ -1475,6 +1483,23 @@ class Game {
         delete this.smokes[i]
       }
     }
+
+    this.smokes = []
+  }
+
+  cleanFriends(){
+    for(var i=0; i<this.friends.length; i++){
+      if(this.friends[i]){
+        // do this so we dont make a sprite
+        this.friends[i].remove()
+        delete this.friends[i]
+      }
+
+      // get rid of ui element
+      this.removeFriendIcon(i)
+    }
+
+    this.friends = []
   }
 
   changeScore(change){
