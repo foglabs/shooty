@@ -6,7 +6,8 @@ class Character {
     let basestr = rgbToHex(base_color[0], base_color[1], base_color[2])
     if(!mat){
       // deefault
-      mat = new THREE.MeshPhongMaterial( { color: basestr, reflectivity: 0.2, shininess: 40 })
+      // mat = new THREE.MeshPhongMaterial( { color: basestr, reflectivity: 0.2, shininess: 40 })
+      mat = new THREE.MeshLambertMaterial( { color: basestr, reflectivity: 0.2, shininess: 40 })
     }
 
     mat.transparent = true

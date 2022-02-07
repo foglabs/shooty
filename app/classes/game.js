@@ -51,6 +51,7 @@ class Game {
     // }
       
     this.musicEnabled = false
+    this.currentSong = OST1
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -392,14 +393,16 @@ class Game {
       // block this so that we cant retry before ENDING animation finishes
       this.readyToStartGame = false
 
-      // for(var i=0; i<20; i++){
+
+      // let lev = 25
+      // for(var i=0; i<lev; i++){
       //   player.levelUp()
       // }
-
-      // let round = 10
+      // this.clearAnnouncements()
+      // let round = 27
       // for(var i=0; i<=round; i++){
       //   // skip all but last round
-      //   game.nextRound( i != round)
+      //   this.nextRound( i != round)
       // }
     }
   }
@@ -569,23 +572,28 @@ class Game {
             this.muteMessage = true
           }
 
-
           if(this.merchant){
-            if( !fx_merchantamb.playing() ){
-              fx_merchantamb.play()
-  
-              if( fx_song2.playing() ){
-                fx_song2.stop()
-              }
+            if(!fx_merchantamb.playing()){
+              this.playSong(MERCHANT)
             }
-
-          } else {
-            if( !fx_song2.playing() ){
-              fx_song2.play()
-
-              if( fx_merchantamb.playing() ){
-                fx_merchantamb.stop()
-              }
+          } else if(this.roundCount < 10 ){
+            if(!fx_ost1.playing()){
+              this.playSong(OST1)
+            }
+          } else if(this.roundCount <  20 ){
+            if(!fx_ost2.playing()){
+            // round 10 music
+              this.playSong(OST2)
+            }
+          } else if(this.roundCount < 30 ){
+            if(!fx_ost3.playing()){
+            // round 20 music
+              this.playSong(OST3)
+            }
+          } else if(this.roundCount < 40 ){
+            if(!fx_ost4.playing()){
+            // round 30 music
+              this.playSong(OST4)
             }
           }
         }
@@ -593,6 +601,57 @@ class Game {
     }
     
   }
+
+stopSongs(){
+
+  if(fx_ost1.playing()){
+    fx_ost1.stop()
+  } else if(fx_ost2.playing()){
+    fx_ost2.stop()
+  } else if(fx_ost3.playing()){
+    fx_ost3.stop()
+  } else if(fx_ost4.playing()){
+    fx_ost4.stop()
+  } else if(fx_merchantamb.playing()){
+    fx_merchantamb.stop()
+  }
+}
+
+setSongVolume(vol){
+  if(this.currentSong === OST1){
+    fx_ost1.setVolume(vol)
+  } else if(this.currentSong === OST2){
+    fx_ost2.setVolume(vol)
+  } else if(this.currentSong === OST3){
+    fx_ost3.setVolume(vol)
+  } else if(this.currentSong === OST4){
+    fx_ost4.setVolume(vol)
+  } else if(this.currentSong === MERCHANT){
+    fx_merchantamb.setVolume(vol)
+  } 
+}
+
+playSong(song){
+  this.currentSong = song
+  this.stopSongs()
+  if(song === OST1){
+    console.log( 'playin 1' )
+    fx_ost1.play()
+  } else if(song === OST2){
+    console.log( 'playin 2' )
+    fx_ost2.play()
+  } else if(song === OST3){
+    console.log( 'playin 3' )
+    fx_ost3.play()
+  } else if(song === OST4){
+    console.log( 'playin 4' )
+    fx_ost4.play()
+  } else if(song === MERCHANT){
+    console.log( 'playin 5' )
+    fx_merchantamb.play()
+  } 
+}
+
 
 // loop for game object
   handleGame(){
@@ -621,7 +680,7 @@ class Game {
       
       // stop!
       if(this.musicEnabled){
-        fx_song2.stop()
+        this.stopSongs()
       }
 
       this.drawEnding()

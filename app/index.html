@@ -425,6 +425,13 @@
       ITEMCLER = 4
       ITEMFRND = 5
 
+      // music
+      OST1 = 1
+      OST2 = 2
+      OST3 = 3
+      OST4 = 4
+      MERCHANT = 5
+
       // DEG0 = radian(0)
       DEG1 = radian(1)
       DEG3 = radian(3)
@@ -462,10 +469,16 @@
         !fx_youredeadE.loaded ? done = false : null
         !fx_levelupE2.loaded ? done = false : null
         !fx_startgameE.loaded ? done = false : null
-        !fx_song2.loaded ? done = false : null
+        // !fx_song2.loaded ? done = false : null
         !fx_eat1.loaded ? done = false : null
         !fx_eat2.loaded ? done = false : null
         !fx_eat3.loaded ? done = false : null
+
+        !fx_ost1.loaded ? done = false : null
+        !fx_ost2.loaded ? done = false : null
+        !fx_ost3.loaded ? done = false : null
+        !fx_ost4.loaded ? done = false : null
+        !fx_merchantamb.loaded ? done = false : null
 
 
         return done
@@ -778,7 +791,12 @@
       let fx_youredeadE = new Sound("sounds/youredeadE.mp3", 0.8)
       let fx_levelupE2 = new Sound("sounds/levelupE2.mp3", 0.8)
       let fx_startgameE = new Sound("sounds/startgameE.mp3", 0.8)
-      let fx_song2 = new Music("sounds/song2.mp3", 0.8)
+      
+      let fx_ost1 = new Music("sounds/song2.mp3", 0.8)
+      let fx_ost2 = new Music("sounds/song2.mp3", 0.8)
+      let fx_ost3 = new Music("sounds/shapey.mp3", 0.8)
+      let fx_ost4 = new Music("sounds/round3.mp3", 0.8)
+      let fx_merchantamb = new Sound("sounds/merchantamb.mp3", 0.6)
 
 
       let fx_godcorrupt1 = new Sound("sounds/godcorrupt1.mp3", 0.6)
@@ -816,7 +834,6 @@
       let fx_newfriendkill3 = new Sound("sounds/newfriendkill3.mp3", 0.6)
 
       let fx_buysomething = new Sound("sounds/buysomething.mp3", 0.6)
-      let fx_merchantamb = new Sound("sounds/merchantamb.mp3", 0.6)
       let fx_money = new Sound("sounds/money.mp3", 0.3)
 
       let fx_eat1 = new Sound("sounds/eat1.mp3", 0.15)
@@ -1151,9 +1168,9 @@
           } else if(event.key == "m"){
             // mute
             if(game.musicEnabled){
-              fx_song2.setVolume(0)
+              game.setSongVolume(0)
             } else {
-              fx_song2.setVolume(0.4)
+              game.setSongVolume(0.4)
             }
             
             game.musicEnabled = !game.musicEnabled
