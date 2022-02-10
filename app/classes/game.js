@@ -399,7 +399,7 @@ class Game {
       //   player.levelUp()
       // }
       // this.clearAnnouncements()
-      // let round = 27
+      // let round = 10
       // for(var i=0; i<=round; i++){
       //   // skip all but last round
       //   this.nextRound( i != round)
@@ -443,7 +443,7 @@ class Game {
     b = Math.floor(Math.random() * 100)
 
     this.corruptionTimer.reset()
-    this.corruptedDamage = Math.round( this.corruptedDamageDefault + Math.pow( (this.roundCount/5), 2 ) )
+    this.corruptedDamage = Math.round( this.corruptedDamageDefault + Math.pow( (this.roundCount/4), 2 ) )
     this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + 2 * Math.pow(this.roundCount/6, 2) )
 
     this.greenCorruptedDamage = Math.round( this.greenCorruptedDamageDefault + 2 * Math.pow(this.roundCount/4, 2) )
@@ -628,7 +628,7 @@ setSongVolume(vol){
     fx_ost4.setVolume(vol)
   } else if(this.currentSong === MERCHANT){
     fx_merchantamb.setVolume(vol)
-  } 
+  }
 }
 
 playSong(song){
