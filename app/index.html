@@ -431,6 +431,7 @@
       OST3 = 3
       OST4 = 4
       MERCHANT = 5
+      OSTTITLE = 6
 
       // DEG0 = radian(0)
       DEG1 = radian(1)
@@ -792,8 +793,9 @@
       let fx_levelupE2 = new Sound("sounds/levelupE2.mp3", 0.8)
       let fx_startgameE = new Sound("sounds/startgameE.mp3", 0.8)
       
-      let fx_ost1 = new Music("sounds/letsgetstarted.mp3", 0.8)
-      let fx_ost2 = new Music("sounds/song2.mp3", 0.8)
+      let fx_title = new Music("sounds/title.mp3", 0.9)
+      let fx_ost1 = new Music("sounds/letsgetstarted.mp3", 0.6)
+      let fx_ost2 = new Music("sounds/sounds_song2.mp3", 0.6)
       let fx_ost3 = new Music("sounds/shapey.mp3", 0.8)
       let fx_ost4 = new Music("sounds/round3.mp3", 0.8)
       let fx_merchantamb = new Sound("sounds/merchantamb.mp3", 0.6)
@@ -1167,6 +1169,8 @@
             }
           } else if(event.key == "m"){
             // mute
+
+            console.log( 'mutteeee' )
             if(game.musicEnabled){
               game.setSongVolume(0)
             } else {

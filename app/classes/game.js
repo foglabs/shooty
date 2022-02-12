@@ -50,8 +50,8 @@ class Game {
     //   this.backPlanes.push(backPlane)
     // }
       
-    this.musicEnabled = false
-    this.currentSong = OST1
+    this.musicEnabled = true
+    this.currentSong = TITLE
 
     this.stage = false
     this.stageTimer = new Timer()
@@ -60,6 +60,7 @@ class Game {
 
     // wait a bit to start music
     this.musicTimer = new Timer()
+    this.musicTimer.start()
     // flag to show msg once
     this.muteMessage = false
 
@@ -382,7 +383,6 @@ class Game {
 
 
       fx_startgameE.play()
-      this.musicTimer.start()
 
       this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax, this.corruptingTime, [0,0,0])
 
@@ -503,7 +503,7 @@ class Game {
     this.generateEnemies( numEnemies )
     this.generateEnemies( numEnemies, true )
 
-    if(!skip && this.roundCount % 5 == 0){
+    if(!skip && (this.roundCount-1) % 5 == 0){
       // LETS SHOP
 
       this.announcement("ITEM SHOP HAS OPENED")
@@ -565,21 +565,26 @@ class Game {
 
         // oh forget it!      
         // music start
-        if(this.musicTimer.running && this.musicTimer.time() > 4000){
+        if(this.musicTimer.running && this.musicTimer.time() > 2000){
 
-          if(!this.muteMessage && this.musicTimer.time() > 4000){
+          if(!this.muteMessage){
             this.announcement("MUTE MUSIC (M)")
             this.muteMessage = true
           }
 
-          if(this.merchant){
+          if(this.stage == TITLE){
+            if(!fx_title.playing()){
+              
+              this.playSong(OSTTITLE)
+            }
+          } else if(this.merchant){
             if(!fx_merchantamb.playing()){
               this.playSong(MERCHANT)
             }
           } else if(this.roundCount < 10 ){
             if(!fx_ost1.playing()){
               this.playSong(OST1)
-            }
+            }  
           } else if(this.roundCount <  20 ){
             if(!fx_ost2.playing()){
             // round 10 music
@@ -603,7 +608,6 @@ class Game {
   }
 
 stopSongs(){
-
   if(fx_ost1.playing()){
     fx_ost1.stop()
   } else if(fx_ost2.playing()){
@@ -614,6 +618,8 @@ stopSongs(){
     fx_ost4.stop()
   } else if(fx_merchantamb.playing()){
     fx_merchantamb.stop()
+  } else if(fx_title.playing()){
+    fx_title.stop()
   }
 }
 
@@ -628,6 +634,8 @@ setSongVolume(vol){
     fx_ost4.setVolume(vol)
   } else if(this.currentSong === MERCHANT){
     fx_merchantamb.setVolume(vol)
+  } else if(this.currentSong === OSTTITLE){
+    fx_title.setVolume(vol)
   }
 }
 
@@ -649,7 +657,10 @@ playSong(song){
   } else if(song === MERCHANT){
     console.log( 'playin 5' )
     fx_merchantamb.play()
-  } 
+  } else if(song === OSTTITLE){
+    console.log( 'playin 6' )
+    fx_title.play()
+  }
 }
 
 
