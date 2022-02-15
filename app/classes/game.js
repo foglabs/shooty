@@ -127,7 +127,6 @@ class Game {
     this.gamepadAxisXMax = null
     this.gamepadAxisYMax = null
 
-
     this.startTime = null
     this.endTime = null
     // get and display score board first thing
@@ -221,7 +220,8 @@ class Game {
   }
 
   setDefaultGameValues(){
-    player.health = 100
+    player.maxHealth = 100
+    player.health = player.maxHealth
     player.power = 0
     
     this.u = 0
@@ -248,7 +248,7 @@ class Game {
     this.godCorruptedDamageDefault = 6
     this.godCorruptedDamage = this.godCorruptedDamageDefault
 
-    this.greenCorruptedDamageDefault = 16
+    this.greenCorruptedDamageDefault = 8
     this.greenCorruptedDamage = this.greenCorruptedDamageDefault
 
     this.hitmanCorruptedDamageDefault = 64
@@ -366,6 +366,8 @@ class Game {
       document.getElementById("stage-info").classList.remove("static")
       document.getElementById("scores").innerHTML = ""
 
+      this.musicTimer.reset()
+
       if(player){
         // clean out old player
         player.remove()
@@ -394,16 +396,16 @@ class Game {
       this.readyToStartGame = false
 
 
-      // let lev = 25
-      // for(var i=0; i<lev; i++){
-      //   player.levelUp()
-      // }
-      // this.clearAnnouncements()
-      // let round = 10
-      // for(var i=0; i<=round; i++){
-      //   // skip all but last round
-      //   this.nextRound( i != round)
-      // }
+      let lev = 6
+      for(var i=0; i<lev; i++){
+        player.levelUp()
+      }
+      this.clearAnnouncements()
+      let round = 30
+      for(var i=0; i<=round; i++){
+        // skip all but last round
+        this.nextRound( i != round)
+      }
     }
   }
 
@@ -443,10 +445,10 @@ class Game {
     b = Math.floor(Math.random() * 100)
 
     this.corruptionTimer.reset()
-    this.corruptedDamage = Math.round( this.corruptedDamageDefault + Math.pow( (this.roundCount/4), 2 ) )
-    this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + 2 * Math.pow(this.roundCount/6, 2) )
+    this.corruptedDamage = this.corruptedDamageDefault + (this.roundCount)
+    this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + Math.pow(this.roundCount/6, 2) )
 
-    this.greenCorruptedDamage = Math.round( this.greenCorruptedDamageDefault + 2 * Math.pow(this.roundCount/4, 2) )
+    this.greenCorruptedDamage = Math.round( this.greenCorruptedDamageDefault + Math.pow(this.roundCount/4, 2) )
 
     this.changeScore(this.roundCount * 10)
 
@@ -503,7 +505,7 @@ class Game {
     this.generateEnemies( numEnemies )
     this.generateEnemies( numEnemies, true )
 
-    if(!skip && (this.roundCount-1) % 5 == 0){
+    if(!skip && (this.roundCount-4) % 5 == 0){
       // LETS SHOP
 
       this.announcement("ITEM SHOP HAS OPENED")

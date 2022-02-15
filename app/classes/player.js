@@ -73,7 +73,9 @@ class Player extends Character {
     // build to level up
     this.knowledge = 0
     this.level = 1
-    this.health = 100
+    this.maxHealth = 100
+    this.health = this.maxHealth
+
     
     this.money = 0
     this.lastMoney = 0
@@ -141,7 +143,14 @@ class Player extends Character {
     return Math.min(1.8, calc)
   }
 
+  changeMaxHealth(newMax){
+    this.maxHealth = newMax
+     document.getElementById("health").max = newMax
+  }
+
   levelUp(quiet=false){
+    this.changeMaxHealth(this.maxHealth + 4)
+
     this.knowledge = 0
     this.level += 1
     !quiet ? game.announcement("LEVEL UP (" + this.level + ")" ) : null

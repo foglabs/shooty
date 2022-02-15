@@ -74,6 +74,9 @@ class Character {
     this.moneyCircleSpendTimer = new Timer()
     this.moneyCircleSpendTimer.start()
     this.moneyCircleEnabled = false
+
+    // only for player
+    this.maxHealth = 100
   }
 
   fuckUpVertex(){
@@ -588,7 +591,7 @@ class Character {
 
   changeHealth(healthChange){
     // this is for healing, dont want to use v similar takeDamage because it makes sounds
-    this.health = incInRange( this.health, healthChange, 0, 100 )
+    this.health = incInRange( this.health, healthChange, 0, this.maxHealth )
   }
 
   killSound(){}
