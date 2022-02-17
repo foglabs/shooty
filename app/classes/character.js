@@ -245,12 +245,13 @@ class Character {
   }
 
   addDeadSprite(){
+    // clone material doesnt exactly do anything here but maybe saves some reloading
     if(this.corrupted){
       // corrupted kill
       this.addSprite(corruptorMaterial.clone(), 0.688)
 
     } else if(this.damagedBy == EAT && player.topSpeed()){
-      this.addSprite(new THREE.SpriteMaterial( { map: speedSplatMap } ), 0.388)
+      this.addSprite(speedSplatMaterial.clone(), 0.388)
     } else {
       this.addSprite(bloodspriteMaterial.clone(), 0.388)
     }
@@ -293,8 +294,14 @@ class Character {
     }
 
     // if we're doing some extra-casino kiling
-    if(game.casino && game.casino.highlights[this.id]){
-      game.casino.removeHighlight(this.id)
+    if(game.casino){
+
+      if(game.casino.highlights[this.id]){
+        console.log( 'I removing normally!' )
+        game.casino.removeHighlight(this.id)
+      }
+
+      // removing extras *during* casino, so remove deadsprite right away
     }
 
 
@@ -302,11 +309,6 @@ class Character {
       if(this.laserSight){
         this.removeLaserSight()
       }
-    }
-
-    if(this.casinoHighlight && this.deadSprite){
-      // casino highlight
-      this.removeSprite()
     }
 
     if(this.killingCircle){
@@ -359,7 +361,7 @@ class Character {
   }
 
   removeSprite(){
-    if(this.deadSprite){
+      if(this.deadSprite){
       this.deadSprite.material.dispose()
       scene.remove(this.deadSprite)
     }

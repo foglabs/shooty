@@ -39,7 +39,6 @@ class Casino {
   handlePlay(){
 
     if(this.phase == BETTING){
-      // this.drawBetting()
 
       if(this.phaseTimer.time() > 3000){
         // 3s of betting
@@ -65,7 +64,6 @@ class Casino {
         this.setHighlights( numEnemies )
       }
 
-      // this.drawRolling()
 
       if(this.dice.length < 2){
         // roll 1 die every 800ms uuntiol we have 2
@@ -95,7 +93,6 @@ class Casino {
       }
 
     } else if(this.phase == RESULT){
-      this.drawResult()
 
       if(this.phaseTimer.time() > 3000){
         this.phase = PAYOUT
@@ -114,13 +111,12 @@ class Casino {
       }
 
     } else if(this.phase == PAYOUT){
-      this.drawPayout()
 
       if(this.resultPending){
 
         if(this.result == WIN){
           this.win()
-        } else if(this.result == LOSE) {
+        } else if(this.result == LOSE) {
           this.lose()
         }
 
@@ -132,38 +128,11 @@ class Casino {
       }
 
       if(this.phaseTimer.time() > 3000){
-        // handled from game, not here
+        // done gets handled from game, not here
         this.phase = DONE
         this.phaseTimer.reset()
       }
     }
-  }
-
-  drawBetting(){
-    // nothin
-  }
-
-  drawRolling(){
-    // let rollStr
-    // for(var i=0; i<this.dice.length; i++){
-    //   // add dice as they become available
-    //   rollStr += " " + this.dice[i]
-    // }
-    // game.announcement("ROLLED: " + rollStr)
-  }
-
-  drawResult(){
-    // let won = this.getResult()
-    // let roll = this.rollResult()
-    // let rollStr = roll % 2 == 0 ? "CHO" : "HAN"
-
-    // let resultStr = won ? "WIN" : "LOSE"
-    // this.result = won ? WIN : LOSE
-    // game.announcement("ROLLED " + rollStr + " " + (this.dice[0] + this.dice[1]) + " - " + resultStr)
-  }
-
-  drawPayout(){
-
   }
 
   setHighlights(num){
@@ -220,6 +189,7 @@ class Casino {
         // might be gone already oh well!
         enemy.damagedBy = CASINO
         enemy.health = 0
+        // enemy.removeNow()
       }
     }
 

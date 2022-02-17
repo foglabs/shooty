@@ -396,12 +396,12 @@ class Game {
       this.readyToStartGame = false
 
 
-      let lev = 6
+      let lev = 16
       for(var i=0; i<lev; i++){
         player.levelUp()
       }
       this.clearAnnouncements()
-      let round = 30
+      let round = 20
       for(var i=0; i<=round; i++){
         // skip all but last round
         this.nextRound( i != round)
@@ -1805,8 +1805,7 @@ playSong(song){
           this.enemies[enemyId].startSword()  
         }
       }
-    }  
-    
+    }
   }
 
   handleBombs(){
@@ -2287,6 +2286,7 @@ playSong(song){
               this.eatSound()
             }
           }
+
         }
 
         game.changeScore(score)

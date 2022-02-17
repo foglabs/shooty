@@ -937,6 +937,7 @@
       let glowMap = new THREE.TextureLoader().load("sprites/glow.png")
       let speedBurnMap = new THREE.TextureLoader().load("sprites/speedburn.png")
       let speedSplatMap = new THREE.TextureLoader().load("sprites/speedsplat.png")
+      let speedSplatMaterial = new THREE.SpriteMaterial( { map: speedSplatMap } )
 
       // camera is passed into renderer, rather than as scene object
       var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 )

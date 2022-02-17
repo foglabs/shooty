@@ -358,4 +358,15 @@ sfx
     either goes away or maybe quiet smacks
 
 
+deadsprites get stuck when enemies die from casino
+  seems to be only top speed splats + corrupt splats that get stuck when enemies die *during* casino but not from it
+  uhh still a prob
+
+boss at 40 that kills all other enemies
+  gets more powerful with each kill
+  small array of powers
+
+check sani
+
+
 
