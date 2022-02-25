@@ -43,6 +43,9 @@ class Enemy extends Character {
       } else if(enemyType == KNOWLOCTA) {
         min = game.chanceSlices[3]
         max = 1
+      } else if(enemyType == BOSS){
+        min = 1
+        max = 1
       }
 
       dna = Math.random() * (max-min) + min
@@ -120,6 +123,17 @@ class Enemy extends Character {
       lightness = 0.01
       allowedToPattern = true
       intention = PATTERNMOVE
+    } else if(enemyType == BOSS){
+      health = 100
+      nutritionalValue = 0
+      geometry = new THREE.TorusGeometry( 0.4, 0.1, 6, 3 )
+      base_color = [0,0,0]
+      knowledgeValue = 500
+      lightness = 0.05
+      
+      allowedToPattern = true
+      // ?
+      intention = WANDER
     }
     
     super(
@@ -156,7 +170,12 @@ class Enemy extends Character {
       let dist = 0.1 * this.scaleFactor
       let size = 0.46 * this.scaleFactor
       this.addBanners(candyspriteMap, size, 2, dist, true)
-
+    } else if(this.enemyType == BOSS){
+      // // placeholder...
+      // let dist = 0.1 * this.scaleFactor
+      // let size = 0.8 * this.scaleFactor
+      // this.addBanners(candyspriteMap, size, 2, dist, true)
+      this.bossOutline = null
     }
 
     if(Math.random() > 0.6){
@@ -173,7 +192,12 @@ class Enemy extends Character {
         this.scaleFactor = 1 + Math.random() * 2.1
         this.mesh.scale.x = 1 + Math.random() * this.scaleFactor
         this.mesh.scale.y = 1 + Math.random() * this.scaleFactor
-        this.mesh.scale.z = 1 + Math.random() * this.scaleFactor        
+        this.mesh.scale.z = 1 + Math.random() * this.scaleFactor
+      } else if(this.enemyType == BOSS){
+        // bosses one size
+        this.scaleFactor = 1
+
+        this.mesh.material.needsUpdate = true
       } else {
         this.scaleFactor = 1 + Math.random() * 1.3
         this.mesh.scale.x = 1 + Math.random() * this.scaleFactor
@@ -191,7 +215,24 @@ class Enemy extends Character {
     this.killSounds = [fx_ekill1, fx_ekill2, fx_ekill3, fx_ekill4, fx_ekill5, fx_ekill6]
 
     this.direction = 0
-    this.corrupted = false
+
+    if(this.enemyType == BOSS){
+      this.corrupted = true
+
+      this.bossEatTimer = new Timer()
+      this.bossEatTimer.start()
+
+      this.bossHypnotimer = new Timer()
+      this.bossHypnotimer.start()
+
+      this.bossDamage = 20
+
+      this.mesh.material = new THREE.MeshPhysicalMaterial( { color: rgbToHex(this.baseColor[0],this.baseColor[1],this.baseColor[2]), reflectivity: 0.877, clearcoat: 0.6, roughness: 0})
+
+    } else {
+      this.corrupted = false
+    }
+
     // super
     this.godCorrupted = false
 
@@ -249,6 +290,15 @@ class Enemy extends Character {
     this.birthTimer = new Timer()
   }
 
+  hypnotize(bossId){
+    this.hypnotizedById = bossId
+    this.setColor(100,100,100)
+
+    this.lightness = 0.77
+
+    this.removeExtras()
+  }
+
   // sword
   addSword(length){
     this.sword = new Sword(length, 0, this)
@@ -289,12 +339,18 @@ class Enemy extends Character {
   }
 
   rotation(){
-    let fac = Math.random()
-    // let sign = Math.random() > 0.5 ? 1 : -1
-    this.mesh.rotation.x += 0.28 * fac
-    fac = Math.random() * 0.010
-    // sign = Math.random() > 0.5 ? 1 : -1
-    this.mesh.rotation.y += 0.18 * fac
+
+    if(this.enemyType == BOSS || this.hypnotizedById){
+      this.mesh.rotation.z += 0.001
+    } else {
+      let fac = Math.random()
+      // let sign = Math.random() > 0.5 ? 1 : -1
+      this.mesh.rotation.x += 0.28 * fac
+      fac = Math.random() * 0.010
+      // sign = Math.random() > 0.5 ? 1 : -1
+      this.mesh.rotation.y += 0.18 * fac  
+    }
+    
   }
 
   killScore(){
@@ -649,7 +705,7 @@ class Enemy extends Character {
   plotCourse(){
     this.routePoints = []
 
-    if(this.enemyType == KNOWLOCTA || this.enemyType == SPHERE){
+    if(this.enemyType == KNOWLOCTA || this.enemyType == SPHERE || this.enemyType == BOSS){
 
       // let triangleSide = Math.random() * somethign
       // probaly too big
@@ -785,6 +841,38 @@ class Enemy extends Character {
           this.laserSight.setRotationFromEuler( this.mesh.rotation )
 
           scene.add( this.laserSight )  
+        }
+        
+      } else if(this.hypnotizedById){
+
+        // boss trail line for hypnoed enemy
+
+        if(this.bossOutline){
+          // remove old boss outline
+          this.bossOutline.material.dispose()
+          scene.remove( this.bossOutline )  
+          this.bossOutline = null
+        } 
+
+
+        if( game.enemies[ this.hypnotizedById ] && game.enemies[ this.hypnotizedById ].lifecycle == ALIVE ){
+          // if the boss is still alive
+          
+          let points = []
+          // us, hypnoed enemy
+          points.push( new THREE.Vector3( this.mesh.position.x,this.mesh.position.y,this.mesh.position.z ) )
+          // them, da boss
+          points.push( new THREE.Vector3( game.enemies[ this.hypnotizedById ].mesh.position.x,game.enemies[ this.hypnotizedById ].mesh.position.y,game.enemies[ this.hypnotizedById ].mesh.position.z ) )
+          let geometry = new THREE.BufferGeometry().setFromPoints( points )
+          this.bossOutline = new THREE.LineSegments( geometry, new THREE.LineBasicMaterial( { color: "#880088" } ) )
+
+          // let edges = new THREE.EdgesGeometry( this.mesh.geometry, 90 )
+          // edges.scale(1.3,1.3,1.3)
+          // this.bossOutline = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: "#ffffff" } ) )
+
+          // this.bossOutline.position.set( this.mesh.position.x,this.mesh.position.y,this.mesh.position.z )
+          // this.bossOutline.setRotationFromEuler( this.mesh.rotation )
+          scene.add( this.bossOutline )  
         }
         
       }
@@ -929,7 +1017,7 @@ class Enemy extends Character {
   customMovement(){
 
     // if were allowed to, switch up the fuckkin pattern someTIMES
-    if(this.allowedToPattern && this.intentionTimer.time() > 2000){
+    if(this.allowedToPattern && this.intentionTimer.time() > 800){
       this.intentionTimer.reset()
 
       // put this in here so we flip coin 1 time/2s, not framerate times per s, after 2s
@@ -948,13 +1036,19 @@ class Enemy extends Character {
     //STOP RIGHT THERE - its time to corrupt
     if(this.lifecycle != CORRUPTING){
 
-      if(this.corrupted && (game.percentCorrupted == 1 || game.roundCount >= 20)){
+      if(this.hypnotizedById && game.enemies[ this.hypnotizedById ] && game.enemies[ this.hypnotizedById ].lifecycle == ALIVE ) {
+        // if boss hypnotized enemy, move slowly towards boss
+        console.log( 'hypno wlak!!!' )
+        this.moveTowardsPoint(game.enemies[this.hypnotizedById].mesh.position.x, game.enemies[this.hypnotizedById].mesh.position.y, 0.6)
+      } else if(this.corrupted && (game.percentCorrupted == 1 || game.roundCount >= 20) && this.enemyType != BOSS ){
         // chase the player like a demon from hell if theres only corrupteds left
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
 
       } else if(this.godCorrupted){
         // if godcorrupted, always chase player
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y, 0.4)
+      } else if(this.enemyType == BOSS){
+        this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y, 0.6)
       } else {
 
         if(this.intention == WANDER){

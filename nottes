@@ -366,7 +366,21 @@ boss at 40 that kills all other enemies
   gets more powerful with each kill
   small array of powers
 
+  gets big for a sec to hit you
+  follows at a short distance
+  shoots stuff at you?
+
+  every timeout, chooses enemy to suck toward boss
+    eats on contact
+
+
+
 check sani
+
+
+
+check boss health amounts, lvl 10 player can instantly kill
+boss death sound!
 
 
 

@@ -7,7 +7,7 @@ class Character {
     if(!mat){
       // deefault
       // mat = new THREE.MeshPhongMaterial( { color: basestr, reflectivity: 0.2, shininess: 40 })
-      mat = new THREE.MeshLambertMaterial( { color: basestr, reflectivity: 0.2, shininess: 40 })
+      mat = new THREE.MeshLambertMaterial( { color: basestr, reflectivity: 0.2})
     }
 
     mat.transparent = true
@@ -77,6 +77,9 @@ class Character {
 
     // only for player
     this.maxHealth = 100
+
+    // hypnotized by boss
+    this.hypnotizedById = null
   }
 
   fuckUpVertex(){
@@ -172,6 +175,12 @@ class Character {
     scene.remove( this.laserSight )  
   }
 
+  removeBossOutline(){
+    // only for hitman corrupted
+    this.bossOutline.material.dispose()
+    scene.remove( this.bossOutline )  
+  }
+
   // MONEY cirlce - spend mone yto extend shrinking hitman-contract-buying circle
   addMoneyCircle(){
     // bigger power, bigger circle
@@ -246,7 +255,9 @@ class Character {
 
   addDeadSprite(){
     // clone material doesnt exactly do anything here but maybe saves some reloading
-    if(this.corrupted){
+    if(this.enemyType == BOSS){
+      this.addSprite(corruptorMaterial.clone(), 1.688)
+    } else if(this.corrupted){
       // corrupted kill
       this.addSprite(corruptorMaterial.clone(), 0.688)
 
@@ -297,7 +308,6 @@ class Character {
     if(game.casino){
 
       if(game.casino.highlights[this.id]){
-        console.log( 'I removing normally!' )
         game.casino.removeHighlight(this.id)
       }
 
@@ -313,6 +323,10 @@ class Character {
 
     if(this.killingCircle){
       this.removeKillingCircle()
+    }
+
+    if(this.bossOutline){
+      this.removeBossOutline()
     }
   }
 
@@ -590,7 +604,6 @@ class Character {
     return material1
   }
 
-
   changeHealth(healthChange){
     // this is for healing, dont want to use v similar takeDamage because it makes sounds
     this.health = incInRange( this.health, healthChange, 0, this.maxHealth )
@@ -602,11 +615,27 @@ class Character {
   takeDamageSound(){}
 
   takeDamage(dmg, damageSource){
-    if(!this.isPlayer){
+    if(this.roundCount >= 40 || !this.isPlayer){
+
       this.fuckUpVertex()
       this.fuckUpVertex()
       this.fuckUpVertex()
     }
+
+    // if(this.enemyType == BOSS){
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+    //   this.fuckUpVertex()
+      
+    // }
 
     this.takeDamageSound()
 
@@ -706,7 +735,9 @@ class Character {
       this.bbox.expandByScalar(sizeBonus)
     }
 
-    this.colorCycle()
+    if(this.enemyType != BOSS && !this.hypnotizedById){
+      this.colorCycle()
+    }
 
     if(this.money >= 0){
       this.handleMoneyLabel()

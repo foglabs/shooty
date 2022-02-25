@@ -50,7 +50,7 @@ class Game {
     //   this.backPlanes.push(backPlane)
     // }
       
-    this.musicEnabled = true
+    this.musicEnabled = false
     this.currentSong = TITLE
 
     this.stage = false
@@ -352,7 +352,7 @@ class Game {
   }
 
   calcEnemyHealthFactor(){
-    return Math.max( 0.01, Math.log(this.roundCount/-3 + 12) )
+    return this.roundCount < 30 ? Math.max( 0.01, Math.log(this.roundCount/-3 + 12) ) : 1
   }
 
   newPlayer(){
@@ -396,16 +396,16 @@ class Game {
       this.readyToStartGame = false
 
 
-      let lev = 16
-      for(var i=0; i<lev; i++){
-        player.levelUp()
-      }
-      this.clearAnnouncements()
-      let round = 20
-      for(var i=0; i<=round; i++){
-        // skip all but last round
-        this.nextRound( i != round)
-      }
+      // let lev = 6
+      // for(var i=0; i<lev; i++){
+      //   player.levelUp()
+      // }
+      // this.clearAnnouncements()
+      // let round = 40
+      // for(var i=0; i<round; i++){
+      //   // skip all but last round
+      //   this.nextRound( i != round)
+      // }
     }
   }
 
@@ -440,10 +440,17 @@ class Game {
     this.chanceSlices = this.calcChanceSlices()
 
     let r,g,b
-    r = Math.floor(Math.random() * 100)
-    g = Math.floor(Math.random() * 100)
-    b = Math.floor(Math.random() * 100)
 
+    if(this.roundCount >= 40){
+      r = 255
+      g = 255
+      b = 255
+    } else {
+      r = Math.floor(Math.random() * 100)
+      g = Math.floor(Math.random() * 100)
+      b = Math.floor(Math.random() * 100)
+    }
+    
     this.corruptionTimer.reset()
     this.corruptedDamage = this.corruptedDamageDefault + (this.roundCount)
     this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + Math.pow(this.roundCount/6, 2) )
@@ -539,11 +546,13 @@ class Game {
       spotlight2.color = new THREE.Color("#ff0000")
     } else if(this.roundCount >= 40){
       // purple to the death of me
-      spotlight2.color = new THREE.Color("#ff00ff")
+      spotlight2.color = new THREE.Color("#ff0000")
     }
 
     // change backplane color
-    if(this.roundCount > 1){
+    if(this.roundCount >= 40){
+      this.entryPlane.setColor("#ffffff")      
+    } else if(this.roundCount > 1){
       this.entryPlane.randomColor()
     }
   }
@@ -602,6 +611,11 @@ class Game {
             // round 30 music
               this.playSong(OST4)
             }
+          } else {
+            if(!fx_ost5.playing()){
+            // round 30 music
+              this.playSong(OST5)
+            }
           }
         }
       }  
@@ -618,6 +632,8 @@ stopSongs(){
     fx_ost3.stop()
   } else if(fx_ost4.playing()){
     fx_ost4.stop()
+  } else if(fx_ost5.playing()){
+    fx_ost5.stop()
   } else if(fx_merchantamb.playing()){
     fx_merchantamb.stop()
   } else if(fx_title.playing()){
@@ -634,6 +650,8 @@ setSongVolume(vol){
     fx_ost3.setVolume(vol)
   } else if(this.currentSong === OST4){
     fx_ost4.setVolume(vol)
+  } else if(this.currentSong === OST5){
+    fx_ost5.setVolume(vol)
   } else if(this.currentSong === MERCHANT){
     fx_merchantamb.setVolume(vol)
   } else if(this.currentSong === OSTTITLE){
@@ -656,11 +674,14 @@ playSong(song){
   } else if(song === OST4){
     console.log( 'playin 4' )
     fx_ost4.play()
-  } else if(song === MERCHANT){
+  } else if(song === OST5){
     console.log( 'playin 5' )
+    fx_ost5.play()
+  } else if(song === MERCHANT){
+    console.log( 'playin merchant' )
     fx_merchantamb.play()
   } else if(song === OSTTITLE){
-    console.log( 'playin 6' )
+    console.log( 'playin title' )
     fx_title.play()
   }
 }
@@ -1759,6 +1780,10 @@ playSong(song){
     [fx_eat1, fx_eat2, fx_eat3][ Math.floor( Math.random() * 3 ) ].play()
   }
 
+  bossGrowSound(){
+    [fx_bossgrow1, fx_bossgrow2, fx_bossgrow3][ Math.floor( Math.random() * 3 ) ].play()
+  }
+
   // faddenemy
   addEnemy(type=null, posx=null, posy=null){
     let killer = new Enemy([0,88,255*Math.round(Math.random())], type);
@@ -1789,6 +1814,23 @@ playSong(song){
       this.enemies[enemy.id] = enemy
     }
 
+    if(this.roundCount >= 40){
+      let numBosses = (this.roundCount - 39)
+
+      for(var i=0; i<numBosses; i++){ 
+        // add a boss for each round above 40
+        console.log( 'adding boss ' )
+        let enemy = this.addEnemy(BOSS)
+        this.enemies[ enemy.id ] = enemy
+        fx_bossenter.play()
+      }
+    }
+
+    // let enemy = this.addEnemy(BOSS)
+    // this.enemies[ enemy.id ] = enemy
+    // enemy = this.addEnemy(BOSS)
+    // this.enemies[ enemy.id ] = enemy
+
     let enemiesKeys = k(this.enemies)
     let enemyId
     for(var i=0; i<enemiesKeys.length; i++){
@@ -1802,10 +1844,11 @@ playSong(song){
         if(this.roundCount >= 10 && Math.random() > this.roundCount/-256 + 1 ){
           // enemy sword wow!
           this.enemies[enemyId].addSword(0.2 * (1 + (this.roundCount-1) / 8 ) )
-          this.enemies[enemyId].startSword()  
+          this.enemies[enemyId].startSword()
         }
       }
     }
+
   }
 
   handleBombs(){
@@ -1964,8 +2007,8 @@ playSong(song){
 
   handleEnemy(enemy){
     // MOVEMENT
-    let enemyId = enemy.directionalLength                 
-    
+    let enemyId = enemy.directionalLength
+
     // handle movement
     enemy.handleMovement()
     // draw other crap thats changing
@@ -2004,6 +2047,7 @@ playSong(song){
     // LIFE/CORRUPTION
     // only sword/bombs/casino can hurt while corrupting
     if(enemy.lifecycle == ALIVE && !enemy.corrupted){
+
       let hitresult = enemy.handleHit(player)
 
       if(player.lifecycle == ALIVE && hitresult){
@@ -2029,7 +2073,6 @@ playSong(song){
 
         // start eating animation, which shuts itself off after timer
         player.eating = true
-
       }
 
       if(this.roundCount > 2 && enemy.lifecycle == ALIVE && this.corruptionTimer.time() > 1000) {
@@ -2042,7 +2085,7 @@ playSong(song){
 
         // if(this.percentCorrupted < this.corruptionMax && corruption_chance >= 0.7 ){
         // if(this.percentCorrupted < this.corruptionMax && corruption_chance >= 0.5 ){
-        if(this.percentCorrupted < this.corruptionMax && corruption_chance >= this.corruptionThreshold() ){
+        if(this.percentCorrupted < this.corruptionMax && corruption_chance >= this.corruptionThreshold() && enemy.enemyType != BOSS && !enemy.hypnotizedById ){
           // console.log( 'i really *should* be corrupting ' )
           enemy.startCorrupting()
 
@@ -2057,6 +2100,8 @@ playSong(song){
       // already done corrupting
 
       if(player.killingCircle && player.killingCircle.visible){
+        // killing circle damage dealing
+
         let hit = enemy.handleHit( player.killingCircleArea )
 
         if(hit){
@@ -2116,57 +2161,116 @@ playSong(song){
         }
       }
 
-      // this is enemy hitting the player
-      let corrupthit = enemy.handleHit(player)
-      if(player.lifecycle == ALIVE && enemy.lifecycle == ALIVE && corrupthit){
+
+      if(enemy.lifecycle == ALIVE){
+
+        // this is enemy hitting the player
+        let corrupthit = enemy.handleHit(player)
+        if(player.lifecycle == ALIVE && corrupthit){
 
 
-        if(player.healthTimer.time() > 500 ){
-          // how often can the player *take* damage
-          player.healthTimer.reset()
-          // need to gate this so 10 corrupteds dont just saw your head off before you can react
+          if(player.healthTimer.time() > 500 ){
+            // how often can the player *take* damage
+            player.healthTimer.reset()
+            // need to gate this so 10 corrupteds dont just saw your head off before you can react
 
-          if(enemy.godCorrupted){
-            enemy.attackSound()
-            player.takeDamage( game.godCorruptedDamage, ENEMY )
-          } else if(enemy.greenCorrupted){
-            if(enemy.birthTimer.time() > 3000){
-              console.log( 'done!!  setting opac' )
-              enemy.mesh.material.opacity = 1
+            if(enemy.godCorrupted){
               enemy.attackSound()
-              player.takeDamage( game.greenCorruptedDamage, ENEMY )  
+              player.takeDamage( game.godCorruptedDamage, ENEMY )
+            } else if(enemy.greenCorrupted){
+              if(enemy.birthTimer.time() > 3000){
+                console.log( 'done!!  setting opac' )
+                enemy.mesh.material.opacity = 1
+                enemy.attackSound()
+                player.takeDamage( game.greenCorruptedDamage, ENEMY )  
+              }
+              
+            } else if(enemy.hitmanCorrupted){
+
+              if(enemy.contract && enemy.contract.type == ONPLAYER){
+                // will fuck you up
+
+                enemy.attackSound()
+                player.takeDamage( game.hitmanCorruptedDamage, ENEMY )
+
+              } else if(!enemy.contract){
+                // if no contract, check for player contract
+                if(player.money >= 50){
+                  let cost = player.money
+                  let keyz = k(this.enemies)
+                  let randomTargetId = keyz[Math.floor( Math.random() * keyz.length )]
+
+                  let playerMoney = player.money
+                  player.changeMoney( -1 * playerMoney )
+                  enemy.changeMoney( playerMoney )
+                  enemy.addEnemyContract( cost, randomTargetId )
+                }
+
+              }
+
+            } else {
+              // this is regular corrupted damage
+              player.takeDamage( game.corruptedDamage, ENEMY )
             }
-            
-          } else if(enemy.hitmanCorrupted){
+          }
+        }
+        
+        if(enemy.enemyType == BOSS){
+          var newHypnoId
 
-            if(enemy.contract && enemy.contract.type == ONPLAYER){
-              // will fuck you up
+          if(enemy.bossEatTimer.time() > 1000){
+            enemy.bossEatTimer.reset()
 
-              enemy.attackSound()
-              player.takeDamage( game.hitmanCorruptedDamage, ENEMY )
 
-            } else if(!enemy.contract){
-              // if no contract, check for player contract
-              if(player.money >= 50){
-                let cost = player.money
-                let keyz = k(this.enemies)
-                let randomTargetId = keyz[Math.floor( Math.random() * keyz.length )]
+            let enemyIds = k(this.enemies)
+            for(var i=0; i<enemyIds.length; i++){
+              let eId = enemyIds[i]
+              if(this.enemies[ eId ] && this.enemies[ eId ].lifecycle == ALIVE && this.enemies[ eId ].enemyType != BOSS ){
 
-                let playerMoney = player.money
-                player.changeMoney( -1 * playerMoney )
-                enemy.changeMoney( playerMoney )
-                enemy.addEnemyContract( cost, randomTargetId )
+                if(!newHypnoId && this.enemies[ eId ] && this.enemies[ eId ].passedEntryPlane() && !this.enemies[ eId ].hypnotizedById ){
+                  // pick one enemy to be hypnoed below
+                  newHypnoId = eId
+                }
+
+                if(enemy.handleHit( this.enemies[ eId ] )){
+
+                  // non-boss enemy is alive and touching alive boss
+                  
+                  // eaten enemy gets hurt
+                  this.enemies[ eId ].takeDamage(500, BOSSDAMAGE)
+                  // boss gets more powerful
+                  enemy.health += 2
+                  enemy.bossDamage += 2
+                  enemy.mesh.scale.x += 0.1
+                  enemy.mesh.scale.y += 0.1
+                  enemy.mesh.scale.z += 0.1
+
+                  // sound it
+                  this.bossGrowSound()
+
+                  // redden
+                  let r = enemy.color[0] < 255 ? enemy.color[0] + 5 : enemy.color[0]
+
+                  enemy.setColor( r, 0, 0 )  
+                }
+                
               }
 
             }
-
-          } else {
-            // this is regular corrupted damage
-            player.takeDamage( game.corruptedDamage, ENEMY )
           }
-        }
-      }
 
+          // if(enemy.bossHypnotimer.time() > 800){
+          //   enemy.bossHypnotimer.reset()
+            if( this.enemies[newHypnoId] ){
+              console.log( 'get hypnoed bitch' )
+              this.enemies[ newHypnoId ].hypnotize( enemy.id )
+            }
+          // }
+          
+        }
+  
+      }
+      
       // if we're dead for any old reason, die 
       if(this.stage != TITLE && player.lifecycle == ALIVE && player.health <= 0){
         player.lifecycle = DYING
@@ -2204,7 +2308,7 @@ playSong(song){
         }
       }
 
-      if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && !enemy.greenCorrupted && !enemy.hitmanCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 ){
+      if(this.godCorruptionTimer.time() > 2000 && !enemy.godCorrupted && !enemy.greenCorrupted && !enemy.hitmanCorrupted && enemy.lifecycle == ALIVE && this.roundCount > 3 && enemy.enemyType != BOSS ){
           // god killer corruption! more likely with higher round
           let god = ( 10/ (2*(this.roundCount+7)) + 0.5 )
           let ch = Math.random()
@@ -2213,7 +2317,7 @@ playSong(song){
         if(ch > god){
 
           // godkill corruption wil just happen because were already corrupted
-          enemy.startCorrupting()  
+          enemy.startCorrupting()
         }
         
       }
@@ -2270,6 +2374,10 @@ playSong(song){
             if(enemy.healthValue > 0){
               player.changeHealth( enemy.healthValue )
             }
+          }
+
+          if(enemy.damagedBy == BOSSDAMAGE){
+            console.log( 'boss dammy baby!' )
           }
 
           if(enemy.damagedBy == EAT || enemy.damagedBy == SWORD){

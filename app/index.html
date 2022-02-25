@@ -354,6 +354,7 @@
       CIRCLE = 2
       KNOWLOCTA = 3
       HEALCUBE = 4
+      BOSS = 5
 
       // contract types
       ONPLAYER = 0
@@ -399,6 +400,7 @@
       BOMB = 5
       FRIEND = 6
       CASINO = 7
+      BOSSDAMAGE = 8
 
       // name entry
       NONAME = 0
@@ -430,8 +432,9 @@
       OST2 = 2
       OST3 = 3
       OST4 = 4
-      MERCHANT = 5
-      OSTTITLE = 6
+      OST5 = 5
+      MERCHANT = 6
+      OSTTITLE = 7
 
       // DEG0 = radian(0)
       DEG1 = radian(1)
@@ -475,12 +478,12 @@
         !fx_eat2.loaded ? done = false : null
         !fx_eat3.loaded ? done = false : null
 
-        !fx_ost1.loaded ? done = false : null
-        !fx_ost2.loaded ? done = false : null
-        !fx_ost3.loaded ? done = false : null
-        !fx_ost4.loaded ? done = false : null
-        !fx_merchantamb.loaded ? done = false : null
-
+        // !fx_ost1.loaded ? done = false : null
+        // !fx_ost2.loaded ? done = false : null
+        // !fx_ost3.loaded ? done = false : null
+        // !fx_ost4.loaded ? done = false : null
+        // !fx_merchantamb.loaded ? done = false : null
+        // !fx_bossgrow.loaded ? done = false : null
 
         return done
       }
@@ -798,6 +801,7 @@
       let fx_ost2 = new Music("sounds/sounds_song2.mp3", 0.6)
       let fx_ost3 = new Music("sounds/shapey.mp3", 0.8)
       let fx_ost4 = new Music("sounds/round3.mp3", 0.8)
+      let fx_ost5 = new Music("sounds/boss.mp3", 0.2)
       let fx_merchantamb = new Sound("sounds/merchantamb.mp3", 0.6)
 
 
@@ -845,6 +849,12 @@
       let fx_edmg1 = new Sound("sounds/newedmg1.mp3", 0.25)
       let fx_edmg2 = new Sound("sounds/newedmg2.mp3", 0.25)
       let fx_edmg3 = new Sound("sounds/newedmg3.mp3", 0.25)
+
+      let fx_bossgrow1 = new Sound("sounds/bossgrow.mp3", 0.32)
+      let fx_bossgrow2 =  new Sound("sounds/bossgrow2.mp3", 0.32)
+      let fx_bossgrow3 = new Sound("sounds/bossgrow3.mp3", 0.32)
+
+      let fx_bossenter = new Sound("sounds/bossenter.mp3", 0.6)
 
       // scene contains objects
       var scene = new THREE.Scene();
