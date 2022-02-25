@@ -396,16 +396,16 @@ class Game {
       this.readyToStartGame = false
 
 
-      // let lev = 6
-      // for(var i=0; i<lev; i++){
-      //   player.levelUp()
-      // }
-      // this.clearAnnouncements()
-      // let round = 40
-      // for(var i=0; i<round; i++){
-      //   // skip all but last round
-      //   this.nextRound( i != round)
-      // }
+      let lev = 6
+      for(var i=0; i<lev; i++){
+        player.levelUp()
+      }
+      this.clearAnnouncements()
+      let round = 40
+      for(var i=0; i<round; i++){
+        // skip all but last round
+        this.nextRound( i != round)
+      }
     }
   }
 
@@ -1821,15 +1821,15 @@ playSong(song){
         // add a boss for each round above 40
         console.log( 'adding boss ' )
         let enemy = this.addEnemy(BOSS)
+
+        if(back){
+          enemy.mesh.position.z = -3
+        }
+
         this.enemies[ enemy.id ] = enemy
         fx_bossenter.play()
       }
     }
-
-    // let enemy = this.addEnemy(BOSS)
-    // this.enemies[ enemy.id ] = enemy
-    // enemy = this.addEnemy(BOSS)
-    // this.enemies[ enemy.id ] = enemy
 
     let enemiesKeys = k(this.enemies)
     let enemyId
@@ -2355,7 +2355,7 @@ playSong(song){
       // you can kill while corrupting, make sure they actually die
       if( enemy.lifecycle == ALIVE || enemy.lifecycle == CORRUPTING ){
 
-        let gainedKnowledge = false
+        let blockKillSound = false
 
         // only score once
         let score
@@ -2382,10 +2382,11 @@ playSong(song){
 
           if(enemy.damagedBy == EAT || enemy.damagedBy == SWORD){
 
+            blockKillSound = true
+
             // knowledge is for everyone
             if(enemy.knowledgeValue > 0){
               this.knowledgeSound()
-              gainedKnowledge = true
               player.changeKnowledge( enemy.knowledgeValue )
             } else if(enemy.moneyValue > 0){
               this.moneySound()
@@ -2402,10 +2403,10 @@ playSong(song){
         // remove banners etc for during fadeout
         enemy.removeExtras()
 
-        // if(!gainedKnowledge){
-        //   // block kill sound if we play the knowledge sound
-        //   enemy.killSound()
-        // }
+        if(!blockKillSound){
+          // block kill sound if we play the knowledge sound
+          enemy.killSound()
+        }
 
         // og spot
         // enemy.remove()

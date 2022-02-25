@@ -454,11 +454,11 @@
       function checkSoundsLoaded(){
         let done = true
         !fx_ekill1.loaded ? done = false : null
-        !fx_ekill2.loaded ? done = false : null
-        !fx_ekill3.loaded ? done = false : null
-        !fx_ekill4.loaded ? done = false : null
-        !fx_ekill5.loaded ? done = false : null
-        !fx_ekill6.loaded ? done = false : null
+        // !fx_ekill2.loaded ? done = false : null
+        // !fx_ekill3.loaded ? done = false : null
+        // !fx_ekill4.loaded ? done = false : null
+        // !fx_ekill5.loaded ? done = false : null
+        // !fx_ekill6.loaded ? done = false : null
         !fx_edmg1.loaded ? done = false : null
         !fx_edmg2.loaded ? done = false : null
         !fx_edmg3.loaded ? done = false : null
@@ -483,7 +483,14 @@
         // !fx_ost3.loaded ? done = false : null
         // !fx_ost4.loaded ? done = false : null
         // !fx_merchantamb.loaded ? done = false : null
-        // !fx_bossgrow.loaded ? done = false : null
+        
+        !fx_bossgrow1.loaded ? done = false : null
+        !fx_bossgrow2.loaded ? done = false : null
+        !fx_bossgrow3.loaded ? done = false : null
+        !fx_bossenter.loaded ? done = false : null
+        !fx_bossdie1.loaded ? done = false : null
+        !fx_bossdie2.loaded ? done = false : null
+        !fx_bossdie3.loaded ? done = false : null
 
         return done
       }
@@ -776,11 +783,13 @@
       let audioLoader = new THREE.AudioLoader()
 
       let fx_ekill1 = new Sound("sounds/ekill1.mp3")
-      let fx_ekill2 = new Sound("sounds/ekill2.mp3")
-      let fx_ekill3 = new Sound("sounds/ekill3.mp3")
-      let fx_ekill4 = new Sound("sounds/ekill4.mp3")
-      let fx_ekill5 = new Sound("sounds/ekill5.mp3")
-      let fx_ekill6 = new Sound("sounds/ekill6.mp3")
+      // chill out!
+      // let fx_ekill2 = new Sound("sounds/ekill2.mp3")
+      // let fx_ekill3 = new Sound("sounds/ekill3.mp3")
+      // let fx_ekill4 = new Sound("sounds/ekill4.mp3")
+      // let fx_ekill5 = new Sound("sounds/ekill5.mp3")
+      // let fx_ekill6 = new Sound("sounds/ekill6.mp3")
+
       // let fx_edmg1 = new Sound("sounds/edmg1.mp3")
       // let fx_edmg2 = new Sound("sounds/edmg2.mp3")
       // let fx_edmg3 = new Sound("sounds/edmg3.mp3")
@@ -797,11 +806,11 @@
       let fx_startgameE = new Sound("sounds/startgameE.mp3", 0.8)
       
       let fx_title = new Music("sounds/title.mp3", 0.9)
-      let fx_ost1 = new Music("sounds/letsgetstarted.mp3", 0.9)
+      let fx_ost1 = new Music("sounds/letsgetstarted.mp3", 0.6)
       let fx_ost2 = new Music("sounds/sounds_song2.mp3", 0.6)
       let fx_ost3 = new Music("sounds/shapey.mp3", 0.8)
       let fx_ost4 = new Music("sounds/round3.mp3", 0.8)
-      let fx_ost5 = new Music("sounds/boss.mp3", 0.2)
+      let fx_ost5 = new Music("sounds/boss.mp3", 0.6)
       let fx_merchantamb = new Sound("sounds/merchantamb.mp3", 0.6)
 
 
@@ -854,7 +863,11 @@
       let fx_bossgrow2 =  new Sound("sounds/bossgrow2.mp3", 0.32)
       let fx_bossgrow3 = new Sound("sounds/bossgrow3.mp3", 0.32)
 
-      let fx_bossenter = new Sound("sounds/bossenter.mp3", 0.6)
+      let fx_bossenter = new Sound("sounds/bossenter.mp3", 0.4)
+
+      let fx_bossdie1 = new Sound("sounds/bossdie.mp3", 0.4)
+      let fx_bossdie2 = new Sound("sounds/bossdie2.mp3", 0.4)
+      let fx_bossdie3 = new Sound("sounds/bossdie3.mp3", 0.4)
 
       // scene contains objects
       var scene = new THREE.Scene();

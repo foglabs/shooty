@@ -212,7 +212,7 @@ class Enemy extends Character {
     this.attackSounds = null
 
 
-    this.killSounds = [fx_ekill1, fx_ekill2, fx_ekill3, fx_ekill4, fx_ekill5, fx_ekill6]
+    this.killSounds = [fx_ekill1]
 
     this.direction = 0
 
@@ -228,6 +228,9 @@ class Enemy extends Character {
       this.bossDamage = 20
 
       this.mesh.material = new THREE.MeshPhysicalMaterial( { color: rgbToHex(this.baseColor[0],this.baseColor[1],this.baseColor[2]), reflectivity: 0.877, clearcoat: 0.6, roughness: 0})
+
+      this.killSounds = [fx_bossdie1,fx_bossdie2,fx_bossdie3]
+
 
     } else {
       this.corrupted = false
