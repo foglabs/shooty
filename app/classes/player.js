@@ -532,7 +532,7 @@ class Player extends Character {
 
       if(!this.deadSprite){
         // only do it once
-        this.addSprite(pbloodspriteMaterial.clone(), 0.3)
+        this.addSprite(pbloodspriteMaterial.clone(), 1, true, 0.6)
       }
     }
   }
@@ -598,6 +598,12 @@ class Player extends Character {
       this.mesh.scale.set(x,y,z)
 
       // this.mesh.material.opacity -= 0.01
+
+
+      if(this.deadSprite && this.deadSprite.material.opacity > 0){
+        this.deadSprite.material.rotation += 0.01
+        this.deadSprite.material.opacity -= 0.02
+      }
     }
   }
 

@@ -12,6 +12,9 @@ class SmokeBubble extends Character {
     this.y = y
     this.radius = radius
 
+
+    this.hitColor = [200,200,200]
+
     this.scaleFactor = 1
 
     this.mesh.position.set(x, y, player.mesh.position.z)

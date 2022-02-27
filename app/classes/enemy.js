@@ -124,9 +124,9 @@ class Enemy extends Character {
       allowedToPattern = true
       intention = PATTERNMOVE
     } else if(enemyType == BOSS){
-      health = 100
+      health = 400
       nutritionalValue = 0
-      geometry = new THREE.TorusGeometry( 0.4, 0.1, 6, 3 )
+      geometry = new THREE.TorusGeometry( 0.4, 0.18, 6, 36 )
       base_color = [0,0,0]
       knowledgeValue = 500
       lightness = 0.05
@@ -298,6 +298,11 @@ class Enemy extends Character {
     this.setColor(100,100,100)
 
     this.lightness = 0.77
+
+    // this.corrupted = false
+    // this.godCorrupted = false
+    // this.greenCorrupted = false
+    // this.hitmanCorrupted = false
 
     this.removeExtras()
   }

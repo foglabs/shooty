@@ -79,8 +79,8 @@ class Game {
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
-    // this.flickerTimer = new Timer()
-    // this.flickerTimer.start()
+    this.flickerTimer = new Timer()
+    this.flickerTimer.start()
 
     this.enemyDriftInTimer = new Timer()
     this.enemyDriftInTimer.start()
@@ -396,7 +396,7 @@ class Game {
       this.readyToStartGame = false
 
 
-      let lev = 6
+      let lev = 8
       for(var i=0; i<lev; i++){
         player.levelUp()
       }
@@ -1400,6 +1400,11 @@ playSong(song){
   }
 
   drawPlaying(){
+
+    if(this.roundCount >= 40){
+      this.drawFlicker()
+    }
+
 
     if(this.casino){
       // game phases are handled internally
