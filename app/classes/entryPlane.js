@@ -37,7 +37,6 @@ class EntryPlane {
     this.roundAnim = 0
   }
 
-
   animation(){
 
     if(this.entryPlaneTimer.time() > 30){
@@ -59,17 +58,18 @@ class EntryPlane {
           this.roundAnim = 2
         }
       }
-      
 
       if(game.roundCount >= 10){
+        let amount = game.roundCount / 6000.0
+        let limit = game.roundCount / -32
         let vertIndex = Math.floor( Math.random() * this.mesh.geometry.vertices.length )
         if(this.goingUp){
-          this.mesh.geometry.vertices[vertIndex].z += (0.001)
+          this.mesh.geometry.vertices[vertIndex].z += (amount)
         } else {
-          this.mesh.geometry.vertices[vertIndex].z -= (0.001)
+          this.mesh.geometry.vertices[vertIndex].z -= (amount)
         }
-        if(this.mesh.geometry.vertices[vertIndex].z < -1){
-          this.mesh.geometry.vertices[vertIndex].z = -1
+        if(this.mesh.geometry.vertices[vertIndex].z < limit){
+          this.mesh.geometry.vertices[vertIndex].z = limit
           this.goingUp = true
         }
         if(this.mesh.geometry.vertices[vertIndex].z > 0){

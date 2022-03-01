@@ -396,16 +396,16 @@ class Game {
       this.readyToStartGame = false
 
 
-      let lev = 8
-      for(var i=0; i<lev; i++){
-        player.levelUp()
-      }
-      this.clearAnnouncements()
-      let round = 40
-      for(var i=0; i<round; i++){
-        // skip all but last round
-        this.nextRound( i != round)
-      }
+      // let lev = 8
+      // for(var i=0; i<lev; i++){
+      //   player.levelUp()
+      // }
+      // this.clearAnnouncements()
+      // let round = 40
+      // for(var i=0; i<round; i++){
+      //   // skip all but last round
+      //   this.nextRound( i != round)
+      // }
     }
   }
 
