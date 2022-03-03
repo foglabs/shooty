@@ -140,7 +140,10 @@ class Item {
   }
 
   remove(){
-    this.removeMoneyLabel()
+    if(this.moneyLabel){
+      // underc ertain circumstances, remove before moneylabels show up
+      this.removeMoneyLabel()
+    }
     this.mesh.geometry.dispose()
     this.mesh.material.dispose()
     scene.remove(this.mesh)

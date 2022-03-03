@@ -61,7 +61,7 @@ class EntryPlane {
 
       if(game.roundCount >= 10){
         let amount = game.roundCount / 6000.0
-        let limit = game.roundCount / -32
+        let limit = game.roundCount / -48
         let vertIndex = Math.floor( Math.random() * this.mesh.geometry.vertices.length )
         if(this.goingUp){
           this.mesh.geometry.vertices[vertIndex].z += (amount)
