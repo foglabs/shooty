@@ -149,7 +149,7 @@ class Player extends Character {
   }
 
   levelUp(quiet=false){
-    this.changeMaxHealth(this.maxHealth + 4)
+    this.changeMaxHealth(this.maxHealth + 2)
 
     this.knowledge = 0
     this.level += 1

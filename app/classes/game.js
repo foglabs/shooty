@@ -23,6 +23,9 @@ class Game {
     this.nameEntryIndex = 0
     this.nameEntryConfirm = false
 
+
+    this.entryPlane = new EntryPlane(-0.5, 10, 0.785398)
+
     this.setDefaultGameValues()
 
     // clean up everything
@@ -32,7 +35,8 @@ class Game {
     document.getElementById("fog-logo2").classList.add("hidden")
     this.clearAnnouncements()
 
-    this.entryPlane = new EntryPlane(-0.5, 10, 0.785398)
+
+    this.entryPlane.mesh.visible = true
 
     // a little something for you and yours
     // this.backPlanes = []
@@ -401,7 +405,7 @@ class Game {
       //   player.levelUp()
       // }
       // this.clearAnnouncements()
-      // let round = 40
+      // let round = 38
       // for(var i=0; i<round; i++){
       //   // skip all but last round
       //   this.nextRound( i != round)
@@ -551,9 +555,14 @@ class Game {
 
     // change backplane color
     if(this.roundCount >= 40){
-      this.entryPlane.setColor("#ffffff")      
+      this.entryPlane.setColor("#ffffff")
     } else if(this.roundCount > 1){
       this.entryPlane.randomColor()
+    }
+
+    // unfade abit each round after 30
+    if(this.roundCount >= 30){
+      this.entryPlane.mesh.material.opacity = (this.entryPlane.mesh.material.opacity + 0.08 < 1) ? this.entryPlane.mesh.material.opacity + 0.08 : 1
     }
   }
 

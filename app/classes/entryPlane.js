@@ -3,7 +3,7 @@ class EntryPlane {
 
     // haha!
     const geometry = new THREE.PlaneGeometry( 1, 1 )
-    const material = new THREE.MeshStandardMaterial( {transparent: true, color: "#000000", side: THREE.DoubleSide, opacity: 0.9} )
+    const material = new THREE.MeshStandardMaterial( {transparent: true, color: "#000000", side: THREE.DoubleSide, opacity: 0.9, needsUpdate: true} )
     this.mesh = new THREE.Mesh( geometry, material )
     this.mesh.position.z = zPos
     this.mesh.scale.x = scale
@@ -37,6 +37,10 @@ class EntryPlane {
     this.roundAnim = 0
   }
 
+  opacityByRound(){
+    return 0.9 - (game.roundCount - 30 / 5)
+  }
+
   animation(){
 
     if(this.entryPlaneTimer.time() > 30){
@@ -59,6 +63,14 @@ class EntryPlane {
         }
       }
 
+      if( game.roundCount >= 30 && this.mesh.material.opacity > this.opacityByRound() ){
+        // fade down backplane after 30
+        this.mesh.material.opacity -= 0.001
+        if(this.mesh.material.opacity < 0.1){
+          this.mesh.visible = false
+        }
+      }
+     
       if(game.roundCount >= 10){
         let amount = game.roundCount / 6000.0
         let limit = game.roundCount / -48
@@ -77,7 +89,7 @@ class EntryPlane {
           this.goingUp = false
         }
         this.mesh.geometry.verticesNeedUpdate = true
-      }
+      } 
         
 
 
