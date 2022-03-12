@@ -1046,16 +1046,16 @@ class Enemy extends Character {
 
       if(this.hypnotizedById && game.enemies[ this.hypnotizedById ] && game.enemies[ this.hypnotizedById ].lifecycle == ALIVE ) {
         // if boss hypnotized enemy, move slowly towards boss
-        console.log( 'hypno wlak!!!' )
         this.moveTowardsPoint(game.enemies[this.hypnotizedById].mesh.position.x, game.enemies[this.hypnotizedById].mesh.position.y, 0.6)
+      } else if(this.godCorrupted){
+        // if godcorrupted, always chase player
+        this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y, 0.4)
       } else if(this.corrupted && (game.percentCorrupted == 1 || game.roundCount >= 20) && this.enemyType != BOSS ){
         // chase the player like a demon from hell if theres only corrupteds left
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y)
 
-      } else if(this.godCorrupted){
-        // if godcorrupted, always chase player
-        this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y, 0.4)
       } else if(this.enemyType == BOSS){
+        // uh this doesnt hapennnnnnn
         this.moveTowardsPoint(player.mesh.position.x, player.mesh.position.y, 0.6)
       } else {
 
