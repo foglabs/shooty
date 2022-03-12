@@ -390,6 +390,8 @@ class Game {
 
       fx_startgameE.play()
 
+      this.entryPlane.setDefaultOpacity()
+
       this.newRound(this.enemyMax, this.enemyInterval, this.corruptionMax, this.corruptingTime, [0,0,0])
 
       this.startTime = performance.now()
@@ -400,16 +402,16 @@ class Game {
       this.readyToStartGame = false
 
 
-      // let lev = 8
-      // for(var i=0; i<lev; i++){
-      //   player.levelUp()
-      // }
-      // this.clearAnnouncements()
-      // let round = 38
-      // for(var i=0; i<round; i++){
-      //   // skip all but last round
-      //   this.nextRound( i != round)
-      // }
+      let lev = 8
+      for(var i=0; i<lev; i++){
+        player.levelUp()
+      }
+      this.clearAnnouncements()
+      let round = 39
+      for(var i=0; i<round; i++){
+        // skip all but last round
+        this.nextRound( i != round)
+      }
     }
   }
 
@@ -456,7 +458,7 @@ class Game {
     }
     
     this.corruptionTimer.reset()
-    this.corruptedDamage = this.corruptedDamageDefault + (this.roundCount)
+    this.corruptedDamage = this.corruptedDamageDefault + Math.floor(this.roundCount * 0.6)
     this.godCorruptedDamage = Math.round( this.godCorruptedDamageDefault + Math.pow(this.roundCount/6, 2) )
 
     this.greenCorruptedDamage = Math.round( this.greenCorruptedDamageDefault + Math.pow(this.roundCount/4, 2) )
@@ -556,13 +558,17 @@ class Game {
     // change backplane color
     if(this.roundCount >= 40){
       this.entryPlane.setColor("#ffffff")
+      this.entryPlane.setDefaultOpacity()
     } else if(this.roundCount > 1){
       this.entryPlane.randomColor()
     }
 
     // unfade abit each round after 30
-    if(this.roundCount >= 30){
-      this.entryPlane.mesh.material.opacity = (this.entryPlane.mesh.material.opacity + 0.08 < 1) ? this.entryPlane.mesh.material.opacity + 0.08 : 1
+    if(this.roundCount >= 30 && this.roundCount < 40){
+      if(!this.entryPlane.mesh.visible){
+        this.entryPlane.mesh.visible = true
+      }
+      this.entryPlane.mesh.material.opacity = (this.entryPlane.mesh.material.opacity + 0.4 < 1) ? this.entryPlane.mesh.material.opacity + 0.4 : 1
     }
   }
 

@@ -18,8 +18,9 @@ class EntryPlane {
     this.roundAnim = DONE
   }
 
-
-
+  setDefaultOpacity(){
+    this.mesh.material.opacity = 0.9
+  }
 
   randomColor(){
     let r,g,b
@@ -63,7 +64,7 @@ class EntryPlane {
         }
       }
 
-      if( game.roundCount >= 30 && this.mesh.material.opacity > this.opacityByRound() ){
+      if( game.roundCount >= 30 && game.roundCount < 40 && this.mesh.material.opacity > this.opacityByRound() ){
         // fade down backplane after 30
         this.mesh.material.opacity -= 0.001
         if(this.mesh.material.opacity < 0.1){
