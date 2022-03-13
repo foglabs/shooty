@@ -402,16 +402,16 @@ class Game {
       this.readyToStartGame = false
 
 
-      let lev = 8
-      for(var i=0; i<lev; i++){
-        player.levelUp()
-      }
-      this.clearAnnouncements()
-      let round = 39
-      for(var i=0; i<round; i++){
-        // skip all but last round
-        this.nextRound( i != round)
-      }
+      // let lev = 8
+      // for(var i=0; i<lev; i++){
+      //   player.levelUp()
+      // }
+      // this.clearAnnouncements()
+      // let round = 39
+      // for(var i=0; i<round; i++){
+      //   // skip all but last round
+      //   this.nextRound( i != round)
+      // }
     }
   }
 
@@ -551,7 +551,7 @@ class Game {
 
       spotlight2.color = new THREE.Color("#ff0000")
     } else if(this.roundCount >= 40){
-      // purple to the death of me
+      // red to the death of me
       spotlight2.color = new THREE.Color("#ff0000")
     }
 
@@ -1835,7 +1835,7 @@ playSong(song){
     }
 
     if(this.roundCount >= 40){
-      let numBosses = (this.roundCount - 39)
+      let numBosses = (this.roundCount - 39) * 2
 
       for(var i=0; i<numBosses; i++){ 
         // add a boss for each round above 40
@@ -2504,14 +2504,26 @@ playSong(song){
 
         this.handleEnemy(enemy)
 
+        // if(enemy.enemyType == BOSS){
+        //   // -1 or 1
+        //   enemy.mesh.position.z += enemy.zDirection * 0.004
+        //   if(enemy.zDirection == 1 && enemy.mesh.position.z >= 0.2){
+        //     enemy.zDirection = -1
+        //     console.log( 'switch to -1' )
+        //   } else if(enemy.zDirection == -1 && enemy.mesh.position.z <= -0.2) {
+        //     enemy.zDirection = 1
+        //     console.log( 'switch to 1' )
+        //   }
+        
         // scroll in new enemies
+
         if(enemy.mesh.position.z < 0){
           // if enemy not in round yet, move em in
           enemy.mesh.position.z += 0.016 + this.roundCount / 1000.0
           if(enemy.mesh.position.z > 0){
             enemy.mesh.position.z = 0
           }
-        }
+        }  
 
         if(enemy.passedEntryPlane() && enemy.lifecycle == ALIVE || enemy.lifecycle == CORRUPTING){
           // only rael alive ones

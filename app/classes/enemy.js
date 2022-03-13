@@ -231,6 +231,8 @@ class Enemy extends Character {
 
       this.killSounds = [fx_bossdie1,fx_bossdie2,fx_bossdie3]
 
+      // bosses move back and forth z
+      // this.zDirection = 1
 
     } else {
       this.corrupted = false
