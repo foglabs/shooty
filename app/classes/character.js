@@ -269,6 +269,11 @@ class Character {
   }
 
   removeExtras(){
+    if(this.speedGuide){
+      this.speedGuide.geometry.dispose()
+      this.speedGuide.material.dispose()
+      scene.remove(this.speedGuide)
+    }
 
     if(this.moneyLabel){
       this.removeMoneyLabel()
@@ -725,15 +730,12 @@ class Character {
   }
 
   animation(){
-      // override dis in your subclass to do extra stuff in addition to the reggies here
-    this.customAnimation()
-
     // set bounding box from mesh baby
     this.bbox.setFromObject(this.mesh)
-    if(this.isPlayer){
-      let sizeBonus = this.topSpeed() ? 0.33 : 0.22
-      this.bbox.expandByScalar(sizeBonus)
-    }
+
+
+    // override dis in your subclass to do extra stuff in addition to the reggies here
+    this.customAnimation()
 
     if(this.enemyType != BOSS && !this.hypnotizedById){
       this.colorCycle()

@@ -511,6 +511,7 @@
           if(gamepads[0]){
 
             // there is gamepads!
+            // console.log( 'gamepads is ', gamepads )
             var gp = gamepads[0]
             if(game.stage == PLAYING){
               // if(dbug.time() > 1000){
@@ -576,8 +577,8 @@
 
                       // reset these                      
                       game.calibrateAxis = false
-                      game.gamepadAxisXMax = null
-                      game.gamepadAxisYMax = null
+                      game.gamepadAxisXMax = game.defaultGamepadAxisXMax
+                      game.gamepadAxisYMax = game.defaultGamepadAxisYMax
 
                       game.remapTimer.reset()
                     } else if(numPushed == 4){
@@ -733,6 +734,7 @@
                   ymax: game.gamepadAxisYMax,
                   keyMap: game.gamepadKeyMap
                 }
+                console.log( 'chose settings', settings )
                 setCookie("remap", JSON.stringify(settings) )
 
                 game.stage = PAUSE

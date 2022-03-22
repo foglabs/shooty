@@ -95,6 +95,11 @@ class Game {
     this.gamepadConnected = false
     this.gamepadXAxis = null
     this.gamepadYAxis = null
+
+    // total bs
+    this.defaultGamepadAxisXMax = 1
+    this.defaultGamepadAxisYMax = 1
+    
     this.gamepadState = {}
     this.defaultGamepadKeyMap = [
       "z", // 0
