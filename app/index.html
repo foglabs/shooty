@@ -218,7 +218,6 @@
 
         // draw highscores
         document.getElementById("scores").classList.add("score-scroll")
-        let scoreText = ""
         let thisScoreElement
         scoreData.map((thisScore) => {
           thisScoreElement = document.createElement("div")
@@ -227,19 +226,23 @@
           thename = document.createElement("span")
           thename.classList.add("score-thename")
           thename.innerHTML = thisScore.name
-
+          
+          round = document.createElement("span")
+          round.innerHTML = " (R" + thisScore.roundCount + ")"
+          
           level = document.createElement("span")
-          level.innerHTML = "(LVL" + thisScore.level + ")"
+          level.innerHTML = " (LVL" + thisScore.level + ")"
+
 
           let nl = document.createElement("div")
           nl.classList.add("score-nl")
           nl.appendChild(thename)
+          nl.appendChild(round)
           nl.appendChild(level)
 
           score = document.createElement("div")
           score.classList.add("score-score")
           score.innerHTML = thisScore.score
-
 
           thisScoreElement.appendChild(score)
           thisScoreElement.appendChild(nl)
@@ -248,13 +251,15 @@
       }
 
       function postScore(){
-        let score = document.getElementById("score").textContent
-        let level = document.getElementById("level").textContent
+        // let score = document.getElementById("score").textContent
+        let score = game.score.toString()
+        let level = player.level.toString()
         let name = document.getElementById("name").textContent
+        let roundCount = game.roundCount.toString()
         var xhr = new XMLHttpRequest()
         xhr.open("POST", "/score", true)
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-        xhr.send(JSON.stringify( { sex: game.haveSex(), score: score, level: level, name: name } ))
+        xhr.send(JSON.stringify( { sex: game.haveSex(), score: score, level: level, name: name, roundCount: roundCount } ))
       }
 
       function killCookie() {

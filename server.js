@@ -27,7 +27,7 @@ app.get('/score', function(req, res, next){
     data.split("\n").map(function(line){
       thisline = line.split(",")
       if(thisline[0] && thisline[1] && thisline[2]){
-        scores.push ({ score: thisline[0], level: thisline[1], name: thisline[2] } )
+        scores.push ({ score: thisline[0], level: thisline[1], name: thisline[2], roundCount: thisline[3] } )
       }
     })
 
@@ -55,7 +55,8 @@ app.post('/score', function(req, res, next) {
   let score = req.body.score.replace(/\W/g, '')
   let level = req.body.level.replace(/\W/g, '')
   let name = req.body.name.replace(/\W/g, '')
-  console.log( 'sanitized to', score, level, name )
+  let roundCount = req.body.roundCount.replace(/\W/g, '')
+  console.log( 'sanitized to', score, level, name, roundCount )
 
   // we overshot
   // if(!(keyActivity && pLevel && endTime && startTime) || startTime > endTime || keyActivity < 5 || pLevel != level || (endTime - startTime) < 5000 ){
@@ -72,7 +73,7 @@ app.post('/score', function(req, res, next) {
   // console.log(validateKA(82,3640,32191))
   // console.log(validateKA(400,3798,142265))
 
-  let row = [score,level,name].join(",") + "\n"
+  let row = [score,level,name,roundCount].join(",") + "\n"
   console.log( row )
   let filePath = path.join(__dirname, 'data.txt')
   fs.appendFile(filePath, row, function(err) {

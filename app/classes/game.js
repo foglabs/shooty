@@ -78,8 +78,8 @@ class Game {
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    // this.attractStage = SCORES
-    this.attractStage = DEMO
+    this.attractStage = SCORES
+    // this.attractStage = DEMO
     this.attractTimer = new Timer()
     this.attractTimer.start()
 
