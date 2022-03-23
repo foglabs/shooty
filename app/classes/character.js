@@ -269,11 +269,11 @@ class Character {
   }
 
   removeExtras(){
-    if(this.speedGuide){
-      this.speedGuide.geometry.dispose()
-      this.speedGuide.material.dispose()
-      scene.remove(this.speedGuide)
-    }
+    // if(this.speedGuide){
+    //   this.speedGuide.geometry.dispose()
+    //   this.speedGuide.material.dispose()
+    //   scene.remove(this.speedGuide)
+    // }
 
     if(this.moneyLabel){
       this.removeMoneyLabel()

@@ -24,10 +24,10 @@ class Player extends Character {
     this.moneyCircleEnabled = true
 
     this.maxAcc = 2.6
-    this.speedGuide = new THREE.Mesh(this.mesh.geometry, new THREE.MeshStandardMaterial( { wireframe: true, color: this.mesh.material.color.getHex(), opacity: 0.1 }) )
-    scene.add(this.speedGuide)
-    this.speedGuide.scale.set(1.33,1.33,1.33)
-    this.speedGuide.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
+    // this.speedGuide = new THREE.Mesh(this.mesh.geometry, new THREE.MeshStandardMaterial( { wireframe: false, transparent: true, color: this.mesh.material.color.getHex(), opacity: 0.2 }) )
+    // scene.add(this.speedGuide)
+    // this.speedGuide.scale.set(1.33,1.33,1.33)
+    // this.speedGuide.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
 
     this.defaultPlayerValues()
   }
@@ -97,7 +97,7 @@ class Player extends Character {
     this.idleTimer = new Timer()
     this.idleTimer.start()
 
-    this.speedGuide.visible = false
+    // this.speedGuide.visible = false
   }
   
   rotation(){
@@ -108,8 +108,8 @@ class Player extends Character {
     // sign = Math.random() > 0.5 ? 1 : -1
     this.mesh.rotation.y += 0.08 * fac
 
-    this.speedGuide.rotation.x = this.mesh.rotation.x
-    this.speedGuide.rotation.y = this.mesh.rotation.y
+    // this.speedGuide.rotation.x = this.mesh.rotation.x
+    // this.speedGuide.rotation.y = this.mesh.rotation.y
   }
 
   takeDamageSound(){
@@ -538,16 +538,16 @@ class Player extends Character {
       if(this.topSpeed()){
         sizeBonus = 0.33
 
-        this.speedGuide.visible = true
+        // this.speedGuide.visible = true
 
       } else {
-        this.speedGuide.visible = false
+        // this.speedGuide.visible = false
         sizeBonus = 0.22
       }
       // beef up box a little bit, more if topspeed
       this.bbox.expandByScalar(sizeBonus)
       
-      this.speedGuide.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
+      // this.speedGuide.position.set(this.mesh.position.x,this.mesh.position.y,this.mesh.position.z)
     } else if(this.lifecycle == DYING){
       this.deathAnimation()
 
