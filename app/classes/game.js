@@ -88,6 +88,9 @@ class Game {
 
     this.enemyDriftInTimer = new Timer()
     this.enemyDriftInTimer.start()
+    
+    // this.knowledgeDrainTimer = new Timer()
+    // this.knowledgeDrainTimer.start()
 
     this.demo = null
     this.demoCharacters = []
@@ -272,7 +275,7 @@ class Game {
     // max knowl to level up
     this.knowledgeMaxDefault = 50
     this.knowledgeMax = this.knowledgeMaxDefault
-
+    this.knowledgeFloor = this.knowledgeMaxDefault
     // countdown to generate enemies every so often
     this.defaultEnemyInterval = 18000
     this.enemyInterval = this.defaultEnemyInterval
@@ -407,16 +410,16 @@ class Game {
       this.readyToStartGame = false
 
 
-      // let lev = 8
-      // for(var i=0; i<lev; i++){
-      //   player.levelUp()
-      // }
-      // this.clearAnnouncements()
-      // let round = 39
-      // for(var i=0; i<round; i++){
-      //   // skip all but last round
-      //   this.nextRound( i != round)
-      // }
+      let lev = 8
+      for(var i=0; i<lev; i++){
+        player.levelUp()
+      }
+      this.clearAnnouncements()
+      let round = 39
+      for(var i=0; i<round; i++){
+        // skip all but last round
+        this.nextRound( i != round)
+      }
     }
   }
 
@@ -2402,7 +2405,10 @@ playSong(song){
           }
 
           if(enemy.damagedBy == BOSSDAMAGE){
+            // && this.knowledgeDrainTimer.time() > 600
+            // this.knowledgeDrainTimer.reset()
             console.log( 'boss dammy baby!' )
+            player.changeKnowledge(-1)
           }
 
           if(enemy.damagedBy == EAT || enemy.damagedBy == SWORD){

@@ -140,10 +140,12 @@ class Player extends Character {
 
   changeKnowledge(knowChange){
     // lock em in 
-    this.knowledge = incInRange( this.knowledge, knowChange, 0, game.knowledgeMax )
+    this.knowledge = incInRange( this.knowledge, knowChange, -1, game.knowledgeMax )
     if(this.knowledge >= game.knowledgeMax){
       console.log( 'I WANT LEVEL UP NOW', this.knowledge, game.knowledgeMax, this.level )
       this.levelUp()
+    } else if(this.knowledge < 0){
+      this.levelDown()
     }
   }
 
@@ -161,6 +163,7 @@ class Player extends Character {
     this.changeMaxHealth(this.maxHealth + 2)
 
     this.knowledge = 0
+
     this.level += 1
     !quiet ? game.announcement("LEVEL UP (" + this.level + ")" ) : null
     game.changeScore(200 * this.level)
@@ -247,6 +250,85 @@ class Player extends Character {
 
     if(!quiet){
       fx_levelupE2.play()
+    }
+  }
+
+  levelDown(quiet=false){
+    this.changeMaxHealth(this.maxHealth - 2)
+
+    this.level -= 1
+    !quiet ? game.announcement("LEVEL LOST (" + this.level + ")" ) : null
+    // game.changeScore(200 * this.level)
+
+    // game.knowledgeMax = Math.round(game.knowledgeMax * 1.25)
+    
+    if(level > 1){
+      game.knowledgeMax = Math.round( game.knowledgeMaxDefault + ( 6/2*game.knowledgeMaxDefault * Math.log(this.level - 1) ) )
+    } else {
+      game.knowledgeMax = game.knowledgeMaxDefault
+    }
+
+    // change knowledge to just under new level
+    this.knowledge = game.knowledgeMax - 1
+    document.getElementById("knowledge").max = game.knowledgeMax
+    
+    if(this.level < 2){
+      this.swordEnabled = false
+      // !quiet ? game.announcement("SWORD UNLOCKED (Z)") : null
+    }
+
+    if(this.level < 4){
+      // !quiet ? game.announcement("KILLING CIRCLE UNLOCKED (SPACEBAR)") : null
+      this.killingCircleEnabled = false
+    }
+
+    // smokes recharge faster with higher level
+    this.smokesInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
+
+    // start bombs at level 8
+    this.numBombsMax = Math.max(0, Math.floor(-3 + this.level/2))
+    // if(this.level < 8){
+    //   !quiet ? game.announcement("BOMBS UNLOCKED (C)") : null
+    // } else if(this.numBombsMax > 1) {
+    //   !quiet ? game.announcement("EXTRA BOMB UNLOCKED (C)") : null
+    // }
+
+    // bombs recharge faster with higher level
+    // this.bombsInterval = Math.floor( 1000 - 40 * Math.pow( this.level/4, 2 ) )
+
+    // start smokes at level 6
+    this.numSmokesMax = Math.max(0, Math.floor(-2 + this.level/2))
+    // if(this.level < 6){
+    //   !quiet ? game.announcement("SMOKE UNLOCKED (X)") : null
+    // } else if(this.numSmokesMax > 1) {
+    //   !quiet ? game.announcement("EXTRA SMOKE UNLOCKED (X)") : null
+    // }
+  
+    if(game.friends.length > 0){
+      let friend
+      for(var i=0; i<game.friends.length; i++){
+        friend = game.friends[i]
+        friend.changePowerMax( (this.level + 2) * 25 )
+      }
+    }
+
+    if(this.level < 12){
+      // you now can bet
+      // !quiet ? game.announcement("CASINO UNLOCKED (B)") : null
+      this.casinoEnabled = false
+    }
+
+    // this.changeMoney( Math.ceil( this.level * 5 ) )
+
+    // if(this.level % 4 == 0){
+      // !quiet ? game.announcement("TOP SPEED INCREASE") : null
+      player.maxAcc -= 0.05
+    // }
+
+    this.bonusDamage = 2*(this.level/2)
+
+    if(!quiet){
+      // fx_levelupE2.play()
     }
   }
 

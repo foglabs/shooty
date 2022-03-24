@@ -365,8 +365,9 @@ class Enemy extends Character {
 
   killScore(){
     let score = 1
+    // base score
     if(this.damagedBy == EAT) {
-      score = 1
+      score = 2
     } else if(this.damagedBy == SWORD) {
       score = 12
     } else if(this.damagedBy == KILLINGCIRCLE) {
