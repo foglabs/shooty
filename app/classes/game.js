@@ -54,7 +54,7 @@ class Game {
     //   this.backPlanes.push(backPlane)
     // }
       
-    this.musicEnabled = false
+    this.musicEnabled = true
     this.currentSong = TITLE
 
     this.stage = false
@@ -78,7 +78,7 @@ class Game {
     this.scoreLightTimer.start()
 
     // to alternate score scroll + press space msg
-    this.attractStage = SCORES
+    this.attractStage = TITLE
     // this.attractStage = DEMO
     this.attractTimer = new Timer()
     this.attractTimer.start()
@@ -314,6 +314,9 @@ class Game {
 
     this.merchant = null
     this.merchantTimer = new Timer()
+
+    // dont repeat it
+    this.playedDeathSong = false
   }
   
   // calcChanceSlices(){
@@ -410,16 +413,16 @@ class Game {
       this.readyToStartGame = false
 
 
-      let lev = 8
-      for(var i=0; i<lev; i++){
-        player.levelUp()
-      }
-      this.clearAnnouncements()
-      let round = 39
-      for(var i=0; i<round; i++){
-        // skip all but last round
-        this.nextRound( i != round)
-      }
+      // let lev = 8
+      // for(var i=0; i<lev; i++){
+      //   player.levelUp()
+      // }
+      // this.clearAnnouncements()
+      // let round = 39
+      // for(var i=0; i<round; i++){
+      //   // skip all but last round
+      //   this.nextRound( i != round)
+      // }
     }
   }
 
@@ -595,21 +598,29 @@ class Game {
 
   handleMusic(){
     if(this.musicEnabled){
-      if(this.stage == TITLE || this.stage == LOADING || this.stage == PLAYING){
+      if(this.stage == TITLE || this.stage == LOADING || this.stage == PLAYING || this.stage == ENDING || this.stage == GAMEOVER){
 
         // oh forget it!      
         // music start
         if(this.musicTimer.running && this.musicTimer.time() > 2000){
 
-          if(!this.muteMessage){
-            this.announcement("MUTE MUSIC (M)")
-            this.muteMessage = true
-          }
+          // if(!this.muteMessage){
+          //   this.announcement("MUTE MUSIC (M)")
+          //   this.muteMessage = true
+          // }
 
           if(this.stage == TITLE){
             if(!fx_title.playing()){
               
               this.playSong(OSTTITLE)
+            }
+          } else if(this.stage == ENDING || this.stage == GAMEOVER){
+            if(!fx_dye.playing()){
+              if(!this.playedDeathSong){
+                // only play it once
+                this.playedDeathSong = true
+                this.playSong(OSTDEAD)  
+              }
             }
           } else if(this.merchant){
             if(!fx_merchantamb.playing()){
@@ -661,6 +672,8 @@ stopSongs(){
     fx_merchantamb.stop()
   } else if(fx_title.playing()){
     fx_title.stop()
+  } else if(fx_dye.playing()){
+    fx_dye.stop()
   }
 }
 
@@ -706,6 +719,9 @@ playSong(song){
   } else if(song === OSTTITLE){
     console.log( 'playin title' )
     fx_title.play()
+  } else if(song === OSTDEAD){
+    console.log( 'playin dead' )
+    fx_dye.play()
   }
 }
 
@@ -840,7 +856,8 @@ playSong(song){
 
     if( ( game.nameEntry == NONAME) && checkSoundsLoaded() ){
 
-      if(this.attractTimer.time() > 16000){
+      let attractTimeLimit = this.attractStage != READY ? 8000 : 4000
+      if(this.attractTimer.time() > attractTimeLimit){
         this.attractTimer.reset()
         this.attractStage += 1
 
@@ -897,11 +914,11 @@ playSong(song){
             let event3 = new Event(1, 3000, 0, 0)
             let event4 = new Event(2, 6000, 0.1, 0.1)
             let event5 = new Event(0, 4000, -0.8, -0.8)
-            let event6 = new Event(0, 8000, 0.8, 0.8)
-            let event7 = new Event(1, 11000, -0.1, -0.1)
-            let event8 = new Event(2, 11000, 0.6, 0.6)
+            let event6 = new Event(0, 6000, 0.8, 0.8)
+            let event7 = new Event(1, 7000, -0.1, -0.1)
+            let event8 = new Event(2, 7000, 0.6, 0.6)
 
-            this.demo = new Demo(characters, 15000, [event, event2, event3, event4, event5, event6, event7, event8])
+            this.demo = new Demo(characters, 8000, [event, event2, event3, event4, event5, event6, event7, event8])
             this.enemies = [enemy1, enemy2]
           } else if(selectedDemo == 1){
             characters.push(player)
@@ -956,14 +973,14 @@ playSong(song){
             let event24 = new Event(6, 3000, -0.6, 0.2)
             let event25 = new Event(6, 6000, -0.6, -0.2)
 
-            let event26 = new Event(0, 9000, 0.5, 0.5)
-            let event27 = new Event(0, 13000, 0.5, -0.5)
+            let event26 = new Event(0, 7000, 0.5, 0.5)
+            let event27 = new Event(0, 8000, 0.5, -0.5)
 
             let event28 = new Event(0, 3000, 0, 0.5)
             let event29 = new Event(0, 4000, 0.5, -0.5)
             let event30 = new Event(0, 6000, -0.5, 0.5)
 
-            this.demo = new Demo(characters, 15000, [event,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15,event16,event17,event18,event19,event20,event21,event22,event23,event24,event25,event26,event27,event28,event29,event30])
+            this.demo = new Demo(characters, 8000, [event,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15,event16,event17,event18,event19,event20,event21,event22,event23,event24,event25,event26,event27,event28,event29,event30])
             this.enemies = [enemy1, enemy2, enemy3, enemy4, enemy5, enemy6]
           } else if(selectedDemo == 2) {
 
@@ -996,7 +1013,7 @@ playSong(song){
             let event13 = new Event(1, 8000, -0.3, 0.2)
             let event14 = new Event(2, 8000, -0.3, 0.2)
             let event15 = new Event(3, 8000, -0.3, 0.2)
-            this.demo = new Demo(characters, 15000, [event,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15])
+            this.demo = new Demo(characters, 8000, [event,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15])
             this.enemies = [enemy1, enemy2, enemy3, enemy4]
           
           } else if(selectedDemo == 3) {
@@ -1084,20 +1101,20 @@ playSong(song){
             let event7 = new Event(7, 6000, -3, 0)
             let event8 = new Event(8, 6000, -4, 0)
 
-            let event9 = new Event(0, 12000, -3, 3)
-            let event10 = new Event(1, 12000, -3, 2)
-            let event11 = new Event(2, 12000, -3, 1)
-            let event12 = new Event(3, 12000, -3, 0)
-            let event13 = new Event(4, 12000, -3, -1)
-            let event14 = new Event(5, 12000, 3, 0)
-            let event15 = new Event(6, 12000, 3, 1)
-            let event16 = new Event(7, 12000, 3, 2)
-            let event17 = new Event(8, 12000, 3, 3)
+            let event9 = new Event(0, 8000, -3, 3)
+            let event10 = new Event(1, 8000, -3, 2)
+            let event11 = new Event(2, 8000, -3, 1)
+            let event12 = new Event(3, 8000, -3, 0)
+            let event13 = new Event(4, 8000, -3, -1)
+            let event14 = new Event(5, 8000, 3, 0)
+            let event15 = new Event(6, 8000, 3, 1)
+            let event16 = new Event(7, 8000, 3, 2)
+            let event17 = new Event(8, 8000, 3, 3)
 
             characters.push(player)
             player.mesh.visible = true
 
-            this.demo = new Demo(characters, 15000, [event00,event01,event02,event03, event0,event1,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15,event16,event17])
+            this.demo = new Demo(characters, 8000, [event00,event01,event02,event03, event0,event1,event2,event3,event4,event5,event6,event7,event8,event9,event10,event11,event12,event13,event14,event15,event16,event17])
             this.enemies = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8,enemy9]
           } else if(selectedDemo == 4){
             // STICK DEMO
@@ -1119,7 +1136,7 @@ playSong(song){
             let event00 = new Event(1, 0, 0, 0, "EAT STICKS TO INCREASE MONEY")
             let event02 = new Event(1, 4000, -3, 0)
 
-            this.demo = new Demo(characters, 15000, [event00,event02])
+            this.demo = new Demo(characters, 8000, [event00,event02])
             this.enemies = [enemy1] 
           } else if(selectedDemo == 5){
             // knowlocta DEMO
@@ -1166,7 +1183,7 @@ playSong(song){
             // player
             let event06 = new Event(5, 3000, 2, 0)
 
-            this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04,event05,event06])
+            this.demo = new Demo(characters, 8000, [event00,event01,event02,event03,event04,event05,event06])
             this.enemies = [enemy1,enemy2,enemy3,enemy4,enemy5] 
           } else if(selectedDemo == 6){
             // healing DEMO
@@ -1192,9 +1209,9 @@ playSong(song){
 
             let event00 = new Event(2, 0, 2, 0, "EAT SPHERES TO GAIN HEALTH")
             let event01 = new Event(2, 4000, -3, -2)
-            let event02 = new Event(2, 8000, -3, 2, "EAT BLUE CUBES TO REFILL HEALTH")
+            let event02 = new Event(2, 5000, -3, 2, "EAT BLUE CUBES TO REFILL HEALTH")
 
-            this.demo = new Demo(characters, 10000, [event00,event01,event02])
+            this.demo = new Demo(characters, 8000, [event00,event01,event02])
             this.enemies = [enemy1,enemy2] 
           } else if(selectedDemo == 7){
             // eating DEMO
@@ -1248,10 +1265,10 @@ playSong(song){
             let event01 = new Event(8, 2000, -4, 2)
             let event02 = new Event(8, 4000, -4, -2)
 
-            let event03 = new Event(8, 6000, 4, -2, "USE ENERGY TO ACTIVATE POWERS")
-            let event04 = new Event(8, 8000, 4, 2)
+            let event03 = new Event(8, 5000, 4, -2, "USE ENERGY TO ACTIVATE POWERS")
+            let event04 = new Event(8, 7000, 4, 2)
 
-            this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04])
+            this.demo = new Demo(characters, 8000, [event00,event01,event02,event03,event04])
             this.enemies = [enemy1,enemy2,enemy3,enemy4,enemy5,enemy6,enemy7,enemy8,] 
           } else if(selectedDemo == 8){
             // sword DEMO
@@ -1291,9 +1308,9 @@ playSong(song){
             let event02 = new Event(3, 4000, -1, 0, false, DEMOSWORD, true)
 
             let event03 = new Event(3, 6000, -3, 0, "USE POWERS TO KILL CORRUPTED SHAPES")
-            let event04 = new Event(3, 8000, 0, 0, false, DEMOSWORD, false)
+            let event04 = new Event(3, 7000, 0, 0, false, DEMOSWORD, false)
 
-            this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04])
+            this.demo = new Demo(characters, 8000, [event00,event01,event02,event03,event04])
             this.enemies = [enemy1,enemy2,enemy3] 
           } else if(selectedDemo == 9){
             // circle DEMO
@@ -1344,9 +1361,9 @@ playSong(song){
             let event02 = new Event(4, 3000, -3, 0, false, DEMOCIRCLE, false)
             let event03 = new Event(4, 4000, 3, 0)
             let event04 = new Event(4, 6000, 2, 0)
-            let event05 = new Event(4, 8000, 0, 0, false, DEMOCIRCLE, true)
+            let event05 = new Event(4, 7000, 0, 0, false, DEMOCIRCLE, true)
 
-            this.demo = new Demo(characters, 10000, [event00,event01,event02,event03,event04,event05])
+            this.demo = new Demo(characters, 8000, [event00,event01,event02,event03,event04,event05])
             this.enemies = [enemy1,enemy2,enemy3,enemy4] 
           }
         }
