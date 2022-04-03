@@ -84,6 +84,9 @@ class Character {
     // bouncing back from edge
     this.bounceBackTimer = new Timer()
     this.bounceBackTimer.start()
+    // default, dims down with hits
+    this.defaultBounceBackValue = -1.08
+    this.bounceBackValue = this.defaultBounceBackValue
   }
 
   fuckUpVertex(){
@@ -466,12 +469,15 @@ class Character {
   bounceBack(isX){
     // send character back where they CAME FROM
     if(isX){
-      this.accx = -1.08 * this.accx
+      this.accx = this.bounceBackValue * this.accx
     } else {
-      this.accy = -1.08 * this.accy
+      this.accy = this.bounceBackValue * this.accy
     }
    
-    // if its player, cool that key
+    // dont bounce back as hard next time
+    this.bounceBackValue = -0.6
+
+    // if its player, cool relevant key
     if(this.isPlayer){
       if(isX){
         if( Math.sign( this.mesh.position.x ) == -1 ){
@@ -527,6 +533,14 @@ class Character {
     this.mesh.position.x = posx
     this.mesh.position.y = posy
 
+    // slowly regrow bounceback
+    if(this.bounceBackTimer.time() > 60 && this.bounceBackValue>this.defaultBounceBackValue){
+      this.bounceBackTimer.reset()
+      this.bounceBackValue -= 0.01
+    }
+
+
+
     // stop moving duster once were dying
     if(this.lifecycle == ALIVE && this.duster){
       this.duster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
@@ -535,7 +549,6 @@ class Character {
     if(this.lifecycle == ALIVE && this.bloodDuster){
       this.bloodDuster.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
     }
-
 
     if(this.lifecycle == ALIVE && this.speedBurnParticles){
       this.speedBurnParticles.particleSystem.position.set( this.mesh.position.x, this.mesh.position.y, this.mesh.position.z )
