@@ -1032,7 +1032,7 @@ class Enemy extends Character {
       this.intentionTimer.reset()
 
       // put this in here so we flip coin 1 time/2s, not framerate times per s, after 2s
-      if(Math.random() > 0.5){
+      if(Math.random() > 0.2){
 
         if(this.intention == WANDER){
           this.intention = PATTERNMOVE

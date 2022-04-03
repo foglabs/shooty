@@ -54,7 +54,7 @@ class Game {
     //   this.backPlanes.push(backPlane)
     // }
       
-    this.musicEnabled = true
+    this.musicEnabled = false
     this.currentSong = TITLE
 
     this.stage = false
@@ -1526,8 +1526,6 @@ playSong(song){
         this.nextRound()
       }
     }
-    
-
 
     player.animation()
     this.drawUI()

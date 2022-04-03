@@ -386,3 +386,28 @@ xboss death sound!
 xstupid box wont follow!
 
 
+demos between /5 rounds
+  have to deal with preserving player state with demo being cleaned
+bounce off the edge when touch 
+  reflect you back (negative) with 90% of x+y acc that you touched with
+  if x or y amount is > threshold
+
+allow sword when no energy
+  but small
+  much lower damage + score
+  greyed out or opacitys
+
+
+
+
+
+enemies can go too close to edge and get hyper bounced
+
+cool key heat of relevant key as part of bounceBack
+
+
+
+
+
+
+

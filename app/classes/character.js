@@ -80,6 +80,10 @@ class Character {
 
     // hypnotized by boss
     this.hypnotizedById = null
+
+    // bouncing back from edge
+    this.bounceBackTimer = new Timer()
+    this.bounceBackTimer.start()
   }
 
   fuckUpVertex(){
@@ -459,6 +463,33 @@ class Character {
     }
   }
 
+  bounceBack(isX){
+    // send character back where they CAME FROM
+    if(isX){
+      this.accx = -1.08 * this.accx
+    } else {
+      this.accy = -1.08 * this.accy
+    }
+   
+    // if its player, cool that key
+    if(this.isPlayer){
+      if(isX){
+        if( Math.sign( this.mesh.position.x ) == -1 ){
+          console.log( 'left ', keyHandler.keyHeats["ArrowLeft"] )
+          keyHandler.coolKey("ArrowLeft", 3)
+        } else {
+          keyHandler.coolKey("ArrowRight", 3)
+        }
+      } else {
+        if( Math.sign( this.mesh.position.y ) == -1 ){
+          keyHandler.coolKey("ArrowDown", 3)
+        } else {
+          keyHandler.coolKey("ArrowUp", 3)
+        }
+      }
+    }
+  }
+
   // this gets redefined in subclasses to contain other every-loop movement logic specific to the class
   customMovement(){}
   customAnimation(){}
@@ -478,15 +509,18 @@ class Character {
       posy = this.mesh.position.y
     }
     
-    if(Math.abs(posx) >= game.maxX){
-      // stop it if it hits the edge
-      this.accx = 0
+
+    let px = Math.abs(posx)
+    if( px > game.maxX ){
+      // bounce it if it hits the edge
+      this.bounceBack(true)
       posx = Math.sign(posx) * game.maxX
     }
 
-    if(Math.abs(posy) >= game.maxY){
-      // stop it if it hits the edge
-      this.accy = 0
+    let py = Math.abs(posy)
+    if( py > game.maxY ){
+      // bounce it if it hits the edge
+      this.bounceBack(false)
       posy = Math.sign(posy) * game.maxY
     }
 
