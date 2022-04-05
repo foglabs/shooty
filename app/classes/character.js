@@ -275,6 +275,13 @@ class Character {
     }
   }
 
+  // sword
+  addSword(length){
+    this.sword = new Sword( length, 0, this )
+    this.sword.mesh.visible = false
+    scene.add( this.sword.mesh )
+  }
+
   removeExtras(){
     // if(this.speedGuide){
     //   this.speedGuide.geometry.dispose()
@@ -477,23 +484,27 @@ class Character {
     // dont bounce back as hard next time
     this.bounceBackValue = -0.6
 
-    // if its player, cool relevant key
-    if(this.isPlayer){
-      if(isX){
-        if( Math.sign( this.mesh.position.x ) == -1 ){
-          console.log( 'left ', keyHandler.keyHeats["ArrowLeft"] )
-          keyHandler.coolKey("ArrowLeft", 3)
-        } else {
-          keyHandler.coolKey("ArrowRight", 3)
-        }
-      } else {
-        if( Math.sign( this.mesh.position.y ) == -1 ){
-          keyHandler.coolKey("ArrowDown", 3)
-        } else {
-          keyHandler.coolKey("ArrowUp", 3)
-        }
-      }
-    }
+    // // if its player, cool relevant key
+    // if(this.isPlayer){
+    //   if(isX){
+    //     if( Math.sign( this.mesh.position.x ) == -1 ){
+    //       console.log( 'left ', keyHandler.keyHeats["ArrowLeft"] )
+    //       // keyHandler.coolKey("ArrowLeft", 2)
+    //       keyHandler.heatKey("ArrowRight")
+    //     } else {
+    //       // keyHandler.coolKey("ArrowRight", 2)
+    //       keyHandler.heatKey("ArrowLeft")
+    //     }
+    //   } else {
+    //     if( Math.sign( this.mesh.position.y ) == -1 ){
+    //       // keyHandler.coolKey("ArrowDown", 2)
+    //       keyHandler.heatKey("ArrowUp")
+    //     } else {
+    //       // keyHandler.coolKey("ArrowUp", 2)
+    //       keyHandler.heatKey("ArrowDown")
+    //     }
+    //   }
+    // }
   }
 
   // this gets redefined in subclasses to contain other every-loop movement logic specific to the class

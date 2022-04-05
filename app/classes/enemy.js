@@ -309,16 +309,9 @@ class Enemy extends Character {
     this.removeExtras()
   }
 
-  // sword
-  addSword(length){
-    this.sword = new Sword(length, 0, this)
-    this.sword.mesh.visible = false
-    scene.add( this.sword.mesh )
-  }
-
   startSword(){
     if(!this.sword){
-      this.addSword()
+      this.addSword(1)
     }
 
     this.sword.active = true

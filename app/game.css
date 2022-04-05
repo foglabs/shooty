@@ -116,7 +116,6 @@ div#fog-logo2 {
   }
 
   100% {
-    transform: rotateY(360deg);
     opacity: 0.2;
   }
 }
@@ -167,7 +166,7 @@ div#scores {
 }
 
 div#scores.score-scroll {
-  transition: top 20s;
+  transition: top 8s;
   top: 30vh;
 }
 

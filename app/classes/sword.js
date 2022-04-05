@@ -14,7 +14,7 @@ class Sword {
     let geo = new THREE.ConeGeometry( 0.01, this.length, 32 )
     let bbox = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3())
     this.bbox = bbox
-    this.mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial( { color: "#ffffff", transparent: true, blending: THREE.AdditiveBlending }))
+    this.mesh = new THREE.Mesh(geo, new THREE.MeshStandardMaterial( { color: "#ffffff", transparent: true, blending: THREE.AdditiveBlending }))
 
     this.mesh.rotation.z = 0
   }

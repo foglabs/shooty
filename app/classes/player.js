@@ -451,13 +451,6 @@ class Player extends Character {
     // return 8 + 7 * Math.pow(this.level / 4, 2)
   }
 
-  // sword
-  addSword(){
-    this.sword = new Sword( this.swordLength(), 0, this )
-    this.sword.mesh.visible = false
-    scene.add( this.sword.mesh )
-  }
-
   startSword(){
     if(!this.sword){
       this.addSword( this.swordLength() )
@@ -475,7 +468,6 @@ class Player extends Character {
   }
 
   drawSword(){
-
     if(this.sword.rotateTimer.time() > 2){
       this.sword.rotateTimer.reset()
       this.sword.bbox.setFromObject( this.sword.mesh )

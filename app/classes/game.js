@@ -55,7 +55,7 @@ class Game {
     // }
       
     this.musicEnabled = false
-    this.currentSong = TITLE
+    this.currentSong = OSTTITLE
 
     this.stage = false
     this.stageTimer = new Timer()
