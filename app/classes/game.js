@@ -54,7 +54,7 @@ class Game {
     //   this.backPlanes.push(backPlane)
     // }
       
-    this.musicEnabled = false
+    this.musicEnabled = true
     this.currentSong = OSTTITLE
 
     this.stage = false
